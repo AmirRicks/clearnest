@@ -5,6 +5,7 @@ import { z } from "zod";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { AGREEMENT_VERSION } from "@/lib/agreement";
 import { estimatePrice, SERVICES, type ServiceId } from "@/lib/pricing";
+import { sendBookingConfirmation } from "@/lib/email";
 
 const bookingSchema = z.object({
   serviceId: z.enum(["standard", "deep", "moveinout", "airbnb"]),
@@ -96,6 +97,18 @@ export async function submitBooking(input: unknown): Promise<BookingResult> {
     if (bookingError) throw bookingError;
 
     await sb.from("agreements").update({ booking_id: booking.id }).eq("id", agreement.id);
+
+    // Fire-and-forget confirmation email (graceful if RESEND_API_KEY missing)
+    void sendBookingConfirmation({
+      to: data.customerEmail,
+      customerName: data.customerName,
+      serviceName: SERVICES[data.serviceId as ServiceId].name,
+      scheduledFor: data.scheduledFor,
+      address: `${data.addressLine1}${data.addressLine2 ? `, ${data.addressLine2}` : ""}, ${data.city}, ${data.state} ${data.zip}`,
+      priceLow: low,
+      priceHigh: high,
+      bookingId: booking.id,
+    });
 
     revalidatePath("/admin");
     return { ok: true, bookingId: booking.id };

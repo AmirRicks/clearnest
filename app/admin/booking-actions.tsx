@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 import { toast } from "sonner";
-import { updateBookingStatus } from "./actions";
+import { updateBookingStatus, sendInvoice } from "./actions";
 import type { BookingStatus } from "@/lib/supabase/types";
 
 const NEXT: Record<BookingStatus, BookingStatus | null> = {
@@ -33,8 +33,33 @@ export function BookingRowActions({
     });
   };
 
+  const invoice = () => {
+    const input = window.prompt("Final invoice amount (USD) to charge after the clean:");
+    if (!input) return;
+    const amount = Number(input);
+    if (!Number.isFinite(amount) || amount <= 0) {
+      toast.error("Enter a valid amount.");
+      return;
+    }
+    start(async () => {
+      const res = await sendInvoice(bookingId, amount);
+      if (res.ok) toast.success("Invoice sent to customer.");
+      else toast.error(res.error);
+    });
+  };
+
   return (
     <div className="inline-flex items-center gap-2">
+      {currentStatus === "completed" && (
+        <button
+          type="button"
+          disabled={pending}
+          onClick={invoice}
+          className="rounded-full bg-brand-700 px-3 py-1 text-xs font-semibold text-white transition hover:bg-brand-800 disabled:opacity-50"
+        >
+          Send invoice
+        </button>
+      )}
       {next && (
         <button
           type="button"

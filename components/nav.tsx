@@ -7,6 +7,7 @@ import { Menu, Phone, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BUSINESS, cn } from "@/lib/utils";
 import { Logo } from "./logo";
+import { Magnetic } from "@/components/anim/magnetic";
 
 const links = [
   { href: "/services", label: "Services" },
@@ -79,12 +80,15 @@ export function Nav() {
             <span className="hidden xl:inline">{BUSINESS.phone}</span>
             <span className="xl:hidden">Call</span>
           </a>
-          <Link
-            href="/book"
-            className="inline-flex items-center gap-2 rounded-full bg-charcoal px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
-          >
-            Book Cleaning
-          </Link>
+          <Magnetic strength={0.25}>
+            <Link
+              href="/book"
+              className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-charcoal px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
+            >
+              <span className="relative z-10">Book Cleaning</span>
+              <span className="shine-bar" />
+            </Link>
+          </Magnetic>
         </div>
 
         <button

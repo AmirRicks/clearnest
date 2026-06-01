@@ -31,6 +31,11 @@ export interface Booking {
   status: BookingStatus;
   agreement_id: string | null;
   reschedule_count: number;
+  // Phase 2 (migration 0002) — optional until DB is migrated
+  stripe_invoice_id?: string | null;
+  stripe_invoice_url?: string | null;
+  last_reschedule_at?: string | null;
+  last_status_change?: string | null;
 }
 
 export interface Agreement {
