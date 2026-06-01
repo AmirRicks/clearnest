@@ -36,7 +36,7 @@ export function HowItWorks() {
       <RevealGroup className="mt-14 grid gap-6 md:grid-cols-3">
         {steps.map((s, i) => (
           <RevealItem key={s.title}>
-            <SpotlightCard className="group h-full rounded-3xl border border-stone/70 bg-background p-7 shadow-soft transition hover:-translate-y-1 hover:shadow-card">
+            <SpotlightCard className="group glass-light glass-specular h-full rounded-3xl p-7 transition hover:-translate-y-1 hover:shadow-card">
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-300 to-transparent opacity-0 transition group-hover:opacity-100" />
               <div className="flex items-center gap-3">
                 <span className="grid h-11 w-11 place-items-center rounded-2xl bg-brand-50 text-brand-700 transition group-hover:scale-110 group-hover:bg-brand-100">

@@ -33,7 +33,7 @@ export function ServicesTeaser() {
       <RevealGroup className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {services.map((s) => (
           <RevealItem key={s.id}>
-            <SpotlightCard className="group flex h-full flex-col rounded-3xl border border-stone/70 bg-background p-6 shadow-soft transition hover:-translate-y-1 hover:shadow-card">
+            <SpotlightCard className="group glass-light glass-specular flex h-full flex-col rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-card">
               <span className="text-xs font-medium uppercase tracking-[0.18em] text-graphite/80">
                 From ${s.baseRate}
               </span>

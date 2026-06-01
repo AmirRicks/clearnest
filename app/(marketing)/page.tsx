@@ -1,4 +1,4 @@
-import { HouseTour } from "@/components/house-tour";
+import { CinematicHero } from "@/components/cinematic-hero";
 import { TrustMarquee } from "@/components/trust-marquee";
 import { StatsBand } from "@/components/stats-band";
 import { HowItWorks } from "@/components/how-it-works";
@@ -11,7 +11,7 @@ import { CtaBand } from "@/components/cta-band";
 export default function HomePage() {
   return (
     <>
-      <HouseTour />
+      <CinematicHero />
       <TrustMarquee />
       <HowItWorks />
       <StatsBand />

@@ -57,8 +57,7 @@ export function H2({
   className?: string;
   animate?: boolean;
 }) {
-  const base =
-    "mt-4 max-w-3xl text-balance text-3xl font-semibold leading-[1.1] tracking-tight text-charcoal sm:text-4xl md:text-5xl";
+  const base = "mt-4 max-w-4xl text-balance display-2 text-charcoal";
   // Animate word-by-word only when given a plain string.
   if (animate && typeof children === "string") {
     return <AnimatedText as="h2" text={children} className={cn(base, className)} />;
