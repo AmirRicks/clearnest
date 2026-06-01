@@ -1,5 +1,8 @@
 @AGENTS.md
 
+# 🚀 READ FIRST: Growth Directive
+ClearNest is a **customer-acquisition system**, not just a website. Every change must pass the filter: "Will this generate more leads, bookings, trust, reviews, or revenue?" Act as the full growth team (dev + UX + CRO + SEO + PPC + analyst + marketing + local-growth). Full directive + prioritized ROI roadmap: **`GROWTH-DIRECTIVE.md`**. Two hard rules: (1) capacity-aware — never generate demand beyond fulfillment; (2) truth-in-advertising — only claim what's actually true (no fake reviews/ratings/badges).
+
 # ClearNest — agent-specific notes
 
 This is a Next.js **16** project — there are real breaking changes from Next 15. Before writing any code, check `node_modules/next/dist/docs/01-app/02-guides/upgrading/version-16.md`:

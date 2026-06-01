@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 import { toast } from "sonner";
-import { updateBookingStatus, sendInvoice } from "./actions";
+import { updateBookingStatus, sendInvoice, requestReview } from "./actions";
 import type { BookingStatus } from "@/lib/supabase/types";
 
 const NEXT: Record<BookingStatus, BookingStatus | null> = {
@@ -48,8 +48,19 @@ export function BookingRowActions({
     });
   };
 
+  const review = () => {
+    start(async () => {
+      const res = await requestReview(bookingId);
+      if (res.ok) toast.success("Review request emailed to customer.");
+      else toast.error(res.error);
+    });
+  };
+
+  const finished =
+    currentStatus === "completed" || currentStatus === "invoiced" || currentStatus === "paid";
+
   return (
-    <div className="inline-flex items-center gap-2">
+    <div className="inline-flex flex-wrap items-center justify-end gap-2">
       {currentStatus === "completed" && (
         <button
           type="button"
@@ -58,6 +69,16 @@ export function BookingRowActions({
           className="rounded-full bg-brand-700 px-3 py-1 text-xs font-semibold text-white transition hover:bg-brand-800 disabled:opacity-50"
         >
           Send invoice
+        </button>
+      )}
+      {finished && (
+        <button
+          type="button"
+          disabled={pending}
+          onClick={review}
+          className="rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800 transition hover:bg-amber-100 disabled:opacity-50"
+        >
+          Request review
         </button>
       )}
       {next && (

@@ -3,6 +3,7 @@ import { Logo } from "@/components/logo";
 
 const tabs = [
   { href: "/admin", label: "Bookings" },
+  { href: "/admin/leads", label: "Leads" },
   { href: "/admin/reviews", label: "Reviews" },
   { href: "/admin/settings", label: "Settings" },
 ];

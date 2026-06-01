@@ -164,6 +164,56 @@ export async function sendInvoiceEmail(input: {
   });
 }
 
+/** Notify the owner when a new lead comes in (so you can follow up fast). */
+export async function sendLeadNotification(lead: {
+  name?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  source?: string;
+  message?: string | null;
+  estimated_low?: number | null;
+  estimated_high?: number | null;
+}) {
+  const to = process.env.LEAD_NOTIFY_EMAIL || BUSINESS.email;
+  const quote =
+    lead.estimated_low && lead.estimated_high
+      ? formatCurrencyRange(lead.estimated_low, lead.estimated_high)
+      : "—";
+  const body = `
+    <p style="margin:0 0 16px;color:#4a5159;line-height:1.6;">New lead from the website — follow up fast (speed-to-lead wins jobs).</p>
+    ${row("Name", escape(lead.name || "—"))}
+    ${row("Phone", escape(lead.phone || "—"))}
+    ${row("Email", escape(lead.email || "—"))}
+    ${row("Source", escape(lead.source || "website"))}
+    ${row("Quote", quote)}
+    ${lead.message ? row("Message", escape(lead.message)) : ""}
+  `;
+  return send({ to, subject: `New ClearNest lead — ${lead.name || lead.phone || "website"}`, html: shell("New lead", body) });
+}
+
+/** Ask a happy customer for a review (the engine that turns jobs into reviews). */
+export async function sendReviewRequest(input: {
+  to: string;
+  customerName: string;
+  yelpUrl: string;
+  googleUrl?: string;
+}) {
+  const buttons = `
+    <p style="margin:20px 0;text-align:center;">
+      <a href="${input.googleUrl || input.yelpUrl}" style="background:#1a1d22;color:#fff;padding:12px 22px;border-radius:999px;text-decoration:none;font-weight:600;font-size:14px;">Leave a review</a>
+    </p>
+    <p style="margin:0;text-align:center;font-size:13px;">
+      <a href="${input.yelpUrl}" style="color:#1b556c;">Review on Yelp</a>${input.googleUrl ? ` &nbsp;·&nbsp; <a href="${input.googleUrl}" style="color:#1b556c;">Review on Google</a>` : ""}
+    </p>`;
+  const body = `
+    <p style="margin:0 0 16px;color:#4a5159;line-height:1.6;">
+      Hi ${escape(input.customerName)} — thank you for choosing ClearNest! If your clean made your day a little easier, a quick review would mean the world to a new local business — and helps the next family find us.
+    </p>
+    ${buttons}
+  `;
+  return send({ to: input.to, subject: "How did we do? 🌿", html: shell("Mind leaving a quick review?", body) });
+}
+
 function escape(s: string) {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }

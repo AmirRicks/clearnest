@@ -3,21 +3,25 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
+import { Sparkles, MessageSquareText } from "lucide-react";
 import { SERVICES, estimatePrice, type ServiceId } from "@/lib/pricing";
 import { formatCurrencyRange } from "@/lib/utils";
 import { Eyebrow, H2, Lead, Section } from "./section";
+import { Modal } from "@/components/ui/modal";
+import { QuickLeadForm } from "@/components/lead/quick-lead-form";
 
 export function PriceEstimator({ asSection = true }: { asSection?: boolean }) {
   const [serviceId, setServiceId] = useState<ServiceId>("standard");
   const [bedrooms, setBedrooms] = useState(2);
   const [bathrooms, setBathrooms] = useState(2);
   const [sqft, setSqft] = useState(1400);
+  const [leadOpen, setLeadOpen] = useState(false);
   const [, startTransition] = useTransition();
 
   const estimate = estimatePrice({ serviceId, bedrooms, bathrooms, sqft });
 
   const Inner = (
+    <>
     <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr]">
       <div>
         <Eyebrow>Instant estimate</Eyebrow>
@@ -125,12 +129,47 @@ export function PriceEstimator({ asSection = true }: { asSection?: boolean }) {
           >
             Book this cleaning
           </Link>
+          <button
+            type="button"
+            onClick={() => setLeadOpen(true)}
+            className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-full border border-stone/70 bg-background px-5 py-3 text-sm font-semibold text-charcoal transition hover:border-brand-300 hover:text-brand-700"
+          >
+            <MessageSquareText className="h-4 w-4" /> Text me this quote
+          </button>
           <p className="mt-3 text-center text-[11px] text-graphite/80">
-            Pay after the clean. Same-day reschedule allowed.
+            Not ready to book? Get your price by text — no obligation.
           </p>
         </div>
       </motion.div>
     </div>
+
+    <Modal open={leadOpen} onClose={() => setLeadOpen(false)}>
+      <span className="inline-flex items-center gap-2 rounded-full border border-stone/70 bg-paper/60 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-graphite">
+        Your quote · {SERVICES[serviceId].name}
+      </span>
+      <h2 className="mt-4 text-2xl font-semibold tracking-tight text-charcoal">
+        We’ll text you {formatCurrencyRange(estimate.low, estimate.high)}
+      </h2>
+      <p className="mt-1.5 text-sm text-graphite">
+        {bedrooms} bd · {bathrooms} ba · {sqft.toLocaleString()} sq ft. Drop your info and we’ll
+        confirm your price + earliest opening.
+      </p>
+      <div className="mt-5">
+        <QuickLeadForm
+          defaults={{
+            source: "estimator",
+            serviceId,
+            bedrooms,
+            bathrooms,
+            sqft,
+            estimatedLow: estimate.low,
+            estimatedHigh: estimate.high,
+          }}
+          onDone={() => setTimeout(() => setLeadOpen(false), 2600)}
+        />
+      </div>
+    </Modal>
+    </>
   );
 
   if (!asSection) return Inner;

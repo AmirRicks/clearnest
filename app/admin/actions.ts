@@ -4,8 +4,10 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { BookingStatus } from "@/lib/supabase/types";
 import { createHostedInvoice } from "@/lib/stripe";
-import { sendInvoiceEmail } from "@/lib/email";
+import { sendInvoiceEmail, sendReviewRequest } from "@/lib/email";
 import { SERVICES } from "@/lib/pricing";
+import { BUSINESS } from "@/lib/utils";
+import type { LeadStatus } from "@/lib/supabase/types";
 
 type Ok = { ok: true };
 type Fail = { ok: false; error: string };
@@ -127,6 +129,42 @@ export async function sendInvoice(
 
   revalidatePath("/admin");
   revalidatePath("/account");
+  return { ok: true };
+}
+
+export async function updateLeadStatus(
+  leadId: string,
+  status: LeadStatus
+): Promise<Ok | Fail> {
+  const { sb, isAdmin } = await requireAdmin();
+  if (!isAdmin) return { ok: false, error: "Not authorized." };
+  const { error } = await sb.from("leads").update({ status }).eq("id", leadId);
+  if (error) return { ok: false, error: error.message };
+  revalidatePath("/admin/leads");
+  return { ok: true };
+}
+
+export async function requestReview(bookingId: string): Promise<Ok | Fail> {
+  const { sb, isAdmin } = await requireAdmin();
+  if (!isAdmin) return { ok: false, error: "Not authorized." };
+
+  const { data: b } = await sb
+    .from("bookings")
+    .select("customer_name, customer_email")
+    .eq("id", bookingId)
+    .single();
+  if (!b) return { ok: false, error: "Booking not found." };
+
+  const { data: settings } = await sb.from("site_settings").select("key, value");
+  const map = Object.fromEntries((settings ?? []).map((r) => [r.key, r.value]));
+
+  const res = await sendReviewRequest({
+    to: b.customer_email,
+    customerName: b.customer_name,
+    yelpUrl: map.yelp_url || BUSINESS.yelpUrl,
+    googleUrl: map.google_review_url || undefined,
+  });
+  if (!res.ok) return { ok: false, error: "Email failed (check RESEND_API_KEY)." };
   return { ok: true };
 }
 

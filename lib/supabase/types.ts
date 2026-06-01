@@ -50,6 +50,25 @@ export interface Agreement {
   ip_hash: string | null;
 }
 
+export type LeadStatus = "new" | "contacted" | "won" | "lost";
+
+export interface Lead {
+  id: string;
+  created_at: string;
+  name: string | null;
+  email: string | null;
+  phone: string | null;
+  source: string;
+  service_id: string | null;
+  bedrooms: number | null;
+  bathrooms: number | null;
+  sqft: number | null;
+  estimated_low: number | null;
+  estimated_high: number | null;
+  message: string | null;
+  status: LeadStatus;
+}
+
 export interface Review {
   id: string;
   created_at: string;

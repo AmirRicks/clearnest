@@ -7,6 +7,7 @@ import { updateSetting } from "../actions";
 
 const FIELDS = [
   { key: "yelp_url", label: "Yelp profile URL", placeholder: "https://www.yelp.com/biz/clearnest-cleaning-services" },
+  { key: "google_review_url", label: "Google review link (from Google Business Profile)", placeholder: "https://g.page/r/...review" },
   { key: "yelp_rating", label: "Yelp displayed rating", placeholder: "5.0" },
   { key: "yelp_review_ct", label: "Yelp displayed review count", placeholder: "0" },
   { key: "booking_lead_hours", label: "Minimum booking lead time (hours)", placeholder: "24" },

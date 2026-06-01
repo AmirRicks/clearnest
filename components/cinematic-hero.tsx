@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { useScroll, useMotionValueEvent, useReducedMotion } from "framer-motion";
-import { Phone, Star, ChevronDown, ShieldCheck, CreditCard } from "lucide-react";
+import { Phone, Leaf, ChevronDown, ShieldCheck, CreditCard } from "lucide-react";
 import { BUSINESS } from "@/lib/utils";
 import { AnimatedText, ShinyText } from "@/components/anim/animated-text";
 import { MagneticButton } from "@/components/anim/magnetic";
@@ -113,14 +113,8 @@ export function CinematicHero() {
 
             {/* Floating liquid-glass trust card */}
             <div className="glass glass-specular mt-10 inline-flex flex-wrap items-center gap-x-7 gap-y-3 rounded-2xl px-5 py-4 text-white">
-              <span className="inline-flex items-center gap-2">
-                <span className="flex text-amber-400">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-current" />
-                  ))}
-                </span>
-                <span className="text-sm font-semibold">5.0</span>
-                <span className="text-xs text-white/70">Yelp &amp; Google</span>
+              <span className="inline-flex items-center gap-2 text-sm">
+                <ShieldCheck className="h-4 w-4 text-brand-200" /> Insured &amp; bonded
               </span>
               <span className="h-4 w-px bg-white/20" />
               <span className="inline-flex items-center gap-2 text-sm">
@@ -128,7 +122,7 @@ export function CinematicHero() {
               </span>
               <span className="h-4 w-px bg-white/20" />
               <span className="inline-flex items-center gap-2 text-sm">
-                <ShieldCheck className="h-4 w-4 text-brand-200" /> Insured &amp; bonded
+                <Leaf className="h-4 w-4 text-brand-200" /> Eco &amp; pet-safe
               </span>
             </div>
           </div>
