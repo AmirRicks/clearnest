@@ -16,13 +16,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://clearnest.vercel.app"),
+  metadataBase: new URL("https://clearnest.services"),
   title: {
     default: "ClearNest Cleaning Services — A Cleaner Home. A Clearer Mind.",
     template: "%s · ClearNest Cleaning Services",
   },
   description:
-    "Professional residential, deep, move-out, and Airbnb cleaning in Salt Lake County. Book online in 60 seconds. Pay after the service is complete.",
+    "Professional residential, deep, move-out, and Airbnb cleaning within 40 miles of Salt Lake City, Utah. Book online in 60 seconds. Pay after the service is complete.",
   keywords: [
     "house cleaning",
     "deep cleaning",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     title: "ClearNest Cleaning Services",
     description:
       "Premium cleaning that feels effortless. Book online, pay after the clean.",
-    url: "https://clearnest.vercel.app",
+    url: "https://clearnest.services",
     siteName: "ClearNest Cleaning Services",
     type: "website",
   },

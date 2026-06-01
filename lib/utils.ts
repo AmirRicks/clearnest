@@ -14,7 +14,7 @@ export const BUSINESS = {
   smsHref: "sms:+18014410726",
   email: "hello@clearnest.services",
   emailHref: "mailto:hello@clearnest.services",
-  serviceArea: "Salt Lake County and surrounding areas, Utah",
+  serviceArea: "Salt Lake City and within 40 miles, Utah",
   hours: "Mon–Sat · 7:00 AM – 7:00 PM",
   yelpUrl: process.env.NEXT_PUBLIC_YELP_URL ?? "https://www.yelp.com/biz/clearnest-cleaning-services",
 } as const;
