@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>ClearNest — Door Hanger (4.25×11)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  @page { size: letter portrait; margin: 0; }
+  @media print { body { margin: 0; } .screen-only { display: none; } }
+
+  :root {
+    --paper: #f6f6f1;
+    --background: #fdfdfb;
+    --graphite: #4a5159;
+    --charcoal: #1a1d22;
+    --brand-500: #2b88a8;
+    --brand-700: #1b556c;
+    --brand-800: #194653;
+    --accent: #c9a96e;
+  }
+  html, body { background: #e9e6dc; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Helvetica Neue", "Geist", "Inter", system-ui, Arial, sans-serif;
+    color: var(--charcoal);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  @media screen {
+    body { padding: 30px; display: grid; place-items: center; }
+    .page { box-shadow: 0 30px 80px -20px rgba(15,23,42,.25); }
+  }
+
+  .page {
+    width: 8.5in; height: 11in;
+    background: #f3f0e6;
+    position: relative;
+    box-sizing: border-box;
+    padding: 0;
+  }
+
+  /* The hanger sits in the left half of the letter sheet. The right half is
+     intentionally blank (saves toner) and includes light crop marks. */
+
+  .hanger {
+    position: absolute;
+    top: 0; left: 0.5in;
+    width: 4.25in; height: 11in;
+    background: var(--paper);
+    border: 1px dashed rgba(74,81,89,0.35); /* cut guide */
+    overflow: hidden;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-rows: 1.3in 1fr auto;
+  }
+
+  /* Hang-hole area at top */
+  .hole-zone {
+    position: relative;
+    border-bottom: 1px dashed rgba(74,81,89,0.25);
+  }
+  .hole {
+    position: absolute;
+    top: 0.45in; left: 50%; transform: translateX(-50%);
+    width: 1.3in; height: 0.55in;
+    border: 1px dashed rgba(74,81,89,0.5);
+    border-radius: 0.55in;
+    background: #f3f0e6;
+  }
+  .hole::after {
+    content: "CUT OUT";
+    position: absolute; inset: 0;
+    display: grid; place-items: center;
+    font-size: 8px; letter-spacing: 0.22em; color: rgba(74,81,89,0.7);
+  }
+
+  /* Body area — ambient glow */
+  .body {
+    position: relative;
+    padding: 0.36in 0.36in 0.2in;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto auto;
+    gap: 0.18in;
+    overflow: hidden;
+  }
+  .body::before {
+    content: "";
+    position: absolute;
+    width: 4in; height: 4in;
+    top: -1.5in; right: -1.5in;
+    background: radial-gradient(circle, rgba(126,190,216,.35), transparent 70%);
+    filter: blur(40px);
+    border-radius: 50%;
+  }
+  .body::after {
+    content: "";
+    position: absolute;
+    width: 3.5in; height: 3.5in;
+    bottom: -1in; left: -1in;
+    background: radial-gradient(circle, rgba(201,169,110,.28), transparent 70%);
+    filter: blur(40px);
+    border-radius: 50%;
+  }
+
+  /* Lockup */
+  .lockup { display: flex; align-items: center; gap: 10px; position: relative; }
+  .mark { width: 38px; height: 38px; color: var(--brand-700); }
+  .lockup .word { display: flex; flex-direction: column; line-height: 1; }
+  .lockup .name { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; color: var(--charcoal); }
+  .lockup .strap { font-size: 8px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--graphite); margin-top: 3px; }
+
+  /* Eyebrow */
+  .eyebrow {
+    position: relative;
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 9px;
+    border: 1px solid rgba(74,81,89,.22);
+    border-radius: 999px;
+    background: rgba(253,253,251,0.7);
+    font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--graphite); font-weight: 500;
+  }
+  .eyebrow .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+
+  /* Headline */
+  .headline {
+    position: relative;
+    font-size: 38px; font-weight: 700; letter-spacing: -0.03em; line-height: 0.96; color: var(--charcoal); margin: 6px 0 0;
+  }
+  .headline .accent { color: var(--brand-700); }
+
+  .lede {
+    margin: 12px 0 0; position: relative;
+    font-size: 12px; line-height: 1.45; color: var(--graphite);
+  }
+
+  /* Offer card */
+  .offer {
+    position: relative;
+    align-self: end;
+    padding: 0.2in 0.22in;
+    border-radius: 0.18in;
+    background: linear-gradient(135deg, rgba(255,255,255,0.85), rgba(240,247,251,0.65));
+    border: 1px solid rgba(27,85,108,0.18);
+    box-shadow: 0 16px 30px -22px rgba(27,85,108,0.30);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    align-items: center;
+  }
+  .offer .label {
+    font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--graphite); font-weight: 600;
+  }
+  .offer h2 {
+    margin: 2px 0 0;
+    font-size: 17px; line-height: 1.05; letter-spacing: -0.02em; color: var(--charcoal); font-weight: 700;
+  }
+  .offer .pct {
+    font-size: 38px; line-height: 0.85; letter-spacing: -0.04em; color: var(--brand-700); font-weight: 800;
+    display: flex; align-items: baseline; gap: 2px;
+  }
+  .offer .pct .off { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--graphite); font-weight: 600; }
+
+  /* Contact area */
+  .contact {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 0.18in;
+  }
+  .contact .phone {
+    font-size: 24px; font-weight: 700; color: var(--brand-800); letter-spacing: -0.01em; line-height: 1;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+  }
+  .contact .url {
+    margin-top: 6px;
+    font-size: 13px; font-weight: 600; color: var(--brand-700);
+  }
+  .contact .key {
+    font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--graphite); font-weight: 500; margin-bottom: 4px;
+  }
+  .qr {
+    width: 0.95in; height: 0.95in; padding: 0.06in;
+    background: #fff; border-radius: 6px;
+    border: 1px solid rgba(74,81,89,0.18);
+    display: grid; place-items: center;
+  }
+  .qr img { width: 100%; height: 100%; display: block; }
+
+  /* Trust strip */
+  .trust {
+    position: relative;
+    border-top: 1px solid rgba(74,81,89,0.15);
+    padding-top: 8px;
+    display: flex; justify-content: space-between;
+    font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--graphite); font-weight: 500;
+  }
+  .trust span + span::before {
+    content: "·"; margin: 0 6px; color: var(--accent);
+  }
+
+  /* Right-side cut-guide note */
+  .side-note {
+    position: absolute;
+    top: 50%; right: 0.4in; transform: translateY(-50%) rotate(-90deg); transform-origin: right center;
+    font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(74,81,89,0.5);
+  }
+
+  .screen-only {
+    position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%);
+    padding: 8px 14px; background: rgba(26,29,34,0.92); color: #fff;
+    border-radius: 999px; font-size: 12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="hanger">
+    <!-- Hole zone -->
+    <div class="hole-zone">
+      <div class="hole"></div>
+    </div>
+
+    <!-- Body -->
+    <div class="body">
+
+      <div class="lockup">
+        <svg class="mark" viewBox="0 0 64 64" fill="none">
+          <path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/>
+          <circle cx="32" cy="38" r="3" fill="#c9a96e"/>
+        </svg>
+        <div class="word">
+          <span class="name">ClearNest</span>
+          <span class="strap">Cleaning Services</span>
+        </div>
+      </div>
+
+      <div>
+        <span class="eyebrow"><span class="dot"></span> Hello, neighbor</span>
+        <div class="headline">A Cleaner Home.<br/><span class="accent">A Clearer Mind.</span></div>
+        <p class="lede">
+          We just cleaned a home on your street. ClearNest is a new, local, insured cleaning team —
+          family- and pet-safe products, and <strong style="color:var(--charcoal);">you pay after the clean, never before.</strong>
+        </p>
+      </div>
+
+      <!-- Spacer (grid 1fr) -->
+      <div></div>
+
+      <div class="offer">
+        <div>
+          <div class="label">Founding offer · First 10 homes</div>
+          <h2>Your first clean.</h2>
+        </div>
+        <div class="pct">20%<span class="off">off</span></div>
+      </div>
+
+      <div class="contact">
+        <div>
+          <div class="key">Call or text</div>
+          <div class="phone">(801) 441-0726</div>
+          <div class="url">clearnest.services</div>
+        </div>
+        <div>
+          <div class="qr">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=0&qzone=0&format=svg&data=https%3A%2F%2Fclearnest.services" alt="Scan to book"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="trust">
+        <span>Insured</span>
+        <span>Background-checked</span>
+        <span>Eco &amp; pet-safe</span>
+        <span>Pay after</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="side-note">Door hanger · 4.25 × 11 in · trim along dashed lines, cut out the knob hole</div>
+</div>
+
+<div class="screen-only">⌘P / Ctrl+P → Letter, no margins, scale 100%. Trim along dashed guides, cut out the hole.</div>
+
+</body>
+</html>

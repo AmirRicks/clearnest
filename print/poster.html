@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>ClearNest — Poster (Letter)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  /* ===== Print sizing ===== */
+  @page { size: letter portrait; margin: 0; }
+  @media print { body { margin: 0; } .screen-only { display: none; } }
+
+  :root {
+    --paper: #f6f6f1;
+    --background: #fdfdfb;
+    --stone: #d4d8dc;
+    --graphite: #4a5159;
+    --charcoal: #1a1d22;
+    --brand-50: #f0f7fb;
+    --brand-100: #d6eaf3;
+    --brand-300: #7ebed8;
+    --brand-500: #2b88a8;
+    --brand-700: #1b556c;
+    --brand-800: #194653;
+    --accent: #c9a96e;
+  }
+
+  html, body { background: #e9e6dc; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Helvetica Neue", "Geist", "Inter", system-ui, Arial, sans-serif;
+    color: var(--charcoal);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Screen-only paper preview frame */
+  @media screen {
+    body { display: grid; place-items: center; padding: 30px; }
+    .poster { box-shadow: 0 30px 80px -20px rgba(15,23,42,.25), 0 6px 18px -6px rgba(15,23,42,.18); }
+  }
+
+  /* ===== Poster ===== */
+  .poster {
+    width: 8.5in;
+    height: 11in;
+    background: var(--paper);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  /* Ambient gradients (the liquid-glass mood from the site) */
+  .poster::before, .poster::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    z-index: 0;
+  }
+  .poster::before {
+    width: 6in; height: 6in;
+    top: -2.5in; right: -2in;
+    background: radial-gradient(circle, rgba(126,190,216,.45), transparent 70%);
+  }
+  .poster::after {
+    width: 5.5in; height: 5.5in;
+    bottom: -1.5in; left: -2in;
+    background: radial-gradient(circle, rgba(201,169,110,.30), transparent 70%);
+  }
+
+  /* Hairline guides */
+  .frame {
+    position: absolute; inset: 0.35in;
+    border: 1px solid rgba(27,85,108,.18);
+    border-radius: 0.28in;
+    z-index: 0;
+  }
+
+  .content {
+    position: relative; z-index: 2;
+    height: 100%;
+    padding: 0.65in 0.7in;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto auto;
+    gap: 0.22in;
+  }
+
+  /* Brand lockup */
+  .lockup { display: flex; align-items: center; gap: 14px; }
+  .lockup .mark { width: 56px; height: 56px; color: var(--brand-700); }
+  .lockup .word { display: flex; flex-direction: column; line-height: 1; }
+  .lockup .word .name {
+    font-size: 28px; font-weight: 600; letter-spacing: -0.01em; color: var(--charcoal);
+  }
+  .lockup .word .strap {
+    margin-top: 4px;
+    font-size: 10px; font-weight: 500; letter-spacing: 0.24em; color: var(--graphite); text-transform: uppercase;
+  }
+
+  /* Eyebrow */
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 11px;
+    border: 1px solid rgba(74,81,89,.22);
+    border-radius: 999px;
+    background: rgba(253,253,251,.7);
+    font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--graphite);
+    font-weight: 500;
+  }
+  .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+  /* Display headline */
+  .display {
+    font-size: 84px;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 0.96;
+    color: var(--charcoal);
+    margin: 0;
+  }
+  .display .accent { color: var(--brand-700); }
+  .lede {
+    margin: 18px 0 0;
+    font-size: 17px;
+    line-height: 1.45;
+    color: var(--graphite);
+    max-width: 5.4in;
+  }
+
+  /* Services chips */
+  .services { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .chip {
+    padding: 7px 14px; border-radius: 999px;
+    background: rgba(253,253,251,.78);
+    border: 1px solid rgba(74,81,89,.18);
+    font-size: 12px; font-weight: 600; color: var(--charcoal);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .chip .tick { color: var(--brand-700); font-weight: 700; }
+
+  /* Founding offer card (glass) */
+  .offer {
+    margin-top: 0.34in;
+    padding: 0.34in 0.42in;
+    border-radius: 0.26in;
+    background: linear-gradient(135deg, rgba(255,255,255,0.78), rgba(240,247,251,0.6));
+    border: 1px solid rgba(27,85,108,0.16);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.7) inset,
+      0 24px 50px -30px rgba(27,85,108,0.30);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.2in;
+    align-items: center;
+  }
+  .offer .label {
+    font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--graphite); font-weight: 600;
+  }
+  .offer h2 {
+    margin: 6px 0 4px;
+    font-size: 28px; line-height: 1.05; letter-spacing: -0.02em; color: var(--charcoal); font-weight: 700;
+  }
+  .offer p {
+    margin: 0; font-size: 13px; color: var(--graphite); line-height: 1.5;
+  }
+  .offer .pct {
+    font-size: 64px; line-height: 0.9; letter-spacing: -0.04em; color: var(--brand-700); font-weight: 800;
+    display: flex; align-items: baseline; gap: 4px;
+  }
+  .offer .pct .off { font-size: 14px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--graphite); font-weight: 600; }
+
+  /* Contact strip */
+  .contact {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 0.3in;
+    margin-top: 0.32in;
+  }
+  .contact .info { display: flex; flex-direction: column; gap: 6px; }
+  .contact .info .row { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--charcoal); }
+  .contact .info .row .key { color: var(--graphite); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; min-width: 56px; }
+  .contact .info .phone {
+    font-size: 36px; font-weight: 700; letter-spacing: -0.02em; color: var(--brand-800); line-height: 1;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+  }
+  .contact .info .url {
+    margin-top: 6px;
+    font-size: 18px; font-weight: 600; color: var(--brand-700);
+  }
+  .contact .info .email {
+    margin-top: 2px;
+    font-size: 13px; color: var(--graphite);
+  }
+  .qr {
+    width: 1.55in; height: 1.55in;
+    padding: 0.12in; border-radius: 0.18in;
+    background: #fff; border: 1px solid rgba(74,81,89,0.18);
+    display: grid; place-items: center;
+    box-shadow: 0 18px 36px -20px rgba(15,23,42,0.25);
+  }
+  .qr img { width: 100%; height: 100%; display: block; }
+  .qr-cap { margin-top: 6px; text-align: center; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--graphite); }
+
+  /* Trust strip */
+  .trust {
+    margin-top: 0.34in;
+    padding-top: 0.18in;
+    border-top: 1px solid rgba(74,81,89,0.15);
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 11px; color: var(--graphite); letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500;
+  }
+  .trust span + span::before {
+    content: "·"; margin: 0 8px; color: var(--accent);
+  }
+
+  /* Screen-only hint */
+  .screen-only {
+    position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%);
+    padding: 8px 14px; background: rgba(26,29,34,0.92); color: #fff;
+    border-radius: 999px; font-size: 12px; letter-spacing: 0.05em;
+    font-family: -apple-system, sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<div class="poster">
+  <div class="frame"></div>
+
+  <div class="content">
+
+    <!-- Lockup -->
+    <div class="lockup">
+      <svg class="mark" viewBox="0 0 64 64" fill="none" role="img" aria-label="ClearNest">
+        <path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/>
+        <circle cx="32" cy="38" r="3" fill="#c9a96e"/>
+      </svg>
+      <div class="word">
+        <span class="name">ClearNest</span>
+        <span class="strap">Cleaning Services</span>
+      </div>
+    </div>
+
+    <!-- Eyebrow -->
+    <div>
+      <span class="eyebrow"><span class="dot"></span> Now serving Salt Lake City &amp; within 40 miles</span>
+    </div>
+
+    <!-- Headline + lede + chips -->
+    <div>
+      <h1 class="display">A Cleaner Home.<br/><span class="accent">A Clearer Mind.</span></h1>
+      <p class="lede">
+        Premium house, deep, move-out, and Airbnb turnover cleaning — done by an insured, background-checked team
+        with family- and pet-safe products. <strong style="color:var(--charcoal);">You pay after the clean — never before.</strong>
+      </p>
+      <div class="services">
+        <span class="chip"><span class="tick">✓</span> Standard</span>
+        <span class="chip"><span class="tick">✓</span> Deep</span>
+        <span class="chip"><span class="tick">✓</span> Move-In / Move-Out</span>
+        <span class="chip"><span class="tick">✓</span> Airbnb Turnover</span>
+      </div>
+    </div>
+
+    <!-- Founding offer -->
+    <div class="offer">
+      <div>
+        <div class="label">Founding-customer offer · First 10 homes</div>
+        <h2>20% off your first clean.</h2>
+        <p>In return, if we earn it: an honest review and a couple of before/after photos. That's the whole deal.</p>
+      </div>
+      <div class="pct">20%<span class="off">off</span></div>
+    </div>
+
+    <!-- Contact -->
+    <div class="contact">
+      <div class="info">
+        <div class="row"><span class="key">Call · Text</span></div>
+        <div class="phone">(801) 441-0726</div>
+        <div class="url">clearnest.services</div>
+        <div class="email">clearnest.services@gmail.com</div>
+      </div>
+      <div>
+        <div class="qr">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=0&qzone=0&format=svg&data=https%3A%2F%2Fclearnest.services" alt="Scan to book at clearnest.services"/>
+        </div>
+        <div class="qr-cap">Scan · Book in 60 sec</div>
+      </div>
+    </div>
+
+    <!-- Trust strip -->
+    <div class="trust">
+      <span>Insured &amp; bonded</span>
+      <span>Background-checked W-2 cleaners</span>
+      <span>Eco &amp; pet-safe</span>
+      <span>Pay after the clean</span>
+    </div>
+
+  </div>
+</div>
+
+<div class="screen-only">Press ⌘P / Ctrl+P → Save as PDF (letter, no margins, scale 100%)</div>
+
+</body>
+</html>
