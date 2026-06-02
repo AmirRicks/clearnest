@@ -15,47 +15,60 @@ export function SignaturePad({
   const padRef = useRef<SignaturePadLib | null>(null);
   const [hasInk, setHasInk] = useState(false);
 
+  // Keep the latest callbacks in refs. The init effect runs ONCE — if we put
+  // onChange/onEmpty in the dep array, an inline callback from the parent (e.g.
+  // onEmpty={() => setSignature(null)}) changes identity on every render, which
+  // re-ran the effect and called resize() -> pad.clear(), wiping the signature
+  // the instant the user finished signing. Reading from refs fixes that.
+  const onChangeRef = useRef(onChange);
+  const onEmptyRef = useRef(onEmpty);
+  onChangeRef.current = onChange;
+  onEmptyRef.current = onEmpty;
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const resize = () => {
-      const ratio = Math.max(window.devicePixelRatio || 1, 1);
-      const data = padRef.current?.toData();
-      canvas.width = canvas.offsetWidth * ratio;
-      canvas.height = canvas.offsetHeight * ratio;
-      const ctx = canvas.getContext("2d");
-      ctx?.scale(ratio, ratio);
-      padRef.current?.clear();
-      if (data) padRef.current?.fromData(data);
-    };
-
-    padRef.current = new SignaturePadLib(canvas, {
+    const pad = new SignaturePadLib(canvas, {
       penColor: "#0e1116",
       backgroundColor: "rgba(0,0,0,0)",
       minWidth: 0.6,
       maxWidth: 2.4,
     });
+    padRef.current = pad;
 
-    padRef.current.addEventListener("endStroke", () => {
-      const empty = padRef.current?.isEmpty() ?? true;
+    const resize = () => {
+      const ratio = Math.max(window.devicePixelRatio || 1, 1);
+      const data = pad.toData(); // preserve any existing strokes across a resize
+      canvas.width = canvas.offsetWidth * ratio;
+      canvas.height = canvas.offsetHeight * ratio;
+      canvas.getContext("2d")?.scale(ratio, ratio);
+      pad.clear();
+      if (data && data.length) pad.fromData(data);
+    };
+
+    pad.addEventListener("endStroke", () => {
+      const empty = pad.isEmpty();
       setHasInk(!empty);
-      if (empty) onEmpty?.();
-      else onChange(padRef.current!.toDataURL("image/png"));
+      if (empty) onEmptyRef.current?.();
+      else onChangeRef.current(pad.toDataURL("image/png"));
     });
 
     resize();
     window.addEventListener("resize", resize);
     return () => {
       window.removeEventListener("resize", resize);
-      padRef.current?.off();
+      pad.off();
     };
-  }, [onChange, onEmpty]);
+    // Init once; callbacks are read from refs so unstable parent callbacks
+    // never tear down and re-create the pad (which was clearing the canvas).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const clear = () => {
     padRef.current?.clear();
     setHasInk(false);
-    onEmpty?.();
+    onEmptyRef.current?.();
   };
 
   return (

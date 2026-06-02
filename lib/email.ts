@@ -120,6 +120,7 @@ export async function sendRescheduleConfirmation(input: {
     to: input.to,
     subject: `Rescheduled — ${formatDate(input.newFor)}`,
     html: shell("Your visit has been rescheduled.", body),
+    replyTo: BUSINESS.email,
   });
 }
 
@@ -134,10 +135,11 @@ export async function sendCancelConfirmation(input: {
     html: shell(
       "Booking canceled.",
       `<p style="margin:0 0 16px;color:#4a5159;line-height:1.6;">
-        Hi ${escape(input.customerName)} — your visit has been canceled. We'd love to see you again whenever you're ready: <a href="https://clearnest.vercel.app/book" style="color:#1b556c;">clearnest.vercel.app/book</a>.
+        Hi ${escape(input.customerName)} — your visit has been canceled. We'd love to see you again whenever you're ready: <a href="https://clearnest.services/book" style="color:#1b556c;">clearnest.services/book</a>.
       </p>
       ${row("Booking ID", input.bookingId.slice(0, 8))}`
     ),
+    replyTo: BUSINESS.email,
   });
 }
 
@@ -163,6 +165,7 @@ export async function sendInvoiceEmail(input: {
     to: input.to,
     subject: "Your ClearNest invoice",
     html: shell("Your invoice is ready.", body),
+    replyTo: BUSINESS.email,
   });
 }
 
@@ -190,7 +193,13 @@ export async function sendLeadNotification(lead: {
     ${row("Quote", quote)}
     ${lead.message ? row("Message", escape(lead.message)) : ""}
   `;
-  return send({ to, subject: `New ClearNest lead — ${lead.name || lead.phone || "website"}`, html: shell("New lead", body) });
+  return send({
+    to,
+    subject: `New ClearNest lead — ${lead.name || lead.phone || "website"}`,
+    html: shell("New lead", body),
+    // Reply goes straight to the customer (speed-to-lead).
+    replyTo: lead.email || undefined,
+  });
 }
 
 /** Ask a happy customer for a review (the engine that turns jobs into reviews). */
@@ -213,7 +222,12 @@ export async function sendReviewRequest(input: {
     </p>
     ${buttons}
   `;
-  return send({ to: input.to, subject: "How did we do? 🌿", html: shell("Mind leaving a quick review?", body) });
+  return send({
+    to: input.to,
+    subject: "How did we do? 🌿",
+    html: shell("Mind leaving a quick review?", body),
+    replyTo: BUSINESS.email,
+  });
 }
 
 function escape(s: string) {
