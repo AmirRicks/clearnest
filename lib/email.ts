@@ -23,7 +23,9 @@ async function send({ to, subject, html, replyTo }: SendArgs) {
     console.warn("[ClearNest email] RESEND_API_KEY missing — skipping send.", { to, subject });
     return { ok: true, skipped: true as const };
   }
-  const from = process.env.RESEND_FROM ?? "ClearNest <hello@clearnest.services>";
+  // Use a verified-domain sender once clearnest.services is verified in Resend.
+  // Until then, onboarding@resend.dev works (delivers to the Resend account owner).
+  const from = process.env.RESEND_FROM?.trim() || "ClearNest <onboarding@resend.dev>";
   try {
     const res = await client.emails.send({
       from,
