@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Plus, Minus } from "lucide-react";
 import { Eyebrow, H2, Lead, Section } from "@/components/section";
 import { CtaBand } from "@/components/cta-band";
+import { FaqJsonLd } from "@/components/json-ld";
 
 const QUESTIONS = [
   {
@@ -44,6 +45,7 @@ export default function FaqPage() {
   const [open, setOpen] = useState<number | null>(0);
   return (
     <>
+      <FaqJsonLd items={QUESTIONS} />
       <Section>
         <Eyebrow>FAQ</Eyebrow>
         <H2>Common questions, answered.</H2>

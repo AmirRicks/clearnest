@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
+import { LocalBusinessJsonLd } from "@/components/json-ld";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -39,7 +40,23 @@ export const metadata: Metadata = {
     url: "https://clearnest.services",
     siteName: "ClearNest Cleaning Services",
     type: "website",
+    locale: "en_US",
+    images: [
+      {
+        url: "/video/home-tour-poster.jpg",
+        width: 1920,
+        height: 1080,
+        alt: "ClearNest Cleaning Services — a freshly cleaned modern home",
+      },
+    ],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "ClearNest Cleaning Services",
+    description: "Premium cleaning in Salt Lake City. Book online, pay after the clean.",
+    images: ["/video/home-tour-poster.jpg"],
+  },
+  alternates: { canonical: "https://clearnest.services" },
 };
 
 export const viewport: Viewport = {
@@ -54,6 +71,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="min-h-screen bg-[var(--color-background)] text-[var(--color-foreground)] antialiased">
+        <LocalBusinessJsonLd />
         {children}
         <Toaster richColors position="top-center" />
       </body>
