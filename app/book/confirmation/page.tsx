@@ -2,10 +2,12 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { Check, Phone } from "lucide-react";
 import { BUSINESS } from "@/lib/utils";
+import { TrackOnMount } from "@/components/analytics";
 
 export default function ConfirmationPage() {
   return (
     <section className="container-tight py-16">
+      <TrackOnMount event="booking_completed" />
       <Suspense>
         <Inner />
       </Suspense>

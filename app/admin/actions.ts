@@ -12,6 +12,8 @@ import type { LeadStatus } from "@/lib/supabase/types";
 type Ok = { ok: true };
 type Fail = { ok: false; error: string };
 
+type SB = Awaited<ReturnType<typeof createClient>>;
+
 async function requireAdmin() {
   const sb = await createClient();
   const { data: { user } } = await sb.auth.getUser();
@@ -24,6 +26,37 @@ async function requireAdmin() {
   return { sb, user, isAdmin: Boolean(admin) };
 }
 
+/** Shared: email a booking's customer a review request (Google-first, Yelp fallback). */
+async function sendReviewForBooking(
+  sb: SB,
+  bookingId: string
+): Promise<{ ok: boolean; error?: string }> {
+  try {
+    const { data: b } = await sb
+      .from("bookings")
+      .select("customer_name, customer_email")
+      .eq("id", bookingId)
+      .single();
+    if (!b) return { ok: false, error: "Booking not found." };
+    if (!b.customer_email) return { ok: false, error: "No customer email on file." };
+
+    const { data: settings } = await sb.from("site_settings").select("key, value");
+    const map = Object.fromEntries(
+      (settings ?? []).map((r: { key: string; value: string }) => [r.key, r.value])
+    );
+
+    const res = await sendReviewRequest({
+      to: b.customer_email,
+      customerName: b.customer_name,
+      yelpUrl: map.yelp_url || BUSINESS.yelpUrl,
+      googleUrl: map.google_review_url || undefined,
+    });
+    return res.ok ? { ok: true } : { ok: false, error: "Email failed (check RESEND_API_KEY)." };
+  } catch {
+    return { ok: false, error: "Could not send the review request." };
+  }
+}
+
 export async function updateBookingStatus(
   bookingId: string,
   status: BookingStatus
@@ -32,6 +65,10 @@ export async function updateBookingStatus(
   if (!isAdmin) return { ok: false, error: "Not authorized." };
   const { error } = await sb.from("bookings").update({ status }).eq("id", bookingId);
   if (error) return { ok: false, error: error.message };
+  // Auto-fire the review request the moment a job is marked complete.
+  if (status === "completed") {
+    void sendReviewForBooking(sb, bookingId);
+  }
   revalidatePath("/admin");
   return { ok: true };
 }
@@ -147,25 +184,8 @@ export async function updateLeadStatus(
 export async function requestReview(bookingId: string): Promise<Ok | Fail> {
   const { sb, isAdmin } = await requireAdmin();
   if (!isAdmin) return { ok: false, error: "Not authorized." };
-
-  const { data: b } = await sb
-    .from("bookings")
-    .select("customer_name, customer_email")
-    .eq("id", bookingId)
-    .single();
-  if (!b) return { ok: false, error: "Booking not found." };
-
-  const { data: settings } = await sb.from("site_settings").select("key, value");
-  const map = Object.fromEntries((settings ?? []).map((r) => [r.key, r.value]));
-
-  const res = await sendReviewRequest({
-    to: b.customer_email,
-    customerName: b.customer_name,
-    yelpUrl: map.yelp_url || BUSINESS.yelpUrl,
-    googleUrl: map.google_review_url || undefined,
-  });
-  if (!res.ok) return { ok: false, error: "Email failed (check RESEND_API_KEY)." };
-  return { ok: true };
+  const res = await sendReviewForBooking(sb, bookingId);
+  return res.ok ? { ok: true } : { ok: false, error: res.error || "Could not send." };
 }
 
 export async function updateSetting(key: string, value: string): Promise<Ok | Fail> {

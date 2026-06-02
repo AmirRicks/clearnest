@@ -184,6 +184,15 @@ export async function sendLeadNotification(lead: {
     lead.estimated_low && lead.estimated_high
       ? formatCurrencyRange(lead.estimated_low, lead.estimated_high)
       : "—";
+  const digits = (lead.phone || "").replace(/[^0-9+]/g, "");
+  const actions = digits
+    ? `<p style="margin:20px 0 4px;text-align:center;">
+        <a href="tel:${digits}" style="display:inline-block;background:#1a1d22;color:#fff;padding:11px 20px;border-radius:999px;text-decoration:none;font-weight:600;font-size:14px;">📞 Call ${escape(lead.phone || "")}</a>
+        &nbsp;&nbsp;
+        <a href="sms:${digits}" style="display:inline-block;background:#1f6c89;color:#fff;padding:11px 20px;border-radius:999px;text-decoration:none;font-weight:600;font-size:14px;">💬 Text now</a>
+      </p>
+      <p style="margin:0;text-align:center;font-size:12px;color:#4a5159;">Tip: leads contacted within 5 minutes are ~21× more likely to book.</p>`
+    : "";
   const body = `
     <p style="margin:0 0 16px;color:#4a5159;line-height:1.6;">New lead from the website — follow up fast (speed-to-lead wins jobs).</p>
     ${row("Name", escape(lead.name || "—"))}
@@ -192,13 +201,44 @@ export async function sendLeadNotification(lead: {
     ${row("Source", escape(lead.source || "website"))}
     ${row("Quote", quote)}
     ${lead.message ? row("Message", escape(lead.message)) : ""}
+    ${actions}
   `;
   return send({
     to,
-    subject: `New ClearNest lead — ${lead.name || lead.phone || "website"}`,
-    html: shell("New lead", body),
+    subject: `🌿 New ClearNest lead — ${lead.name || lead.phone || "website"}`,
+    html: shell("New lead — reply fast!", body),
     // Reply goes straight to the customer (speed-to-lead).
     replyTo: lead.email || undefined,
+  });
+}
+
+/**
+ * Instant auto-reply to the customer the moment they submit a lead.
+ * Speed-to-lead: acknowledging instantly dramatically lifts conversion.
+ * (Delivers to any address once the Resend sending domain is verified; until
+ * then onboarding@resend.dev only reaches the account owner — see SETUP-LIVE.md.)
+ */
+export async function sendLeadAutoReply(input: {
+  to: string;
+  customerName?: string | null;
+}) {
+  const first = input.customerName?.trim().split(" ")[0];
+  const body = `
+    <p style="margin:0 0 16px;color:#4a5159;line-height:1.6;">
+      Hi ${first ? escape(first) : "there"} — thanks for reaching out to ClearNest! We've got your request and we'll text or email your quote shortly. We answer Monday–Saturday, 7am–7pm.
+    </p>
+    <div style="border-top:1px solid #e6e1d6;margin-top:16px;padding-top:16px;font-size:13px;color:#4a5159;line-height:1.6;">
+      <strong style="color:#1a1d22;">Want the fastest answer?</strong> Text or call us at
+      <a href="${BUSINESS.phoneHref}" style="color:#1b556c;font-weight:600;">${BUSINESS.phone}</a>.
+      <br/><br/>
+      And remember — with ClearNest you <strong style="color:#1a1d22;">pay after the clean</strong>, never a deposit. Insured, bonded, and eco &amp; pet-safe.
+    </div>
+  `;
+  return send({
+    to: input.to,
+    subject: "We got your request — ClearNest 🌿",
+    html: shell("Thanks for reaching out!", body),
+    replyTo: BUSINESS.email,
   });
 }
 

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Star, ArrowUpRight, ShieldCheck, Sparkles, CreditCard, Leaf } from "lucide-react";
 import { Eyebrow, H2, Lead, Section } from "@/components/section";
 import { CtaBand } from "@/components/cta-band";
+import { ReviewSchemaJsonLd } from "@/components/review-schema";
 import { BUSINESS } from "@/lib/utils";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import type { Review } from "@/lib/supabase/types";
@@ -38,6 +39,7 @@ export default async function ReviewsPage() {
 
   return (
     <>
+      <ReviewSchemaJsonLd />
       <Section>
         <Eyebrow>Reviews</Eyebrow>
         {hasReviews ? (

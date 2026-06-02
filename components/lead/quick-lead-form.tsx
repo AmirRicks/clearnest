@@ -2,8 +2,9 @@
 
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Phone, MessageSquare } from "lucide-react";
 import { submitLead } from "@/app/lead/actions";
+import { trackEvent } from "@/components/analytics";
 import type { ServiceId } from "@/lib/pricing";
 
 export type LeadDefaults = {
@@ -54,6 +55,10 @@ export function QuickLeadForm({
       });
       if (res.ok) {
         setDone(true);
+        trackEvent("lead_submitted", {
+          source: defaults.source,
+          service: String(defaults.serviceId ?? ""),
+        });
         toast.success("Got it! We’ll text you your quote shortly.");
         onDone?.();
       } else {
@@ -64,9 +69,28 @@ export function QuickLeadForm({
 
   if (done) {
     return (
-      <div className="rounded-2xl border border-success/30 bg-success/5 p-4 text-sm text-success">
-        Thanks{name ? `, ${name.split(" ")[0]}` : ""}! We’ll reach out within the hour
-        (Mon–Sat, 7am–7pm). Need it now? Call <a className="underline" href="tel:+18014410726">(801) 441-0726</a>.
+      <div className="rounded-2xl border border-success/30 bg-success/5 p-5">
+        <p className="text-sm font-semibold text-success">
+          Thanks{name ? `, ${name.split(" ")[0]}` : ""}! Your request is in. 🌿
+        </p>
+        <p className="mt-1 text-sm text-graphite">
+          We’ll reach out within the hour (Mon–Sat, 7am–7pm). Want your quote{" "}
+          <span className="font-semibold text-charcoal">right now</span>? Text or call us:
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <a
+            href="sms:+18014410726"
+            className="inline-flex items-center gap-1.5 rounded-full bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800"
+          >
+            <MessageSquare className="h-4 w-4" /> Text us now
+          </a>
+          <a
+            href="tel:+18014410726"
+            className="inline-flex items-center gap-1.5 rounded-full border border-stone/70 bg-background px-4 py-2 text-sm font-medium text-charcoal transition hover:border-brand-300"
+          >
+            <Phone className="h-4 w-4" /> (801) 441-0726
+          </a>
+        </div>
       </div>
     );
   }

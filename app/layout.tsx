@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import { LocalBusinessJsonLd } from "@/components/json-ld";
+import { SiteAnalytics } from "@/components/analytics";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -74,6 +75,7 @@ export default function RootLayout({
         <LocalBusinessJsonLd />
         {children}
         <Toaster richColors position="top-center" />
+        <SiteAnalytics />
       </body>
     </html>
   );

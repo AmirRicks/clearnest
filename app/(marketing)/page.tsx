@@ -1,3 +1,4 @@
+import { ReviewSchemaJsonLd } from "@/components/review-schema";
 import { CinematicHero } from "@/components/cinematic-hero";
 import { TrustMarquee } from "@/components/trust-marquee";
 import { StatsBand } from "@/components/stats-band";
@@ -11,6 +12,7 @@ import { CtaBand } from "@/components/cta-band";
 export default function HomePage() {
   return (
     <>
+      <ReviewSchemaJsonLd />
       <CinematicHero />
       <TrustMarquee />
       <HowItWorks />

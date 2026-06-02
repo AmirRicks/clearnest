@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
-import { sendLeadNotification } from "@/lib/email";
+import { sendLeadNotification, sendLeadAutoReply } from "@/lib/email";
 
 const leadSchema = z.object({
   name: z.string().max(120).optional().nullable(),
@@ -33,6 +33,7 @@ export async function submitLead(input: unknown): Promise<LeadResult> {
   if (!isSupabaseConfigured()) {
     console.info("[ClearNest lead]", d);
     void sendLeadNotification(d);
+    if (d.email) void sendLeadAutoReply({ to: d.email, customerName: d.name });
     return { ok: true };
   }
 
@@ -53,6 +54,8 @@ export async function submitLead(input: unknown): Promise<LeadResult> {
     });
     if (error) throw error;
     void sendLeadNotification(d);
+    // Speed-to-lead: instantly acknowledge the customer.
+    if (d.email) void sendLeadAutoReply({ to: d.email, customerName: d.name });
     return { ok: true };
   } catch (err) {
     console.error("[ClearNest lead] insert failed", err);
