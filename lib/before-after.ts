@@ -13,7 +13,7 @@
  * DO NOT EDIT BY HAND — run the sync script.
  */
 
-export type Category = "Kitchen" | "Bathroom" | "Living" | "Airbnb" | "Other";
+export type Category = "Kitchen" | "Bathroom" | "Bedroom" | "Living" | "Airbnb" | "Other";
 
 export interface BeforeAfterPair {
   /** Stable id (the numbered folder, e.g. "1") */
@@ -23,13 +23,41 @@ export interface BeforeAfterPair {
   /** Path under /public — e.g. /gallery/1/before.jpg */
   beforeSrc: string;
   afterSrc: string;
-  /** Image dimensions for layout-shift-free rendering. */
+  /** Image dimensions for layout-shift-free rendering + true aspect ratio. */
   width: number;
   height: number;
 }
 
 /** Auto-generated list. Empty until the owner runs `npm run sync-gallery`. */
-export const BEFORE_AFTER_PAIRS: BeforeAfterPair[] = [];
+export const BEFORE_AFTER_PAIRS: BeforeAfterPair[] = [
+  {
+    id: "1",
+    label: "Bathroom — toilet deep clean",
+    category: "Bathroom",
+    beforeSrc: "/gallery/1/before.jpg",
+    afterSrc: "/gallery/1/after.jpg",
+    width: 1004,
+    height: 1350,
+  },
+  {
+    id: "2",
+    label: "Master bedroom — deep clean",
+    category: "Bedroom",
+    beforeSrc: "/gallery/2/before.jpg",
+    afterSrc: "/gallery/2/after.jpg",
+    width: 1011,
+    height: 1350,
+  },
+  {
+    id: "3",
+    label: "Bedroom — clutter reset & vacuum",
+    category: "Bedroom",
+    beforeSrc: "/gallery/3/before.jpg",
+    afterSrc: "/gallery/3/after.jpg",
+    width: 1010,
+    height: 1350,
+  },
+];
 
 /** Whether to use the real-photo gallery or fall back to synthetic illustrations. */
 export const HAS_REAL_PHOTOS = BEFORE_AFTER_PAIRS.length > 0;

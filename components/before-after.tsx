@@ -17,7 +17,7 @@ import { motion } from "framer-motion";
  * Both modes share the same interactive slider, labels, and chrome.
  */
 
-export type Category = "Kitchen" | "Bathroom" | "Living" | "Airbnb" | "Other";
+export type Category = "Kitchen" | "Bathroom" | "Bedroom" | "Living" | "Airbnb" | "Other";
 
 export type BeforeAfterProps = {
   /** Label shown at the bottom of the card. */
@@ -71,6 +71,11 @@ export function BeforeAfter(
     setPct(p);
   };
 
+  // Real photos render at their TRUE aspect ratio (no cropping — important for
+  // portrait phone photos). Synthetic illustrations keep the 4:3 frame.
+  const aspectStyle =
+    isPhoto && width && height ? { aspectRatio: `${width} / ${height}` } : undefined;
+
   return (
     <div
       ref={wrapRef}
@@ -79,7 +84,11 @@ export function BeforeAfter(
         onMove(e.clientX);
       }}
       onPointerMove={(e) => dragging && onMove(e.clientX)}
-      className="relative aspect-[4/3] w-full select-none overflow-hidden rounded-3xl border border-stone/70 bg-paper shadow-card"
+      style={aspectStyle}
+      className={[
+        "relative w-full select-none overflow-hidden rounded-3xl border border-stone/70 bg-paper shadow-card",
+        aspectStyle ? "" : "aspect-[4/3]",
+      ].join(" ")}
     >
       {/* AFTER layer (full) */}
       {isPhoto ? (
@@ -185,6 +194,7 @@ function SyntheticRoom({
       {category === "Kitchen" && <Kitchen dirty={dirty} accent={accent} />}
       {category === "Bathroom" && <Bathroom dirty={dirty} accent={accent} />}
       {category === "Living" && <Living dirty={dirty} accent={accent} />}
+      {category === "Bedroom" && <Airbnb dirty={dirty} accent={accent} />}
       {category === "Airbnb" && <Airbnb dirty={dirty} accent={accent} />}
       {category === "Other" && <Kitchen dirty={dirty} accent={accent} />}
 

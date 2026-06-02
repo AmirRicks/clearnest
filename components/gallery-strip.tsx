@@ -43,7 +43,7 @@ export function GalleryStrip() {
         </Link>
       </div>
 
-      <div className="mt-12 grid gap-5 md:grid-cols-3">
+      <div className="mt-12 grid items-start gap-5 md:grid-cols-3">
         {previews.map((p, i) => (
           <motion.div
             key={p.id}

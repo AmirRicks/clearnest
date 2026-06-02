@@ -72,7 +72,7 @@ export default function GalleryPage() {
       </Section>
 
       <Section className="pt-0">
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="grid items-start gap-5 md:grid-cols-2">
           {items.map((p) =>
             isRealPair(p) ? (
               <BeforeAfter

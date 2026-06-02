@@ -30,6 +30,9 @@ const ROOT = resolve(dirname(__filename), "..");
 
 const SOURCE_CANDIDATES = [
   join(homedir(), "Documents", "ClearNest", "Before-After"),
+  // "Before:After" on disk = a folder the owner named "Before/After" in Finder
+  // (macOS swaps "/" ↔ ":" between the Finder and POSIX layers).
+  join(homedir(), "Documents", "ClearNest", "Before:After"),
   join(homedir(), "Documents", "ClearNest", "BeforeAfter"),
   join(homedir(), "Documents", "ClearNest", "before-after"),
   join(homedir(), "Documents", "ClearNest", "Before & After"),
@@ -39,7 +42,7 @@ const SOURCE_CANDIDATES = [
 const TARGET = join(ROOT, "public", "gallery");
 const MANIFEST = join(ROOT, "lib", "before-after.ts");
 const MAX_WIDTH = 2400;
-const VALID_CATEGORIES = ["Kitchen", "Bathroom", "Living", "Airbnb", "Other"];
+const VALID_CATEGORIES = ["Kitchen", "Bathroom", "Bedroom", "Living", "Airbnb", "Other"];
 const args = new Set(process.argv.slice(2));
 const PRUNE = args.has("--prune");
 
@@ -50,11 +53,46 @@ function ok(...a) { console.log("✓ ", ...a); }
 function warn(...a) { console.warn("⚠ ", ...a); }
 function fail(...a) { console.error("✗ ", ...a); process.exit(1); }
 
-function findSource() {
-  for (const p of SOURCE_CANDIDATES) {
-    if (existsSync(p) && statSync(p).isDirectory()) return p;
+/** Count how many numbered subfolders in `dir` contain a complete before+after pair. */
+function countPairs(dir) {
+  try {
+    const numbered = readdirSync(dir).filter(
+      (n) => /^\d+$/.test(n) && statSync(join(dir, n)).isDirectory()
+    );
+    let c = 0;
+    for (const n of numbered) {
+      const { before, after } = findPair(join(dir, n));
+      if (before && after) c++;
+    }
+    return c;
+  } catch {
+    return 0;
   }
-  return null;
+}
+
+function findSource() {
+  // Explicit override (used when the agent's sandboxed shell can't read
+  // ~/Documents due to macOS TCC — it stages a readable copy and points here).
+  const override = process.env.CLEARNEST_GALLERY_SRC;
+  if (override && existsSync(override) && statSync(override).isDirectory()) return override;
+
+  const existing = SOURCE_CANDIDATES.filter(
+    (p) => existsSync(p) && statSync(p).isDirectory()
+  );
+  if (existing.length === 0) return null;
+
+  // Prefer whichever existing candidate actually has photo pairs, so an empty
+  // template folder never wins over the one the owner filled with photos.
+  let best = existing[0];
+  let bestCount = countPairs(existing[0]);
+  for (const p of existing.slice(1)) {
+    const c = countPairs(p);
+    if (c > bestCount) {
+      best = p;
+      bestCount = c;
+    }
+  }
+  return best;
 }
 
 function naturalSort(a, b) {
@@ -273,7 +311,7 @@ function writeManifest(pairs) {
  * DO NOT EDIT BY HAND — run the sync script.
  */
 
-export type Category = "Kitchen" | "Bathroom" | "Living" | "Airbnb" | "Other";
+export type Category = "Kitchen" | "Bathroom" | "Bedroom" | "Living" | "Airbnb" | "Other";
 
 export interface BeforeAfterPair {
   /** Stable id (the numbered folder, e.g. "1") */
@@ -283,7 +321,7 @@ export interface BeforeAfterPair {
   /** Path under /public — e.g. /gallery/1/before.jpg */
   beforeSrc: string;
   afterSrc: string;
-  /** Image dimensions for layout-shift-free rendering. */
+  /** Image dimensions for layout-shift-free rendering + true aspect ratio. */
   width: number;
   height: number;
 }
