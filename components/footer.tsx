@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Phone, Mail, MessageSquare, Star } from "lucide-react";
 import { BUSINESS } from "@/lib/utils";
+import { LOCATIONS } from "@/lib/locations";
 import { Logo } from "./logo";
 
 export function Footer() {
@@ -75,6 +76,29 @@ export function Footer() {
               </li>
             ))}
           </ul>
+        </div>
+      </div>
+
+      <div className="border-t border-stone/60">
+        <div className="container-tight py-8">
+          <h4 className="text-xs uppercase tracking-[0.18em] text-graphite/70">Service areas</h4>
+          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+            {LOCATIONS.map((loc) => (
+              <Link
+                key={loc.slug}
+                href={`/house-cleaning/${loc.slug}`}
+                className="text-graphite transition hover:text-charcoal"
+              >
+                {loc.city}
+              </Link>
+            ))}
+            <Link
+              href="/house-cleaning"
+              className="font-medium text-brand-700 transition hover:text-brand-800"
+            >
+              All areas →
+            </Link>
+          </div>
         </div>
       </div>
 

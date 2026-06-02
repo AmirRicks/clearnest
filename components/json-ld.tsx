@@ -66,6 +66,44 @@ export function LocalBusinessJsonLd() {
   );
 }
 
+/** Per-city Service structured data — on /house-cleaning/[city]. */
+export function CityServiceJsonLd({
+  city,
+  url,
+  description,
+}: {
+  city: string;
+  url: string;
+  description: string;
+}) {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    serviceType: "House cleaning service",
+    name: `House Cleaning in ${city}, UT`,
+    description,
+    url,
+    provider: {
+      "@type": "HouseCleaningService",
+      "@id": `${BASE}/#business`,
+      name: BUSINESS.name,
+      telephone: "+18014410726",
+      url: BASE,
+    },
+    areaServed: { "@type": "City", name: `${city}, UT` },
+    offers: Object.values(SERVICES).map((s) => ({
+      "@type": "Offer",
+      itemOffered: { "@type": "Service", name: s.name, description: s.blurb },
+    })),
+  };
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}
+
 /** FAQPage structured data — on /faq. */
 export function FaqJsonLd({ items }: { items: { q: string; a: string }[] }) {
   const data = {
