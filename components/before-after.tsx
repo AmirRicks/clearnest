@@ -1,26 +1,58 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 
-type Pair = {
-  id: string;
+/**
+ * Drag-to-reveal before/after slider.
+ *
+ * Two modes:
+ *  - **Photo mode** (preferred): pass `beforeSrc` + `afterSrc` of real images.
+ *    Real customer photos drive the gallery once the owner runs
+ *    `npm run sync-gallery` against `~/Documents/ClearNest/Before-After/`.
+ *  - **Synthetic mode** (fallback): pass only `category` + `label` — renders
+ *    hand-drawn SVG rooms so the site looks complete before any real photos.
+ *
+ * Both modes share the same interactive slider, labels, and chrome.
+ */
+
+export type Category = "Kitchen" | "Bathroom" | "Living" | "Airbnb" | "Other";
+
+export type BeforeAfterProps = {
+  /** Label shown at the bottom of the card. */
   label: string;
-  category: string;
+  /** Category — used by filters and (in synthetic mode) the room rendering. */
+  category: Category;
+  /** Real before-photo URL. If provided with afterSrc, renders in photo mode. */
+  beforeSrc?: string;
+  /** Real after-photo URL. If provided with beforeSrc, renders in photo mode. */
+  afterSrc?: string;
+  /** Image width (for layout-shift-free rendering). Default 1600. */
+  width?: number;
+  /** Image height. Default 1200. */
+  height?: number;
 };
 
-const DEFAULT_PAIRS: Pair[] = [
-  { id: "kitchen-01", label: "Kitchen — deep clean", category: "Kitchen" },
-  { id: "bathroom-01", label: "Master bath — restoration", category: "Bathroom" },
-  { id: "living-01", label: "Living room — recurring", category: "Living" },
-  { id: "airbnb-01", label: "Airbnb turnover — same-day", category: "Airbnb" },
-];
+/** Legacy prop shape used by old call sites — keeps backwards compatibility. */
+type LegacyPair = { id: string; label: string; category: string };
 
-export function BeforeAfter({
-  pair = DEFAULT_PAIRS[0],
-}: {
-  pair?: Pair;
-}) {
+export function BeforeAfter(
+  props: BeforeAfterProps | { pair: LegacyPair }
+) {
+  // Normalize: support both `pair={...}` (old) and direct props (new).
+  const normalized: BeforeAfterProps =
+    "pair" in props
+      ? {
+          label: props.pair.label,
+          category: (props.pair.category as Category) || "Other",
+        }
+      : props;
+
+  const { label, category, beforeSrc, afterSrc, width = 1600, height = 1200 } =
+    normalized;
+  const isPhoto = Boolean(beforeSrc && afterSrc);
+
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const [pct, setPct] = useState(48);
   const [dragging, setDragging] = useState(false);
@@ -49,17 +81,40 @@ export function BeforeAfter({
       onPointerMove={(e) => dragging && onMove(e.clientX)}
       className="relative aspect-[4/3] w-full select-none overflow-hidden rounded-3xl border border-stone/70 bg-paper shadow-card"
     >
-      {/* AFTER (clean) layer */}
-      <SyntheticRoom variant="after" category={pair.category} />
-      {/* BEFORE (dirty) layer, masked by pct */}
+      {/* AFTER layer (full) */}
+      {isPhoto ? (
+        <Image
+          src={afterSrc!}
+          alt={`${label} — after`}
+          width={width}
+          height={height}
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+          priority={false}
+        />
+      ) : (
+        <SyntheticRoom variant="after" category={category} />
+      )}
+
+      {/* BEFORE layer, clipped to slider position */}
       <div
-        className="absolute inset-0"
+        className="pointer-events-none absolute inset-0"
         style={{ clipPath: `inset(0 ${100 - pct}% 0 0)` }}
       >
-        <SyntheticRoom variant="before" category={pair.category} />
+        {isPhoto ? (
+          <Image
+            src={beforeSrc!}
+            alt={`${label} — before`}
+            width={width}
+            height={height}
+            className="absolute inset-0 h-full w-full object-cover"
+            priority={false}
+          />
+        ) : (
+          <SyntheticRoom variant="before" category={category} />
+        )}
       </div>
 
-      {/* Handle */}
+      {/* Slider handle */}
       <div
         className="absolute inset-y-0 z-10 flex w-px items-center justify-center bg-white/70 shadow-[0_0_0_1px_rgba(0,0,0,0.05)]"
         style={{ left: `calc(${pct}% - 0.5px)` }}
@@ -74,7 +129,14 @@ export function BeforeAfter({
           className="grid h-10 w-10 -translate-x-0 cursor-grab place-items-center rounded-full border border-stone/70 bg-background shadow-card active:cursor-grabbing"
         >
           <svg viewBox="0 0 24 24" className="h-4 w-4 text-graphite">
-            <path d="M9 6l-4 6 4 6M15 6l4 6-4 6" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            <path
+              d="M9 6l-4 6 4 6M15 6l4 6-4 6"
+              stroke="currentColor"
+              strokeWidth="2"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </button>
       </div>
@@ -92,16 +154,16 @@ export function BeforeAfter({
         viewport={{ once: true }}
         className="absolute bottom-3 left-3 rounded-full border border-stone/70 bg-background/80 px-2.5 py-1 text-[11px] font-medium text-graphite backdrop-blur"
       >
-        {pair.label}
+        {label}
       </motion.span>
     </div>
   );
 }
 
-/**
- * Synthetic, hand-drawn-looking SVG room — varies by category, so we don't have to ship
- * stock imagery. Looks deliberate and unique.
- */
+/* =========================================================================
+ * Synthetic illustration fallback (used until owner has real photos)
+ * =======================================================================*/
+
 function SyntheticRoom({
   variant,
   category,
@@ -118,15 +180,14 @@ function SyntheticRoom({
     <svg viewBox="0 0 600 450" className="h-full w-full" preserveAspectRatio="xMidYMid slice">
       <rect width="600" height="450" fill={wall} />
       <rect y="320" width="600" height="130" fill={floor} />
-      {/* Baseboard */}
       <rect y="318" width="600" height="3" fill={accent} opacity="0.6" />
 
       {category === "Kitchen" && <Kitchen dirty={dirty} accent={accent} />}
       {category === "Bathroom" && <Bathroom dirty={dirty} accent={accent} />}
       {category === "Living" && <Living dirty={dirty} accent={accent} />}
       {category === "Airbnb" && <Airbnb dirty={dirty} accent={accent} />}
+      {category === "Other" && <Kitchen dirty={dirty} accent={accent} />}
 
-      {/* Lighting */}
       <defs>
         <radialGradient id="lightAfter" cx="50%" cy="20%" r="70%">
           <stop offset="0" stopColor="#fff4cf" stopOpacity={dirty ? 0.15 : 0.6} />
@@ -209,7 +270,6 @@ function Living({ dirty, accent }: { dirty: boolean; accent: string }) {
 function Airbnb({ dirty, accent }: { dirty: boolean; accent: string }) {
   return (
     <g>
-      {/* Bed */}
       <rect x="80" y="190" width="380" height="120" rx="10" fill="#e7decb" stroke={accent} />
       <rect x="80" y="190" width="380" height="30" fill="#cde2eb" />
       <rect x="100" y="160" width="120" height="34" rx="8" fill="#fff" />
@@ -217,7 +277,13 @@ function Airbnb({ dirty, accent }: { dirty: boolean; accent: string }) {
       <rect x="480" y="220" width="60" height="100" rx="6" fill="#d6cdb6" />
       {dirty && (
         <>
-          <path d="M90 220 q60 -30 180 0 t180 0" stroke="#7a6852" strokeWidth="2" fill="none" opacity="0.6" />
+          <path
+            d="M90 220 q60 -30 180 0 t180 0"
+            stroke="#7a6852"
+            strokeWidth="2"
+            fill="none"
+            opacity="0.6"
+          />
           <ellipse cx="270" cy="270" rx="160" ry="6" fill="#5a4a36" opacity="0.18" />
         </>
       )}

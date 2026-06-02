@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "sync-gallery": "node scripts/sync-gallery.mjs",
+    "sync-gallery:prune": "node scripts/sync-gallery.mjs --prune"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",

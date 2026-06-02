@@ -3,16 +3,26 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import { BeforeAfter } from "./before-after";
+import { BeforeAfter, type Category } from "./before-after";
+import { BEFORE_AFTER_PAIRS, HAS_REAL_PHOTOS, type BeforeAfterPair } from "@/lib/before-after";
 import { Eyebrow, H2, Lead, Section } from "./section";
 
-const previews = [
+type SyntheticPreview = { id: string; label: string; category: Category };
+type AnyPreview = BeforeAfterPair | SyntheticPreview;
+function isReal(p: AnyPreview): p is BeforeAfterPair {
+  return "beforeSrc" in p;
+}
+
+const SYNTHETIC_PREVIEWS: SyntheticPreview[] = [
   { id: "kitchen-01", label: "Kitchen — deep clean", category: "Kitchen" },
   { id: "living-01", label: "Living room — recurring", category: "Living" },
   { id: "bathroom-01", label: "Master bath — restoration", category: "Bathroom" },
 ];
 
 export function GalleryStrip() {
+  // Show up to 3 real photos if available; otherwise the synthetic previews.
+  const previews: AnyPreview[] = HAS_REAL_PHOTOS ? BEFORE_AFTER_PAIRS.slice(0, 3) : SYNTHETIC_PREVIEWS;
+
   return (
     <Section id="gallery-preview">
       <div className="flex flex-wrap items-end justify-between gap-6">
@@ -20,8 +30,9 @@ export function GalleryStrip() {
           <Eyebrow>Before & After</Eyebrow>
           <H2>Drag to reveal the ClearNest difference.</H2>
           <Lead>
-            Real-feeling visuals built from our checklist — interactive and unique to ClearNest. Full
-            gallery of homes is on the gallery page.
+            {HAS_REAL_PHOTOS
+              ? "Real cleanings from real Salt Lake homes — drag the slider on any photo."
+              : "Real-feeling visuals built from our checklist — interactive and unique to ClearNest. Full gallery of homes is on the gallery page."}
           </Lead>
         </div>
         <Link
@@ -41,7 +52,18 @@ export function GalleryStrip() {
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: i * 0.06 }}
           >
-            <BeforeAfter pair={p} />
+            {isReal(p) ? (
+              <BeforeAfter
+                label={p.label}
+                category={p.category}
+                beforeSrc={p.beforeSrc}
+                afterSrc={p.afterSrc}
+                width={p.width}
+                height={p.height}
+              />
+            ) : (
+              <BeforeAfter label={p.label} category={p.category} />
+            )}
           </motion.div>
         ))}
       </div>
