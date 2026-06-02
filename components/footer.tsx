@@ -43,10 +43,10 @@ export function Footer() {
           <h4 className="text-xs uppercase tracking-[0.18em] text-graphite/70">Services</h4>
           <ul className="mt-4 space-y-2 text-sm">
             {[
-              { href: "/services#standard", l: "Standard Cleaning" },
-              { href: "/services#deep", l: "Deep Cleaning" },
-              { href: "/services#moveinout", l: "Move-In / Move-Out" },
-              { href: "/services#airbnb", l: "Airbnb Turnover" },
+              { href: "/services/standard-cleaning", l: "Standard Cleaning" },
+              { href: "/services/deep-cleaning", l: "Deep Cleaning" },
+              { href: "/services/move-in-out-cleaning", l: "Move-In / Move-Out" },
+              { href: "/services/airbnb-turnover", l: "Airbnb Turnover" },
               { href: "/book", l: "Get an Estimate" },
             ].map((i) => (
               <li key={i.href}>

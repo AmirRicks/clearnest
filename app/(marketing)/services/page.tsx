@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { CheckCircle2, Clock, ArrowUpRight } from "lucide-react";
 import { SERVICES } from "@/lib/pricing";
+import { SERVICE_SLUG_BY_ID } from "@/lib/service-pages";
 import { PriceEstimator } from "@/components/price-estimator";
 import { Eyebrow, H2, Lead, Section } from "@/components/section";
 import { CtaBand } from "@/components/cta-band";
@@ -45,6 +46,14 @@ export default function ServicesPage() {
                 <div className="mt-4 inline-flex items-center gap-2 text-xs text-graphite">
                   <Clock className="h-3.5 w-3.5" />
                   Typical visit: {s.durationHrs[0]}–{s.durationHrs[1]} hours
+                </div>
+                <div className="mt-4">
+                  <Link
+                    href={`/services/${SERVICE_SLUG_BY_ID[s.id]}`}
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-700 transition hover:gap-2.5 hover:text-brand-800"
+                  >
+                    Learn more <ArrowUpRight className="h-4 w-4" />
+                  </Link>
                 </div>
               </div>
 

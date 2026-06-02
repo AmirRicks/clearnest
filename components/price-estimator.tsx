@@ -10,8 +10,14 @@ import { Eyebrow, H2, Lead, Section } from "./section";
 import { Modal } from "@/components/ui/modal";
 import { QuickLeadForm } from "@/components/lead/quick-lead-form";
 
-export function PriceEstimator({ asSection = true }: { asSection?: boolean }) {
-  const [serviceId, setServiceId] = useState<ServiceId>("standard");
+export function PriceEstimator({
+  asSection = true,
+  defaultService = "standard",
+}: {
+  asSection?: boolean;
+  defaultService?: ServiceId;
+}) {
+  const [serviceId, setServiceId] = useState<ServiceId>(defaultService);
   const [bedrooms, setBedrooms] = useState(2);
   const [bathrooms, setBathrooms] = useState(2);
   const [sqft, setSqft] = useState(1400);
