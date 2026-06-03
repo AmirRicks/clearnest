@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "label": "Cleaning #1",
+    "category": "Other",
+    "city": null,
+    "beforeSrc": "/gallery/1/before.jpg",
+    "afterSrc": "/gallery/1/after.jpg",
+    "width": 1004,
+    "height": 1350
+  },
+  {
+    "id": "2",
+    "label": "Cleaning #2",
+    "category": "Other",
+    "city": null,
+    "beforeSrc": "/gallery/2/before.jpg",
+    "afterSrc": "/gallery/2/after.jpg",
+    "width": 1011,
+    "height": 1350
+  },
+  {
+    "id": "3",
+    "label": "Cleaning #3",
+    "category": "Other",
+    "city": null,
+    "beforeSrc": "/gallery/3/before.jpg",
+    "afterSrc": "/gallery/3/after.jpg",
+    "width": 1010,
+    "height": 1350
+  }
+]

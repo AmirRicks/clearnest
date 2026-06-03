@@ -22,6 +22,7 @@ import { HowItWorks } from "@/components/how-it-works";
 import { CtaBand } from "@/components/cta-band";
 import { QuickLeadForm } from "@/components/lead/quick-lead-form";
 import { CityServiceJsonLd, FaqJsonLd } from "@/components/json-ld";
+import { LocalGallery } from "@/components/local-gallery";
 
 const BASE = "https://clearnest.services";
 
@@ -141,9 +142,9 @@ export default async function CityPage({
               House Cleaning in {loc.city}
             </h1>
           </Reveal>
-          <Lead>{loc.intro}</Lead>
-
-          <Reveal delay={0.15} className="mt-8 flex flex-wrap items-center gap-3">
+        <Lead>{loc.intro}</Lead>
+        <LocalGallery citySlug={loc.slug} cityName={loc.city} />
+        <Reveal delay={0.15} className="mt-8 flex flex-wrap items-center gap-3">
             <MagneticButton href={`/book?city=${loc.slug}`}>Book a Cleaning</MagneticButton>
             <MagneticButton href={BUSINESS.phoneHref} variant="outline">
               <Phone className="h-4 w-4" /> {BUSINESS.phone}

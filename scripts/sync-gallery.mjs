@@ -241,18 +241,23 @@ function main() {
     const meta = readMeta(folder);
     const label = meta.label || `Cleaning #${id}`;
     const category = ensureCategory(meta.category);
+    const city = meta.city || null;
+    if (meta.city && !LOCATION_SLUGS.includes(meta.city)) {
+      warn(`#${id} meta.json city: "${meta.city}" is not a valid city slug from lib/locations.ts. Ignoring.`);
+    }
 
     pairs.push({
       id,
       label,
       category,
+      city: meta.city && LOCATION_SLUGS.includes(meta.city) ? meta.city : null,
       beforeSrc: `/gallery/${id}/${basename(beforeOut)}`,
       afterSrc: `/gallery/${id}/${basename(afterOut)}`,
       width: dims.width,
       height: dims.height,
     });
 
-    ok(`#${id}  ${label}  (${category})  — ${dims.width}×${dims.height}`);
+    ok(`#${id}  ${label}  (${category}) ${city ? `[${city}]` : ''} — ${dims.width}×${dims.height}`);
   }
 
   // Write manifest.
@@ -261,6 +266,12 @@ function main() {
   if (pairs.length > 0) {
     ok(`Manifest written: lib/before-after.ts  (${pairs.length} pair(s))`);
     ok(`Photos copied to: public/gallery/`);
+    const withoutCity = pairs.filter(p => !p.city).length;
+    if (withoutCity > 0) {
+      console.log('')
+      warn(`${withoutCity} photo pair(s) are missing a "city" in their meta.json.`);
+      console.log(`   Add ' "city": "sandy-ut" ' to link photos to city pages for a huge conversion boost.`);
+    }
   }
   if (skipped.length > 0) {
     console.log("");
@@ -299,42 +310,32 @@ function writeManifest(pairs) {
   const header = `/**
  * Before / After gallery manifest.
  *
- * This file is **auto-generated** by \`scripts/sync-gallery.mjs\` from photos
- * the owner drops into \`~/Documents/ClearNest/Before-After/{N}/before.* + after.*\`.
- *
- * To regenerate: \`npm run sync-gallery\`
- *
- * When \`BEFORE_AFTER_PAIRS\` is empty, the gallery falls back to the
- * synthetic illustrated rooms in \`<BeforeAfter />\` — keeps the site
- * looking complete before the owner has any real photos.
- *
+ * This file is **auto-generated** by \`scripts/sync-gallery.mjs\`.
  * DO NOT EDIT BY HAND — run the sync script.
  */
-
+import type { LocationSlug } from "@/lib/locations";
 export type Category = "Kitchen" | "Bathroom" | "Bedroom" | "Living" | "Airbnb" | "Other";
 
 export interface BeforeAfterPair {
-  /** Stable id (the numbered folder, e.g. "1") */
   id: string;
   label: string;
   category: Category;
-  /** Path under /public — e.g. /gallery/1/before.jpg */
+  city: LocationSlug | null;
   beforeSrc: string;
   afterSrc: string;
-  /** Image dimensions for layout-shift-free rendering + true aspect ratio. */
   width: number;
   height: number;
 }
 
 `;
 
-  const body = `/** Auto-generated list. Empty until the owner runs \`npm run sync-gallery\`. */
-export const BEFORE_AFTER_PAIRS: BeforeAfterPair[] = ${pairs.length === 0 ? "[]" : "[\n" + pairs
+  const body = `export const BEFORE_AFTER_PAIRS: BeforeAfterPair[] = ${pairs.length === 0 ? "[]" : "[\n" + pairs
     .map((p) =>
       `  {
     id: "${escapeStringForTS(p.id)}",
     label: "${escapeStringForTS(p.label)}",
     category: "${p.category}",
+    city: ${p.city ? `"${p.city}"` : "null"},
     beforeSrc: "${p.beforeSrc}",
     afterSrc: "${p.afterSrc}",
     width: ${p.width},
@@ -345,11 +346,6 @@ export const BEFORE_AFTER_PAIRS: BeforeAfterPair[] = ${pairs.length === 0 ? "[]"
 
 /** Whether to use the real-photo gallery or fall back to synthetic illustrations. */
 export const HAS_REAL_PHOTOS = BEFORE_AFTER_PAIRS.length > 0;
-
-/** Display label fallback for a numbered folder when meta.json is absent. */
-export function fallbackLabel(id: string): string {
-  return \`Cleaning #\${id}\`;
-}
 `;
 
   writeFileSync(MANIFEST, header + body);
