@@ -4,7 +4,8 @@
  * This file is **auto-generated** by `scripts/sync-gallery.mjs`.
  * DO NOT EDIT BY HAND — run the sync script.
  */
-import type { LocationSlug } from "@/lib/locations";
+import type { LOCATION_SLUGS } from "@/lib/locations";
+export type LocationSlug = (typeof LOCATION_SLUGS)[number];
 export type Category = "Kitchen" | "Bathroom" | "Bedroom" | "Living" | "Airbnb" | "Other";
 
 export interface BeforeAfterPair {
