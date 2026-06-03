@@ -5,7 +5,15 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { SERVICES, estimatePrice, type ServiceId } from "@/lib/pricing";
+import {
+  SERVICES,
+  estimatePrice,
+  ADDONS,
+  FREQUENCIES,
+  type ServiceId,
+  type AddonId,
+  type FrequencyId,
+} from "@/lib/pricing";
 import { formatCurrencyRange } from "@/lib/utils";
 import { SignaturePad } from "./signature-pad";
 import { AGREEMENT_SECTIONS, AGREEMENT_VERSION } from "@/lib/agreement";
@@ -32,6 +40,14 @@ export function BookingWizard() {
   const [bedrooms, setBedrooms] = useState<number>(Number(params.get("bedrooms") || 2));
   const [bathrooms, setBathrooms] = useState<number>(Number(params.get("bathrooms") || 2));
   const [sqft, setSqft] = useState<number>(Number(params.get("sqft") || 1400));
+  const [frequency, setFrequency] = useState<FrequencyId>(
+    (params.get("frequency") as FrequencyId) in FREQUENCIES
+      ? (params.get("frequency") as FrequencyId)
+      : "one_time"
+  );
+  const [addons, setAddons] = useState<AddonId[]>([]);
+  const toggleAddon = (id: AddonId) =>
+    setAddons((cur) => (cur.includes(id) ? cur.filter((a) => a !== id) : [...cur, id]));
 
   const [date, setDate] = useState<string>(todayISO(2));
   const [time, setTime] = useState<string>("09:00");
@@ -47,13 +63,14 @@ export function BookingWizard() {
   const [access, setAccess] = useState("");
   const [pets, setPets] = useState("");
   const [requests, setRequests] = useState("");
+  const [giftCode, setGiftCode] = useState("");
 
   const [signature, setSignature] = useState<string | null>(null);
   const [agreed, setAgreed] = useState(false);
 
   const estimate = useMemo(
-    () => estimatePrice({ serviceId, bedrooms, bathrooms, sqft }),
-    [serviceId, bedrooms, bathrooms, sqft]
+    () => estimatePrice({ serviceId, bedrooms, bathrooms, sqft, addonIds: addons, frequency }),
+    [serviceId, bedrooms, bathrooms, sqft, addons, frequency]
   );
 
   const canNext = (() => {
@@ -92,6 +109,8 @@ export function BookingWizard() {
         bedrooms,
         bathrooms,
         sqft,
+        frequency,
+        addons,
         customerName: name,
         customerEmail: email,
         customerPhone: phone,
@@ -103,6 +122,7 @@ export function BookingWizard() {
         accessNotes: access || null,
         pets: pets || null,
         specialRequests: requests || null,
+        giftCode: giftCode || null,
         signatureDataUrl: signature,
       });
       if (res.ok) {
@@ -153,6 +173,43 @@ export function BookingWizard() {
                       </button>
                     ))}
                   </div>
+
+                  <div>
+                    <span className="text-xs font-medium uppercase tracking-[0.18em] text-graphite">
+                      How often?
+                    </span>
+                    <p className="mt-1 text-sm text-graphite">
+                      Set a recurring plan and save on <em>every</em> visit — you still pay after
+                      each clean, no card on file.
+                    </p>
+                    <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                      {Object.values(FREQUENCIES).map((f) => {
+                        const active = frequency === f.id;
+                        return (
+                          <button
+                            key={f.id}
+                            type="button"
+                            onClick={() => setFrequency(f.id as FrequencyId)}
+                            className={[
+                              "rounded-2xl border p-3 text-left transition",
+                              active
+                                ? "border-brand-500 bg-brand-50 shadow-soft"
+                                : "border-stone/70 bg-background hover:border-stone",
+                            ].join(" ")}
+                          >
+                            <span className="block text-sm font-semibold text-charcoal">{f.label}</span>
+                            {f.discountPct > 0 ? (
+                              <span className="mt-0.5 block text-[11px] font-semibold text-brand-700">
+                                Save {f.discountPct}%
+                              </span>
+                            ) : (
+                              <span className="mt-0.5 block text-[11px] text-graphite/80">Single visit</span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </Step>
               )}
 
@@ -191,6 +248,37 @@ export function BookingWizard() {
                       className="mt-3 w-full accent-[var(--color-brand-500)]"
                     />
                   </div>
+
+                  <div>
+                    <span className="text-xs font-medium uppercase tracking-[0.18em] text-graphite">
+                      Add-ons (optional)
+                    </span>
+                    <p className="mt-1 text-sm text-graphite">Tap any extras you'd like this visit.</p>
+                    <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                      {Object.values(ADDONS).map((a) => {
+                        const active = addons.includes(a.id as AddonId);
+                        return (
+                          <button
+                            key={a.id}
+                            type="button"
+                            onClick={() => toggleAddon(a.id as AddonId)}
+                            className={[
+                              "rounded-2xl border p-4 text-left transition",
+                              active
+                                ? "border-brand-500 bg-brand-50 shadow-soft"
+                                : "border-stone/70 bg-background hover:border-stone",
+                            ].join(" ")}
+                          >
+                            <span className="flex items-center justify-between gap-2">
+                              <span className="text-sm font-semibold text-charcoal">{a.name}</span>
+                              <span className="text-sm font-semibold text-brand-700">+${a.price}</span>
+                            </span>
+                            <span className="mt-1 block text-xs leading-relaxed text-graphite">{a.blurb}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </Step>
               )}
 
@@ -222,6 +310,11 @@ export function BookingWizard() {
                     label="Special requests (areas to focus, allergies, eco upgrade)"
                     value={requests}
                     onChange={setRequests}
+                  />
+                  <Input
+                    label="Gift card code (optional)"
+                    value={giftCode}
+                    onChange={(v) => setGiftCode(v.toUpperCase())}
                   />
                 </Step>
               )}
@@ -322,15 +415,36 @@ export function BookingWizard() {
         <p className="mt-3 text-3xl font-semibold tracking-tight text-charcoal">
           {formatCurrencyRange(estimate.low, estimate.high)}
         </p>
-        <p className="mt-1 text-xs text-graphite">
+        {estimate.discountPct > 0 && (
+          <span className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-semibold text-brand-700">
+            {FREQUENCIES[frequency].label} · {estimate.discountPct}% off every clean
+          </span>
+        )}
+        <p className="mt-2 text-xs text-graphite">
           Pay after the clean. Same-day reschedule allowed.
         </p>
         <hr className="my-5 border-stone/60" />
         <dl className="grid gap-3 text-sm">
           <Row k="Service" v={SERVICES[serviceId].name} />
+          {frequency !== "one_time" && <Row k="Plan" v={FREQUENCIES[frequency].label} />}
           <Row k="Bedrooms" v={bedrooms} />
           <Row k="Bathrooms" v={bathrooms} />
           <Row k="Size" v={`${sqft.toLocaleString()} sq ft`} />
+          {addons.length > 0 && (
+            <Row
+              k="Add-ons"
+              v={
+                <span className="block">
+                  {addons.map((id) => (
+                    <span key={id} className="block">
+                      {ADDONS[id].name}{" "}
+                      <span className="text-graphite/80">+${ADDONS[id].price}</span>
+                    </span>
+                  ))}
+                </span>
+              }
+            />
+          )}
           <Row k="Scheduled" v={`${date} · ${time}`} />
           {name && <Row k="Customer" v={name} />}
           {(city || zip) && <Row k="Location" v={`${city}${city ? ", " : ""}${state} ${zip}`} />}

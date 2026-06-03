@@ -75,11 +75,41 @@ export const SERVICES = {
 
 export type ServiceId = keyof typeof SERVICES;
 
+/**
+ * Optional checkout add-ons — fixed-price extras that raise the average order.
+ * Customers toggle these in the booking flow.
+ */
+export const ADDONS = {
+  fridge: { id: "fridge", name: "Inside fridge", price: 35, blurb: "Shelves, drawers, and walls wiped + sanitized." },
+  oven: { id: "oven", name: "Inside oven", price: 40, blurb: "Degreased racks, door glass, and interior." },
+  windows: { id: "windows", name: "Interior windows", price: 45, blurb: "Interior glass, sills, and tracks." },
+  cabinets: { id: "cabinets", name: "Inside cabinets", price: 40, blurb: "Empty-cabinet interiors wiped down." },
+  laundry: { id: "laundry", name: "Wash & fold (1 load)", price: 25, blurb: "One load washed, dried, and folded." },
+  garage: { id: "garage", name: "Garage sweep-out", price: 50, blurb: "Sweep, de-cobweb, and tidy (2-car)." },
+} as const;
+
+export type AddonId = keyof typeof ADDONS;
+
+/**
+ * Recurring plans — the lifetime-value lever. Standing discount per visit,
+ * still pay-after-the-clean each time (on-brand: no deposit, no card on file).
+ */
+export const FREQUENCIES = {
+  one_time: { id: "one_time", label: "One-time", short: "Just once", discountPct: 0, blurb: "A single visit." },
+  monthly: { id: "monthly", label: "Monthly", short: "Every 4 weeks", discountPct: 10, blurb: "10% off every clean." },
+  biweekly: { id: "biweekly", label: "Every 2 weeks", short: "Biweekly", discountPct: 15, blurb: "Most popular — 15% off every clean." },
+  weekly: { id: "weekly", label: "Weekly", short: "Weekly", discountPct: 20, blurb: "Always guest-ready — 20% off every clean." },
+} as const;
+
+export type FrequencyId = keyof typeof FREQUENCIES;
+
 export interface EstimateInput {
   serviceId: ServiceId;
   bedrooms: number;
   bathrooms: number;
   sqft: number;
+  addonIds?: AddonId[];
+  frequency?: FrequencyId;
 }
 
 export interface EstimateResult {
@@ -87,6 +117,12 @@ export interface EstimateResult {
   high: number;
   mid: number;
   hours: readonly [number, number];
+  addonsTotal: number;
+  discountPct: number;
+}
+
+export function addonsTotal(ids: AddonId[] | undefined): number {
+  return (ids ?? []).reduce((sum, id) => sum + (ADDONS[id]?.price ?? 0), 0);
 }
 
 export function estimatePrice(input: EstimateInput): EstimateResult {
@@ -102,10 +138,21 @@ export function estimatePrice(input: EstimateInput): EstimateResult {
     sqft * s.sqftRate;
 
   const mid = Math.round(subtotal);
-  const low = Math.round(mid * 0.92);
-  const high = Math.round(mid * 1.18);
+  const baseLow = mid * 0.92;
+  const baseHigh = mid * 1.18;
 
-  return { low, high, mid, hours: s.durationHrs };
+  const extras = addonsTotal(input.addonIds);
+  const discountPct = FREQUENCIES[input.frequency ?? "one_time"]?.discountPct ?? 0;
+  const factor = 1 - discountPct / 100;
+
+  return {
+    low: Math.round((baseLow + extras) * factor),
+    high: Math.round((baseHigh + extras) * factor),
+    mid: Math.round((mid + extras) * factor),
+    hours: s.durationHrs,
+    addonsTotal: extras,
+    discountPct,
+  };
 }
 
 function clamp(n: number, min: number, max: number) {

@@ -11,6 +11,7 @@ import { Magnetic } from "@/components/anim/magnetic";
 
 const links = [
   { href: "/services", label: "Services" },
+  { href: "/plans", label: "Plans" },
   { href: "/house-cleaning", label: "Areas" },
   { href: "/gallery", label: "Before & After" },
   { href: "/reviews", label: "Reviews" },

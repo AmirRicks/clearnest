@@ -52,3 +52,58 @@ export async function createHostedInvoice(args: CreateInvoiceArgs) {
     amount: args.amount,
   };
 }
+
+export type GiftCheckoutArgs = {
+  amount: number; // dollars
+  code: string;
+  purchaserName: string;
+  purchaserEmail: string;
+  recipientName: string;
+  recipientEmail: string;
+  message?: string;
+  successUrl: string;
+  cancelUrl: string;
+};
+
+/**
+ * Stripe Checkout (one-time payment) for a gift card. The card is only written
+ * to our DB after the webhook confirms payment — we never store an "active"
+ * card before the money lands.
+ */
+export async function createGiftCheckout(args: GiftCheckoutArgs) {
+  const s = stripe();
+  if (!s) return { ok: false as const, error: "Stripe not configured" };
+
+  const session = await s.checkout.sessions.create({
+    mode: "payment",
+    payment_method_types: ["card"],
+    customer_email: args.purchaserEmail,
+    line_items: [
+      {
+        quantity: 1,
+        price_data: {
+          currency: "usd",
+          unit_amount: Math.round(args.amount * 100),
+          product_data: {
+            name: `ClearNest Gift Card — $${args.amount}`,
+            description: `For ${args.recipientName}`,
+          },
+        },
+      },
+    ],
+    metadata: {
+      kind: "gift_card",
+      code: args.code,
+      amount: String(Math.round(args.amount * 100)),
+      purchaserName: args.purchaserName.slice(0, 120),
+      purchaserEmail: args.purchaserEmail,
+      recipientName: args.recipientName.slice(0, 120),
+      recipientEmail: args.recipientEmail,
+      message: (args.message ?? "").slice(0, 480),
+    },
+    success_url: args.successUrl,
+    cancel_url: args.cancelUrl,
+  });
+
+  return { ok: true as const, id: session.id, url: session.url ?? "" };
+}

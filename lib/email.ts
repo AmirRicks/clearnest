@@ -270,6 +270,71 @@ export async function sendReviewRequest(input: {
   });
 }
 
+function giftCodeBlock(code: string, amount: number) {
+  return `
+    <div style="margin:18px 0;text-align:center;background:#eef6f9;border:1px dashed #1f6c89;border-radius:18px;padding:20px;">
+      <div style="font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#1b556c;">Gift value</div>
+      <div style="font-size:34px;font-weight:700;letter-spacing:-.02em;color:#16323d;margin:2px 0 12px;">$${amount}</div>
+      <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#4a5159;">Redemption code</div>
+      <div style="font-family:'SF Mono',ui-monospace,Menlo,Consolas,monospace;font-size:22px;font-weight:700;letter-spacing:.06em;color:#16323d;margin-top:4px;">${escape(code)}</div>
+    </div>`;
+}
+
+export async function sendGiftCardToRecipient(input: {
+  to: string;
+  recipientName: string;
+  purchaserName: string;
+  amount: number; // dollars
+  code: string;
+  message?: string;
+}) {
+  const note = input.message?.trim()
+    ? `<p style="margin:0 0 16px;color:#4a5159;line-height:1.6;font-style:italic;">&ldquo;${escape(input.message.trim())}&rdquo;</p>`
+    : "";
+  const body = `
+    <p style="margin:0 0 16px;color:#4a5159;line-height:1.6;">
+      Hi ${escape(input.recipientName)} — <strong>${escape(input.purchaserName)}</strong> sent you the gift of a spotless home from ClearNest Cleaning Services. 🌿
+    </p>
+    ${note}
+    ${giftCodeBlock(input.code, input.amount)}
+    <p style="margin:16px 0;color:#4a5159;line-height:1.6;">
+      To redeem, book your clean below and enter this code in the booking notes — we&rsquo;ll apply your gift balance to the invoice. No rush; your gift doesn&rsquo;t expire.
+    </p>
+    <p style="margin:20px 0;text-align:center;">
+      <a href="https://clearnest.services/book" style="background:#1a1d22;color:#fff;padding:12px 24px;border-radius:999px;text-decoration:none;font-weight:600;font-size:14px;">Book your clean</a>
+    </p>`;
+  return send({
+    to: input.to,
+    subject: `🎁 ${input.purchaserName} sent you a ClearNest gift card`,
+    html: shell("You've received a gift!", body),
+    replyTo: BUSINESS.email,
+  });
+}
+
+export async function sendGiftReceipt(input: {
+  to: string;
+  purchaserName: string;
+  recipientName: string;
+  recipientEmail: string;
+  amount: number; // dollars
+  code: string;
+}) {
+  const body = `
+    <p style="margin:0 0 16px;color:#4a5159;line-height:1.6;">
+      Thank you, ${escape(input.purchaserName)}! Your ClearNest gift card is on its way to <strong>${escape(input.recipientName)}</strong> (${escape(input.recipientEmail)}).
+    </p>
+    ${giftCodeBlock(input.code, input.amount)}
+    <p style="margin:16px 0;color:#4a5159;line-height:1.6;">
+      We&rsquo;ve emailed them the code and how to redeem it. Keep this receipt for your records — if they ever misplace the code, just reply to this email and we&rsquo;ll resend it.
+    </p>`;
+  return send({
+    to: input.to,
+    subject: "Your ClearNest gift card — receipt",
+    html: shell("Gift card confirmed 🎉", body),
+    replyTo: BUSINESS.email,
+  });
+}
+
 function escape(s: string) {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }

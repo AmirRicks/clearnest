@@ -36,6 +36,28 @@ export interface Booking {
   stripe_invoice_url?: string | null;
   last_reschedule_at?: string | null;
   last_status_change?: string | null;
+  // Sprint 2 revenue (migration 0004) — optional until DB is migrated
+  frequency?: "one_time" | "monthly" | "biweekly" | "weekly";
+  addons?: string[];
+  addons_total?: number;
+  discount_pct?: number;
+  gift_code?: string | null;
+}
+
+export interface GiftCard {
+  id: string;
+  created_at: string;
+  code: string;
+  amount: number; // cents
+  balance: number; // cents
+  status: "pending" | "active" | "redeemed" | "void";
+  purchaser_name: string | null;
+  purchaser_email: string | null;
+  recipient_name: string | null;
+  recipient_email: string | null;
+  message: string | null;
+  stripe_session_id: string | null;
+  stripe_payment_intent: string | null;
 }
 
 export interface Agreement {

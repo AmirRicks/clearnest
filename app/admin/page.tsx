@@ -91,11 +91,26 @@ function Section({
                     <div className="text-xs text-graphite">
                       {b.bedrooms} bd · {b.bathrooms} ba · {b.sqft.toLocaleString()} sq ft
                     </div>
+                    {b.frequency && b.frequency !== "one_time" && (
+                      <span className="mt-1 inline-flex items-center rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-brand-800">
+                        {b.frequency} · {b.discount_pct ?? 0}% off
+                      </span>
+                    )}
+                    {Array.isArray(b.addons) && b.addons.length > 0 && (
+                      <div className="mt-1 text-[11px] text-graphite">
+                        + {b.addons.join(", ")} (${b.addons_total ?? 0})
+                      </div>
+                    )}
                   </td>
                   <td className="px-4 py-3">
                     <div className="font-semibold text-charcoal">
                       ${b.estimated_low}–${b.estimated_high}
                     </div>
+                    {b.gift_code && (
+                      <span className="mt-1 inline-flex items-center rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-accent">
+                        🎁 {b.gift_code}
+                      </span>
+                    )}
                   </td>
                   <td className="px-4 py-3">
                     <StatusPill status={b.status} />

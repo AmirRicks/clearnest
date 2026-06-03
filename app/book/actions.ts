@@ -13,6 +13,11 @@ const bookingSchema = z.object({
   bedrooms: z.coerce.number().int().min(0).max(8),
   bathrooms: z.coerce.number().int().min(0).max(8),
   sqft: z.coerce.number().int().min(200).max(12000),
+  frequency: z.enum(["one_time", "monthly", "biweekly", "weekly"]).default("one_time"),
+  addons: z
+    .array(z.enum(["fridge", "oven", "windows", "cabinets", "laundry", "garage"]))
+    .max(12)
+    .default([]),
   customerName: z.string().min(2).max(120),
   customerEmail: z.string().email(),
   customerPhone: z.string().min(7).max(40),
@@ -24,6 +29,7 @@ const bookingSchema = z.object({
   accessNotes: z.string().max(800).optional().nullable(),
   pets: z.string().max(200).optional().nullable(),
   specialRequests: z.string().max(800).optional().nullable(),
+  giftCode: z.string().trim().max(40).optional().nullable(),
   signatureDataUrl: z.string().startsWith("data:image/").max(2_000_000),
 });
 
@@ -38,11 +44,13 @@ export async function submitBooking(input: unknown): Promise<BookingResult> {
   }
   const data = parsed.data;
 
-  const { low, high } = estimatePrice({
+  const { low, high, discountPct, addonsTotal: addonsSum } = estimatePrice({
     serviceId: data.serviceId as ServiceId,
     bedrooms: data.bedrooms,
     bathrooms: data.bathrooms,
     sqft: data.sqft,
+    addonIds: data.addons,
+    frequency: data.frequency,
   });
 
   if (!isSupabaseConfigured()) {
@@ -69,32 +77,54 @@ export async function submitBooking(input: unknown): Promise<BookingResult> {
       .single();
     if (agreementError) throw agreementError;
 
-    const { data: booking, error: bookingError } = await sb
-      .from("bookings")
-      .insert({
-        service_id: data.serviceId,
-        scheduled_for: data.scheduledFor,
-        bedrooms: data.bedrooms,
-        bathrooms: data.bathrooms,
-        sqft: data.sqft,
-        estimated_low: low,
-        estimated_high: high,
-        customer_name: data.customerName,
-        customer_email: data.customerEmail,
-        customer_phone: data.customerPhone,
-        address_line1: data.addressLine1,
-        address_line2: data.addressLine2 ?? null,
-        city: data.city,
-        state: data.state,
-        zip: data.zip,
-        access_notes: data.accessNotes ?? null,
-        pets: data.pets ?? null,
-        special_requests: data.specialRequests ?? null,
-        agreement_id: agreement.id,
-      })
-      .select("id")
-      .single();
-    if (bookingError) throw bookingError;
+    const baseRow = {
+      service_id: data.serviceId,
+      scheduled_for: data.scheduledFor,
+      bedrooms: data.bedrooms,
+      bathrooms: data.bathrooms,
+      sqft: data.sqft,
+      estimated_low: low,
+      estimated_high: high,
+      customer_name: data.customerName,
+      customer_email: data.customerEmail,
+      customer_phone: data.customerPhone,
+      address_line1: data.addressLine1,
+      address_line2: data.addressLine2 ?? null,
+      city: data.city,
+      state: data.state,
+      zip: data.zip,
+      access_notes: data.accessNotes ?? null,
+      pets: data.pets ?? null,
+      special_requests: data.specialRequests ?? null,
+      agreement_id: agreement.id,
+    };
+    const extendedRow = {
+      ...baseRow,
+      frequency: data.frequency,
+      addons: data.addons,
+      addons_total: addonsSum,
+      discount_pct: discountPct,
+      gift_code: data.giftCode ? data.giftCode.toUpperCase() : null,
+    };
+
+    // Insert with the revenue columns; if the 0004 migration hasn't been run
+    // yet (missing columns), fall back to the base row so bookings never break.
+    let booking: { id: string } | null = null;
+    {
+      const first = await sb.from("bookings").insert(extendedRow).select("id").single();
+      if (first.error) {
+        console.warn(
+          "[ClearNest] booking insert with revenue columns failed — falling back (run migration 0004):",
+          first.error.message
+        );
+        const fallback = await sb.from("bookings").insert(baseRow).select("id").single();
+        if (fallback.error) throw fallback.error;
+        booking = fallback.data;
+      } else {
+        booking = first.data;
+      }
+    }
+    if (!booking) throw new Error("Booking was not created.");
 
     await sb.from("agreements").update({ booking_id: booking.id }).eq("id", agreement.id);
 

@@ -47,6 +47,8 @@ export function Footer() {
               { href: "/services/deep-cleaning", l: "Deep Cleaning" },
               { href: "/services/move-in-out-cleaning", l: "Move-In / Move-Out" },
               { href: "/services/airbnb-turnover", l: "Airbnb Turnover" },
+              { href: "/plans", l: "Plans & Memberships" },
+              { href: "/gift-cards", l: "Gift Cards" },
               { href: "/book", l: "Get an Estimate" },
             ].map((i) => (
               <li key={i.href}>
