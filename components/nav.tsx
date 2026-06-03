@@ -14,6 +14,7 @@ const links = [
   { href: "/plans", label: "Plans" },
   { href: "/house-cleaning", label: "Areas" },
   { href: "/gallery", label: "Before & After" },
+  { href: "/referrals", label: "Refer & Earn" },
   { href: "/reviews", label: "Reviews" },
   { href: "/about", label: "About" },
   { href: "/faq", label: "FAQ" },
