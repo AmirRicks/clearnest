@@ -55,7 +55,7 @@ export function Nav() {
       <div className="container-tight flex h-16 items-center justify-between gap-4 md:h-20">
         <Logo />
 
-        <nav className="hidden items-center gap-1 lg:flex">
+        <nav className="hidden items-center gap-1 xl:flex">
           {mainLinks.map((l) => {
             const active = pathname === l.href || pathname.startsWith(l.href + "/");
             return (
@@ -154,7 +154,7 @@ export function Nav() {
         <button
           aria-label="Menu"
           onClick={() => setOpen((v) => !v)}
-          className="grid h-10 w-10 place-items-center rounded-full border border-stone/80 lg:hidden"
+          className="grid h-10 w-10 place-items-center rounded-full border border-stone/80 xl:hidden"
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
@@ -167,7 +167,7 @@ export function Nav() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.18 }}
-            className="border-t border-stone/60 bg-background/95 backdrop-blur-xl lg:hidden"
+            className="border-t border-stone/60 bg-background/95 backdrop-blur-xl xl:hidden"
           >
             <div className="container-tight grid gap-1 py-4">
               {[...mainLinks, ...secondaryLinks].map((l) => (
