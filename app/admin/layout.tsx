@@ -1,46 +1,36 @@
-import Link from "next/link";
-import { Logo } from "@/components/logo";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { Nav } from "./_components/nav";
 
-const tabs = [
-  { href: "/admin", label: "Bookings" },
-  { href: "/admin/leads", label: "Leads" },
-  { href: "/admin/reviews", label: "Reviews" },
-  { href: "/admin/settings", label: "Settings" },
-];
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  if (!user) {
+    return redirect("/admin/login");
+  }
+
+  // A second check to see if they are in the `admins` table
+  // The RLS policies are the true security boundary, but this prevents
+  // any regular signed-in user from even seeing the admin layout.
+  const { data: admin, error } = await supabase
+    .from("admins")
+    .select("user_id")
+    .eq("user_id", user.id)
+    .single();
+
+  if (error || !admin) {
+    // Silently log them out and redirect.
+    await supabase.auth.signOut();
+    return redirect("/admin/login?error=Not authorized");
+  }
+
   return (
-    <div className="min-h-screen bg-paper/30">
-      <header className="border-b border-stone/60 bg-background">
-        <div className="container-tight flex h-16 items-center justify-between gap-4">
-          <div className="flex items-center gap-6">
-            <Logo />
-            <span className="rounded-full bg-charcoal px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">
-              Admin
-            </span>
-          </div>
-          <nav className="flex items-center gap-1">
-            {tabs.map((t) => (
-              <Link
-                key={t.href}
-                href={t.href}
-                className="rounded-full px-3 py-1.5 text-sm font-medium text-graphite transition hover:bg-paper hover:text-charcoal"
-              >
-                {t.label}
-              </Link>
-            ))}
-            <form action="/api/admin/signout" method="post">
-              <button
-                type="submit"
-                className="ml-3 inline-flex items-center gap-2 rounded-full border border-stone/80 px-3 py-1.5 text-sm font-medium text-charcoal hover:border-brand-300"
-              >
-                Sign out
-              </button>
-            </form>
-          </nav>
-        </div>
-      </header>
-      <main className="container-tight py-10">{children}</main>
+    <div className="min-h-screen bg-paper/50">
+      <Nav user={user} />
+      <main className="container-tight py-8">{children}</main>
     </div>
   );
 }

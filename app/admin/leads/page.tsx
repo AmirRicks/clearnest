@@ -1,135 +1,97 @@
-import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
-import { SERVICES } from "@/lib/pricing";
-import { formatDate } from "@/lib/utils";
-import type { Lead } from "@/lib/supabase/types";
-import { LeadRowActions } from "./lead-actions";
+import { createClient } from "@/lib/supabase/server";
+import { formatCurrencyRange } from "@/lib/utils";
+import { StatusSelect } from "./status-select";
+import { formatDistanceToNow } from "date-fns";
 
-export default async function AdminLeads() {
-  if (!isSupabaseConfigured()) {
-    return (
-      <div className="rounded-3xl border border-amber-300 bg-amber-50 p-6 text-sm text-amber-900">
-        Supabase isn’t configured yet — leads capture is disabled.
-      </div>
-    );
-  }
-  const sb = await createClient();
-  const { data, error } = await sb
+export const metadata = {
+  title: "Leads Dashboard | ClearNest Admin",
+};
+
+export default async function LeadsPage() {
+  const supabase = await createClient();
+
+  const { data: leads, error } = await supabase
     .from("leads")
     .select("*")
-    .order("created_at", { ascending: false })
-    .limit(300);
-  if (error) return <p className="text-sm text-danger">Failed to load: {error.message}</p>;
+    .order("created_at", { ascending: false });
 
-  const leads = (data ?? []) as Lead[];
-  const open = leads.filter((l) => l.status === "new" || l.status === "contacted");
-  const closed = leads.filter((l) => l.status === "won" || l.status === "lost");
-  const newCount = leads.filter((l) => l.status === "new").length;
+  if (error) {
+    console.error("Error fetching leads:", error);
+    return <div>Error loading leads.</div>;
+  }
 
   return (
-    <div className="grid gap-10">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight text-charcoal">Leads</h1>
-        <p className="mt-1 text-sm text-graphite">
-          {newCount} new · {open.length} open · {closed.length} closed. Speed-to-lead wins jobs —
-          call new leads within the hour.
-        </p>
-      </header>
+    <div>
+      <div className="mb-8 flex items-center justify-between">
+        <h1 className="text-2xl font-bold tracking-tight text-charcoal">
+          Website Leads
+        </h1>
+        <div className="flex gap-4 text-sm text-graphite">
+          <span>Total: <strong className="text-charcoal">{leads?.length || 0}</strong></span>
+          <span>New: <strong className="text-blue-600">{leads?.filter(l => l.status === 'new').length || 0}</strong></span>
+        </div>
+      </div>
 
-      <Section title="Open" leads={open} empty="No open leads yet. They’ll appear here from the quote forms." />
-      {closed.length > 0 && <Section title="Closed" leads={closed} muted />}
-    </div>
-  );
-}
-
-function Section({
-  title,
-  leads,
-  empty,
-  muted,
-}: {
-  title: string;
-  leads: Lead[];
-  empty?: string;
-  muted?: boolean;
-}) {
-  return (
-    <section>
-      <h2 className="text-xs font-medium uppercase tracking-[0.18em] text-graphite">{title}</h2>
-      {leads.length === 0 ? (
-        <p className="mt-3 text-sm text-graphite">{empty}</p>
-      ) : (
-        <div className="mt-4 overflow-hidden rounded-3xl border border-stone/70 bg-background shadow-soft">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-paper/60 text-left text-[11px] uppercase tracking-[0.14em] text-graphite">
-                <th className="px-4 py-3">When</th>
-                <th className="px-4 py-3">Contact</th>
-                <th className="px-4 py-3">Source</th>
-                <th className="px-4 py-3">Quote</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3 text-right">Actions</th>
+      <div className="overflow-hidden rounded-3xl border border-stone/70 bg-background shadow-soft">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead className="border-b border-stone/70 bg-paper/50">
+              <tr>
+                <th className="px-6 py-4 font-semibold text-charcoal">Date</th>
+                <th className="px-6 py-4 font-semibold text-charcoal">Lead Info</th>
+                <th className="px-6 py-4 font-semibold text-charcoal">Source</th>
+                <th className="px-6 py-4 font-semibold text-charcoal">Estimated Quote</th>
+                <th className="px-6 py-4 font-semibold text-charcoal">Status</th>
               </tr>
             </thead>
-            <tbody className={`divide-y divide-stone/60 ${muted ? "opacity-80" : ""}`}>
-              {leads.map((l) => (
-                <tr key={l.id}>
-                  <td className="px-4 py-3 text-xs text-graphite">{formatDate(l.created_at)}</td>
-                  <td className="px-4 py-3">
-                    <div className="font-medium text-charcoal">{l.name || "—"}</div>
-                    <div className="text-xs text-graphite">
-                      {l.phone ? (
-                        <a className="hover:text-charcoal" href={`tel:${l.phone}`}>{l.phone}</a>
-                      ) : null}
-                      {l.phone && l.email ? " · " : ""}
-                      {l.email ? (
-                        <a className="hover:text-charcoal" href={`mailto:${l.email}`}>{l.email}</a>
-                      ) : null}
-                    </div>
-                    {l.message ? <div className="mt-1 text-xs text-graphite">“{l.message}”</div> : null}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="rounded-full bg-paper px-2 py-0.5 text-[10px] uppercase tracking-[0.14em] text-graphite">
-                      {l.source.replace("_", " ")}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-xs text-graphite">
-                    {l.estimated_low && l.estimated_high ? (
-                      <div className="font-semibold text-charcoal">
-                        ${l.estimated_low}–${l.estimated_high}
-                      </div>
-                    ) : (
-                      "—"
-                    )}
-                    {l.service_id ? (
-                      <div>{SERVICES[l.service_id as keyof typeof SERVICES]?.name ?? l.service_id}</div>
-                    ) : null}
-                  </td>
-                  <td className="px-4 py-3">
-                    <StatusPill status={l.status} />
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <LeadRowActions leadId={l.id} status={l.status} />
+            <tbody className="divide-y divide-stone/60">
+              {leads?.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12 text-center text-graphite">
+                    No leads yet. They will appear here when submitted.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                leads?.map((lead) => (
+                  <tr key={lead.id} className="transition hover:bg-paper/30">
+                    <td className="px-6 py-4 text-graphite">
+                      {formatDistanceToNow(new Date(lead.created_at), { addSuffix: true })}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="font-semibold text-charcoal">{lead.name || "—"}</div>
+                      <div className="mt-1 flex flex-col gap-0.5 text-xs text-graphite">
+                        {lead.phone && (
+                          <a href={"tel:" + lead.phone} className="hover:text-charcoal">
+                            {lead.phone}
+                          </a>
+                        )}
+                        {lead.email && (
+                          <a href={"mailto:" + lead.email} className="hover:text-charcoal">
+                            {lead.email}
+                          </a>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="inline-flex items-center rounded-md bg-stone-100 px-2 py-1 text-xs font-medium text-stone-600">
+                        {lead.source}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-charcoal">
+                      {lead.estimated_low && lead.estimated_high
+                        ? formatCurrencyRange(lead.estimated_low, lead.estimated_high)
+                        : "—"}
+                    </td>
+                    <td className="px-6 py-4">
+                      <StatusSelect id={lead.id} initialStatus={lead.status} />
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
-      )}
-    </section>
-  );
-}
-
-function StatusPill({ status }: { status: Lead["status"] }) {
-  const map: Record<Lead["status"], string> = {
-    new: "bg-amber-100 text-amber-800",
-    contacted: "bg-brand-100 text-brand-800",
-    won: "bg-success/20 text-success",
-    lost: "bg-stone/60 text-graphite",
-  };
-  return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.12em] ${map[status]}`}>
-      {status}
-    </span>
+      </div>
+    </div>
   );
 }

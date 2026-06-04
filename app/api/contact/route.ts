@@ -3,6 +3,7 @@ import { Twilio } from "twilio";
 import { z } from "zod";
 import { BUSINESS } from "@/lib/utils";
 import { sendLeadNotification, sendLeadAutoReply } from "@/lib/email";
+import supabaseAdmin from "@/lib/supabase-admin";
 
 const LeadSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -83,7 +84,25 @@ Message: ${message}`;
   ]);
   // --- End Email Flow ---
   
-  // TODO: Add Supabase lead insert logic
+  // --- Start Supabase Lead Logging ---
+  if (supabaseAdmin) {
+    const { error: dbError } = await supabaseAdmin.from("leads").insert({
+      name,
+      phone,
+      email,
+      message,
+      source,
+    });
+
+    if (dbError) {
+      console.error("[Supabase] Failed to insert lead:", dbError);
+      // Optional: could add extra error handling here, but we don't want to block
+      // the response to the user just because our DB failed. The SMS/email is more critical.
+    }
+  } else {
+    console.warn("[Supabase] Admin client not configured, skipping lead insert.");
+  }
+  // --- End Supabase Flow ---
 
   return NextResponse.json({ ok: true });
 }
