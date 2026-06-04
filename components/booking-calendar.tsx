@@ -25,7 +25,7 @@ export function BookingCalendar({ selectedDate, selectedTime, onSelect }: Bookin
     setLoading(true);
     setError(null);
     
-    getAvailability(currentMonth.toISOString()).then((data) => {
+    getAvailability(currentMonth.toISOString(), new Date().toISOString()).then((data) => {
       if (!isMounted) return;
       const map: Record<string, DayAvailability> = {};
       data.forEach(d => { map[d.date] = d; });
@@ -92,7 +92,7 @@ export function BookingCalendar({ selectedDate, selectedTime, onSelect }: Bookin
               onClick={() => {
                 setError(null);
                 setLoading(true);
-                getAvailability(currentMonth.toISOString()).then((data) => {
+                getAvailability(currentMonth.toISOString(), new Date().toISOString()).then((data) => {
                   const map: Record<string, DayAvailability> = {};
                   data.forEach(d => { map[d.date] = d; });
                   setAvailability(map);

@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
-import { format, startOfMonth, endOfMonth, addMonths } from "date-fns";
+import { format, startOfMonth, endOfMonth, addMonths, startOfDay, addDays } from "date-fns";
 
 export type TimeSlot = "08:00" | "10:00" | "12:00" | "14:00" | "16:00";
 export const ALL_SLOTS: TimeSlot[] = ["08:00", "10:00", "12:00", "14:00", "16:00"];
@@ -12,12 +12,10 @@ export interface DayAvailability {
   availableSlots: TimeSlot[];
 }
 
-function generateFreeAvailability(): DayAvailability[] {
+function generateFreeAvailability(clientToday: string): DayAvailability[] {
   const result: DayAvailability[] = [];
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const end = new Date(today);
-  end.setDate(end.getDate() + 60);
+  const today = startOfDay(new Date(clientToday));
+  const end = addDays(today, 60);
 
   for (let d = new Date(today); d <= end; d.setDate(d.getDate() + 1)) {
     const dateStr = format(d, "yyyy-MM-dd");
@@ -30,8 +28,9 @@ function generateFreeAvailability(): DayAvailability[] {
   return result;
 }
 
-export async function getAvailability(monthDateStr: string): Promise<DayAvailability[]> {
-  if (!isSupabaseConfigured()) return generateFreeAvailability();
+export async function getAvailability(monthDateStr: string, clientTodayStr?: string): Promise<DayAvailability[]> {
+  const todaySource = clientTodayStr || monthDateStr;
+  if (!isSupabaseConfigured()) return generateFreeAvailability(todaySource);
 
   try {
     const supabase = await createClient();
@@ -60,12 +59,11 @@ export async function getAvailability(monthDateStr: string): Promise<DayAvailabi
     }
 
     const availability: DayAvailability[] = [];
-    const currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0);
+    const clientCutoff = startOfDay(new Date(todaySource));
 
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
       const dateStr = format(d, "yyyy-MM-dd");
-      if (d <= currentDate) {
+      if (d <= clientCutoff) {
         availability.push({ date: dateStr, status: "busy", availableSlots: [] });
         continue;
       }
@@ -84,6 +82,6 @@ export async function getAvailability(monthDateStr: string): Promise<DayAvailabi
     return availability;
   } catch (err) {
     console.error("Availability fetch error:", err);
-    return generateFreeAvailability();
+    return generateFreeAvailability(todaySource);
   }
 }
