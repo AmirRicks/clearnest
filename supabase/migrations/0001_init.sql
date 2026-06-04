@@ -1,13 +1,11 @@
 -- ClearNest Cleaning Services — initial schema
 -- Apply with: supabase db push (or paste into Supabase SQL editor)
 
-create extension if not exists "uuid-ossp";
-
 ------------------------------------------------------------
 -- 1. Service Agreements
 ------------------------------------------------------------
 create table if not exists public.agreements (
-  id                  uuid primary key default uuid_generate_v4(),
+  id                  uuid primary key default gen_random_uuid(),
   created_at          timestamptz not null default now(),
   customer_name       text not null,
   customer_email      text not null,
@@ -31,7 +29,7 @@ do $$ begin
 exception when duplicate_object then null; end $$;
 
 create table if not exists public.bookings (
-  id                 uuid primary key default uuid_generate_v4(),
+  id                 uuid primary key default gen_random_uuid(),
   created_at         timestamptz not null default now(),
   service_id         text not null,
   scheduled_for      timestamptz not null,
@@ -76,7 +74,7 @@ do $$ begin
 exception when duplicate_object then null; end $$;
 
 create table if not exists public.reviews (
-  id              uuid primary key default uuid_generate_v4(),
+  id              uuid primary key default gen_random_uuid(),
   created_at      timestamptz not null default now(),
   customer_name   text not null,
   location        text,

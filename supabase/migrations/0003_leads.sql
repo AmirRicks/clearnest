@@ -2,7 +2,7 @@
 -- Sources: floating_cta, exit_intent, estimator, contact, other.
 
 create table if not exists public.leads (
-  id              uuid primary key default uuid_generate_v4(),
+  id              uuid primary key default gen_random_uuid(),
   created_at      timestamptz not null default now(),
   name            text,
   email           text,
