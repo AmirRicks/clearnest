@@ -55,7 +55,7 @@ export function Nav() {
       <div className="container-tight flex h-16 items-center justify-between gap-4 md:h-20">
         <Logo />
 
-        <nav className="hidden items-center gap-1 xl:flex">
+        <nav className="hidden items-center gap-1 lg:flex">
           {mainLinks.map((l) => {
             const active = pathname === l.href || pathname.startsWith(l.href + "/");
             return (
