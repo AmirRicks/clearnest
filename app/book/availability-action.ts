@@ -3,8 +3,8 @@
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { format, startOfMonth, endOfMonth, addMonths, startOfDay, addDays } from "date-fns";
 
-export type TimeSlot = "08:00" | "10:00" | "12:00" | "14:00" | "16:00";
-export const ALL_SLOTS: TimeSlot[] = ["08:00", "10:00", "12:00", "14:00", "16:00"];
+export type TimeSlot = "07:00" | "09:00" | "11:00" | "13:00" | "15:00" | "17:00";
+export const ALL_SLOTS: TimeSlot[] = ["07:00", "09:00", "11:00", "13:00", "15:00", "17:00"];
 
 export interface DayAvailability {
   date: string; // YYYY-MM-DD
