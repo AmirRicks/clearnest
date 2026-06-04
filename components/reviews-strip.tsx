@@ -3,7 +3,14 @@ import { Star, ArrowUpRight, ShieldCheck, Sparkles, Quote } from "lucide-react";
 import { Eyebrow, H2, Lead, Section } from "./section";
 import { BUSINESS } from "@/lib/utils";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
-import type { Review } from "@/lib/supabase/types";
+// Manual type
+interface Review {
+  id: string;
+  customer_name: string;
+  location: string | null;
+  rating: number;
+  body: string;
+}
 
 async function loadFeatured(): Promise<Review[]> {
   if (!isSupabaseConfigured()) return [];

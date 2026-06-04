@@ -1,5 +1,16 @@
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
-import type { Review } from "@/lib/supabase/types";
+// Manual type
+interface Review {
+  id: string;
+  created_at: string;
+  customer_name: string;
+  location: string | null;
+  rating: number;
+  body: string;
+  source: "yelp" | "google" | "direct" | "facebook";
+  featured: boolean;
+  reviewed_at: string;
+}
 import { ReviewsManager } from "./reviews-manager";
 
 export default async function AdminReviews() {

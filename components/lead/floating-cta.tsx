@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Phone, MessageSquareText } from "lucide-react";
 import { BUSINESS } from "@/lib/utils";
-import { Modal } from "@/components/ui/modal";
+import { Modal, ModalContent } from "@/components/ui/modal";
 import { QuickLeadForm } from "./quick-lead-form";
 
 export function FloatingCta() {
@@ -48,19 +48,21 @@ export function FloatingCta() {
         )}
       </AnimatePresence>
 
-      <Modal open={open} onClose={() => setOpen(false)}>
-        <span className="inline-flex items-center gap-2 rounded-full border border-stone/70 bg-paper/60 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-graphite">
-          Free estimate · 60 seconds
-        </span>
-        <h2 className="mt-4 text-2xl font-semibold tracking-tight text-charcoal">
-          Get your free cleaning quote
-        </h2>
-        <p className="mt-1.5 text-sm text-graphite">
-          Tell us where to send it — we’ll text you a price and earliest opening.
-        </p>
-        <div className="mt-5">
-          <QuickLeadForm defaults={{ source: "floating_cta" }} onDone={() => setTimeout(() => setOpen(false), 2500)} />
-        </div>
+      <Modal open={open} onOpenChange={(v) => setOpen(v)}>
+        <ModalContent>
+          <span className="inline-flex items-center gap-2 rounded-full border border-stone/70 bg-paper/60 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-graphite">
+            Free estimate · 60 seconds
+          </span>
+          <h2 className="mt-4 text-2xl font-semibold tracking-tight text-charcoal">
+            Get your free cleaning quote
+          </h2>
+          <p className="mt-1.5 text-sm text-graphite">
+            Tell us where to send it — we'll text you a price and earliest opening.
+          </p>
+          <div className="mt-5">
+            <QuickLeadForm defaults={{ source: "floating_cta" }} onDone={() => setTimeout(() => setOpen(false), 2500)} />
+          </div>
+        </ModalContent>
       </Modal>
     </>
   );

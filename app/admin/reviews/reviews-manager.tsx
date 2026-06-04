@@ -4,7 +4,17 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Plus, Star, Trash2, Save } from "lucide-react";
 import { upsertReview, deleteReview } from "../actions";
-import type { Review } from "@/lib/supabase/types";
+// Manual type
+interface Review {
+  id: string;
+  customer_name: string;
+  location: string | null;
+  rating: number;
+  body: string;
+  source: "yelp" | "google" | "direct" | "facebook";
+  featured: boolean;
+  reviewed_at: string;
+}
 
 const SOURCES: Review["source"][] = ["yelp", "google", "direct", "facebook"];
 

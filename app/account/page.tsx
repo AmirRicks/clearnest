@@ -2,10 +2,29 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { SERVICES } from "@/lib/pricing";
-import type { Booking } from "@/lib/supabase/types";
 import { formatDate, formatTime, formatCurrencyRange } from "@/lib/utils";
 import { Section, Eyebrow } from "@/components/section";
 import { AccountSignOut, BookingActions } from "./booking-card";
+
+// Manual type definition
+export interface Booking {
+  id: string;
+  created_at: string;
+  service_id: string;
+  scheduled_for: string;
+  status: string;
+  bedrooms: number;
+  bathrooms: number;
+  sqft: number;
+  address_line1: string;
+  address_line2: string | null;
+  city: string;
+  state: string;
+  zip: string;
+  estimated_low: number;
+  estimated_high: number;
+  stripe_invoice_url: string | null;
+}
 import { LogIn } from "lucide-react";
 
 export default async function AccountPage() {

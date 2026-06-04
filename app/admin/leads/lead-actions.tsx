@@ -3,7 +3,8 @@
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { updateLeadStatus } from "../actions";
-import type { LeadStatus } from "@/lib/supabase/types";
+// Manual type
+export type LeadStatus = "new" | "contacted" | "won" | "lost";
 
 export function LeadRowActions({ leadId, status }: { leadId: string; status: LeadStatus }) {
   const [pending, start] = useTransition();

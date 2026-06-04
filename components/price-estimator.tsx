@@ -7,7 +7,7 @@ import { Sparkles, MessageSquareText } from "lucide-react";
 import { SERVICES, estimatePrice, type ServiceId } from "@/lib/pricing";
 import { formatCurrencyRange } from "@/lib/utils";
 import { Eyebrow, H2, Lead, Section } from "./section";
-import { Modal } from "@/components/ui/modal";
+import { Modal, ModalContent } from "@/components/ui/modal";
 import { QuickLeadForm } from "@/components/lead/quick-lead-form";
 
 export function PriceEstimator({
@@ -149,31 +149,33 @@ export function PriceEstimator({
       </motion.div>
     </div>
 
-    <Modal open={leadOpen} onClose={() => setLeadOpen(false)}>
-      <span className="inline-flex items-center gap-2 rounded-full border border-stone/70 bg-paper/60 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-graphite">
-        Your quote · {SERVICES[serviceId].name}
-      </span>
-      <h2 className="mt-4 text-2xl font-semibold tracking-tight text-charcoal">
-        We’ll text you {formatCurrencyRange(estimate.low, estimate.high)}
-      </h2>
-      <p className="mt-1.5 text-sm text-graphite">
-        {bedrooms} bd · {bathrooms} ba · {sqft.toLocaleString()} sq ft. Drop your info and we’ll
-        confirm your price + earliest opening.
-      </p>
-      <div className="mt-5">
-        <QuickLeadForm
-          defaults={{
-            source: "estimator",
-            serviceId,
-            bedrooms,
-            bathrooms,
-            sqft,
-            estimatedLow: estimate.low,
-            estimatedHigh: estimate.high,
-          }}
-          onDone={() => setTimeout(() => setLeadOpen(false), 2600)}
-        />
-      </div>
+    <Modal open={leadOpen} onOpenChange={(v) => setLeadOpen(v)}>
+      <ModalContent>
+        <span className="inline-flex items-center gap-2 rounded-full border border-stone/70 bg-paper/60 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-graphite">
+          Your quote · {SERVICES[serviceId].name}
+        </span>
+        <h2 className="mt-4 text-2xl font-semibold tracking-tight text-charcoal">
+          We'll text you {formatCurrencyRange(estimate.low, estimate.high)}
+        </h2>
+        <p className="mt-1.5 text-sm text-graphite">
+          {bedrooms} bd · {bathrooms} ba · {sqft.toLocaleString()} sq ft. Drop your info and we'll
+          confirm your price + earliest opening.
+        </p>
+        <div className="mt-5">
+          <QuickLeadForm
+            defaults={{
+              source: "estimator",
+              serviceId,
+              bedrooms,
+              bathrooms,
+              sqft,
+              estimatedLow: estimate.low,
+              estimatedHigh: estimate.high,
+            }}
+            onDone={() => setTimeout(() => setLeadOpen(false), 2600)}
+          />
+        </div>
+      </ModalContent>
     </Modal>
     </>
   );

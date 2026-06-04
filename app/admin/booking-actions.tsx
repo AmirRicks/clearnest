@@ -3,7 +3,15 @@
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { updateBookingStatus, sendInvoice, requestReview } from "./actions";
-import type { BookingStatus } from "@/lib/supabase/types";
+// Manual type
+export type BookingStatus =
+  | "pending"
+  | "confirmed"
+  | "in_progress"
+  | "completed"
+  | "invoiced"
+  | "paid"
+  | "canceled";
 
 const NEXT: Record<BookingStatus, BookingStatus | null> = {
   pending: "confirmed",

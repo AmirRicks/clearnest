@@ -1,6 +1,12 @@
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { BUSINESS } from "@/lib/utils";
-import type { Review } from "@/lib/supabase/types";
+// Manual type
+interface Review {
+  customer_name: string;
+  rating: number;
+  body: string;
+  reviewed_at: string;
+}
 
 const BASE = "https://clearnest.services";
 

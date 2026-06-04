@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogOut, Users } from "lucide-react";
+import { LogOut, Users, Calendar } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 
@@ -34,6 +34,18 @@ export function Nav({ user }: { user: User }) {
             >
               <Users className="mr-2 inline-flex h-4 w-4" />
               Leads
+            </Link>
+            <Link
+              href="/admin/calendar"
+              className={
+                "rounded-lg px-3 py-2 text-sm font-medium transition " +
+                (pathname === "/admin/calendar"
+                  ? "bg-paper text-charcoal"
+                  : "text-graphite hover:bg-paper/50 hover:text-charcoal")
+              }
+            >
+              <Calendar className="mr-2 inline-flex h-4 w-4" />
+              Calendar
             </Link>
           </nav>
         </div>

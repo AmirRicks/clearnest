@@ -2,7 +2,16 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import type { BookingStatus } from "@/lib/supabase/types";
+
+// Manual type
+export type BookingStatus =
+  | "pending"
+  | "confirmed"
+  | "in_progress"
+  | "completed"
+  | "invoiced"
+  | "paid"
+  | "canceled";
 import { createHostedInvoice } from "@/lib/stripe";
 import { sendInvoiceEmail, sendReviewRequest } from "@/lib/email";
 import { SERVICES } from "@/lib/pricing";

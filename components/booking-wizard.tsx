@@ -17,6 +17,8 @@ import {
 import { formatCurrencyRange } from "@/lib/utils";
 import { SignaturePad } from "./signature-pad";
 import { AGREEMENT_SECTIONS, AGREEMENT_VERSION } from "@/lib/agreement";
+import { BookingCalendar } from "./booking-calendar";
+
 import { submitBooking, type BookingResult } from "@/app/book/actions";
 
 const STEPS = ["Service", "Schedule", "Property", "You", "Agreement"] as const;
@@ -49,8 +51,8 @@ export function BookingWizard() {
   const toggleAddon = (id: AddonId) =>
     setAddons((cur) => (cur.includes(id) ? cur.filter((a) => a !== id) : [...cur, id]));
 
-  const [date, setDate] = useState<string>(todayISO(2));
-  const [time, setTime] = useState<string>("09:00");
+  const [date, setDate] = useState<string>("");
+  const [time, setTime] = useState<string>("");
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -215,11 +217,12 @@ export function BookingWizard() {
 
               {step === 1 && (
                 <Step title="Pick a date and time" hint="Visits start at the time you choose; team arrives within a 15-minute window.">
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <Input label="Date" type="date" value={date} min={todayISO(1)} onChange={(v) => setDate(v)} />
-                    <Input label="Start time" type="time" value={time} onChange={(v) => setTime(v)} />
-                  </div>
-                  <p className="mt-3 text-xs text-graphite">
+                  <BookingCalendar 
+                    selectedDate={date} 
+                    selectedTime={time} 
+                    onSelect={(d, t) => { setDate(d); setTime(t); }} 
+                  />
+                  <p className="mt-6 text-xs text-graphite text-center">
                     24-hour notice required. Need same-day? Call (801) 441-0726.
                   </p>
                 </Step>
