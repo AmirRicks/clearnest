@@ -17,17 +17,24 @@ export function BookingCalendar({ selectedDate, selectedTime, onSelect }: Bookin
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [availability, setAvailability] = useState<Record<string, DayAvailability>>({});
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch availability when month changes
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
+    setError(null);
     
     getAvailability(currentMonth.toISOString()).then((data) => {
       if (!isMounted) return;
       const map: Record<string, DayAvailability> = {};
       data.forEach(d => { map[d.date] = d; });
       setAvailability(map);
+      setLoading(false);
+    }).catch((err) => {
+      if (!isMounted) return;
+      console.error("Failed to load availability:", err);
+      setError("Could not load availability. Please try again.");
       setLoading(false);
     });
 
@@ -76,6 +83,30 @@ export function BookingCalendar({ selectedDate, selectedTime, onSelect }: Bookin
         {loading && (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/50 backdrop-blur-sm rounded-xl">
             <Loader2 className="w-8 h-8 animate-spin text-brand-500" />
+          </div>
+        )}
+        {error && (
+          <div className="mb-4 p-4 rounded-xl bg-red-50 border border-red-100 text-red-800 text-sm text-center">
+            {error}
+            <button
+              onClick={() => {
+                setError(null);
+                setLoading(true);
+                getAvailability(currentMonth.toISOString()).then((data) => {
+                  const map: Record<string, DayAvailability> = {};
+                  data.forEach(d => { map[d.date] = d; });
+                  setAvailability(map);
+                  setLoading(false);
+                }).catch((err) => {
+                  console.error("Retry failed:", err);
+                  setError("Still having trouble. Please refresh the page.");
+                  setLoading(false);
+                });
+              }}
+              className="ml-2 underline font-medium"
+            >
+              Retry
+            </button>
           </div>
         )}
 
