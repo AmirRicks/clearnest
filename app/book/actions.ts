@@ -128,6 +128,23 @@ export async function submitBooking(input: unknown): Promise<BookingResult> {
 
     await sb.from("agreements").update({ booking_id: booking.id }).eq("id", agreement.id);
 
+    // Insert a lead so it shows in the admin leads panel
+    await sb.from("leads").insert({
+      name: data.customerName,
+      email: data.customerEmail,
+      phone: data.customerPhone,
+      source: "booking_wizard",
+      service_id: data.serviceId,
+      bedrooms: data.bedrooms,
+      bathrooms: data.bathrooms,
+      sqft: data.sqft,
+      estimated_low: low,
+      estimated_high: high,
+      message: data.specialRequests || null,
+    }).select("id").single().then(({ error: leadErr }) => {
+      if (leadErr) console.warn("[ClearNest] lead insert failed (non-fatal):", leadErr.message);
+    });
+
     // Fire-and-forget confirmation email (graceful if RESEND_API_KEY missing)
     void sendBookingConfirmation({
       to: data.customerEmail,

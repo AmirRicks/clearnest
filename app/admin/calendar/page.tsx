@@ -14,7 +14,7 @@ export default async function CalendarPage() {
   const { data: bookings, error } = await supabase
     .from("bookings")
     .select("id, scheduled_for, customer_name, service_id, status")
-    .in("status", ["confirmed", "in_progress"]);
+    .in("status", ["pending", "confirmed", "in_progress"]);
 
   if (error) {
     console.error("Error fetching bookings for calendar:", error);
