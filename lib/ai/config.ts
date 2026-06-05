@@ -13,7 +13,7 @@ export function getAIConfig(): AIConfig | null {
 
   return {
     provider: "openrouter",
-    model: "deepseek/deepseek-chat",
+    model: "deepseek/deepseek-v4-flash:free",
     apiKey: key,
     baseUrl: "https://openrouter.ai/api/v1",
     maxTokens: 2048,

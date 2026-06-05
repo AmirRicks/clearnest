@@ -56,7 +56,6 @@ export async function updateConversation(
     .from("ai_conversations")
     .update({
       ...updates,
-      message_count: db.rpc("increment") as any,
       updated_at: new Date().toISOString(),
     })
     .eq("id", conversationId);
