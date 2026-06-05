@@ -2,9 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogOut, Users, Calendar } from "lucide-react";
+import { LogOut, Users, Calendar, Bot } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
+
+const NAV = [
+  { href: "/admin/leads", label: "Leads", icon: Users },
+  { href: "/admin/calendar", label: "Calendar", icon: Calendar },
+  { href: "/admin/ai/conversations", label: "AI", icon: Bot },
+] as const;
 
 export function Nav({ user }: { user: User }) {
   const pathname = usePathname();
@@ -23,30 +29,25 @@ export function Nav({ user }: { user: User }) {
             ClearNest Admin
           </span>
           <nav className="flex items-center gap-1">
-            <Link
-              href="/admin/leads"
-              className={
-                "rounded-lg px-3 py-2 text-sm font-medium transition " +
-                (pathname === "/admin/leads"
-                  ? "bg-paper text-charcoal"
-                  : "text-graphite hover:bg-paper/50 hover:text-charcoal")
-              }
-            >
-              <Users className="mr-2 inline-flex h-4 w-4" />
-              Leads
-            </Link>
-            <Link
-              href="/admin/calendar"
-              className={
-                "rounded-lg px-3 py-2 text-sm font-medium transition " +
-                (pathname === "/admin/calendar"
-                  ? "bg-paper text-charcoal"
-                  : "text-graphite hover:bg-paper/50 hover:text-charcoal")
-              }
-            >
-              <Calendar className="mr-2 inline-flex h-4 w-4" />
-              Calendar
-            </Link>
+            {NAV.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={
+                    "rounded-lg px-3 py-2 text-sm font-medium transition flex items-center gap-1.5 " +
+                    (isActive
+                      ? "bg-paper text-charcoal"
+                      : "text-graphite hover:bg-paper/50 hover:text-charcoal")
+                  }
+                >
+                  <Icon className="h-4 w-4" />
+                  {item.label}
+                </Link>
+              );
+            })}
           </nav>
         </div>
         <div className="flex items-center gap-4">
