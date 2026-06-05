@@ -13,7 +13,7 @@ export function getAIConfig(): AIConfig | null {
 
   return {
     provider: "openrouter",
-    model: "deepseek/deepseek-v4-flash:free",
+    model: "openrouter/free",
     apiKey: key,
     baseUrl: "https://openrouter.ai/api/v1",
     maxTokens: 2048,
@@ -79,7 +79,8 @@ export async function streamAIResponse(
       if (data === "[DONE]") continue;
       try {
         const parsed = JSON.parse(data);
-        const content = parsed.choices?.[0]?.delta?.content || "";
+        const delta = parsed.choices?.[0]?.delta || {};
+        const content = delta.content || delta.reasoning || "";
         if (content) {
           full += content;
           onToken(content);
