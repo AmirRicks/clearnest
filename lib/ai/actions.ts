@@ -1,4 +1,4 @@
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createServerClient } from "@/lib/supabase/server-client";
 import { format, startOfDay } from "date-fns";
 
 const ALL_SLOTS = ["07:00", "09:00", "11:00", "13:00", "15:00", "17:00"] as const;
@@ -6,17 +6,16 @@ type TimeSlot = (typeof ALL_SLOTS)[number];
 
 type Result<T = void> = { ok: true; data: T } | { ok: false; error: string };
 
-async function getDb() {
-  const db = createAdminClient();
-  if (!db) throw new Error("Supabase not configured");
-  return db;
+let _db: ReturnType<typeof createServerClient> | null = null;
+function getDb() {
+  if (!_db) _db = createServerClient();
+  return _db;
 }
 
 // ----- CONVERSATION -----
 
 export async function createConversation(sessionId: string) {
-  const db = await getDb();
-  const { data, error } = await db
+  const { data, error } = await getDb()
     .from("ai_conversations")
     .insert({ session_id: sessionId })
     .select("id")
@@ -31,8 +30,7 @@ export async function saveMessage(
   content: string,
   metadata?: Record<string, unknown>,
 ) {
-  const db = await getDb();
-  await db.from("ai_messages").insert({
+  await getDb().from("ai_messages").insert({
     conversation_id: conversationId,
     role,
     content,
@@ -51,8 +49,7 @@ export async function updateConversation(
     resolved?: boolean;
   },
 ) {
-  const db = await getDb();
-  await db
+  await getDb()
     .from("ai_conversations")
     .update({
       ...updates,
@@ -62,13 +59,12 @@ export async function updateConversation(
 }
 
 export async function incrementMessageCount(conversationId: string) {
-  const db = await getDb();
-  const { data: conv } = await db
+  const { data: conv } = await getDb()
     .from("ai_conversations")
     .select("message_count")
     .eq("id", conversationId)
     .single();
-  await db
+  await getDb()
     .from("ai_conversations")
     .update({
       message_count: (conv?.message_count || 0) + 1,
@@ -90,8 +86,7 @@ export async function createLeadFromAI(input: {
   message?: string;
   conversationId?: string;
 }): Promise<Result<{ id: string }>> {
-  const db = await getDb();
-  const { data, error } = await db
+  const { data, error } = await getDb()
     .from("leads")
     .insert({
       name: input.name,
@@ -127,8 +122,7 @@ export async function createBookingRequest(input: {
   notes?: string;
   conversationId?: string;
 }): Promise<Result<{ id: string }>> {
-  const db = await getDb();
-  const { data, error } = await db
+  const { data, error } = await getDb()
     .from("booking_requests")
     .insert({
       customer_name: input.customerName,
@@ -163,8 +157,7 @@ export async function createSupportTicket(input: {
   description: string;
   conversationId?: string;
 }): Promise<Result<{ id: string }>> {
-  const db = await getDb();
-  const { data, error } = await db
+  const { data, error } = await getDb()
     .from("support_tickets")
     .insert({
       customer_name: input.customerName || null,
@@ -194,8 +187,7 @@ export async function createRefundRequest(input: {
   reason: string;
   conversationId?: string;
 }): Promise<Result<{ id: string }>> {
-  const db = await getDb();
-  const { data, error } = await db
+  const { data, error } = await getDb()
     .from("refund_requests")
     .insert({
       customer_name: input.customerName,
@@ -219,7 +211,6 @@ export async function createRefundRequest(input: {
 export async function checkAvailability(
   dateStr: string,
 ): Promise<{ available: boolean; availableSlots: TimeSlot[]; message: string }> {
-  const db = await getDb();
   const date = new Date(dateStr);
   const dayOfWeek = date.getDay();
 
@@ -244,7 +235,7 @@ export async function checkAvailability(
   const dayEnd = new Date(dayStart);
   dayEnd.setDate(dayEnd.getDate() + 1);
 
-  const { data: bookings } = await db
+  const { data: bookings } = await getDb()
     .from("bookings")
     .select("scheduled_for")
     .in("status", ["pending", "confirmed", "in_progress", "paid", "invoiced"])
