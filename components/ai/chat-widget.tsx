@@ -53,10 +53,19 @@ export function AIChatWidget() {
     if (savedConv) setConversationId(savedConv);
   }, []);
 
-  // Scroll to bottom on new messages
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+
+  const isNearBottom = useCallback(() => {
+    const el = messagesContainerRef.current;
+    if (!el) return true;
+    return el.scrollHeight - el.scrollTop - el.clientHeight < 100;
+  }, []);
+
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, streamingContent]);
+    if (isNearBottom()) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, streamingContent, isNearBottom]);
 
   const addMessage = useCallback((msg: Message) => {
     setMessages((prev) => {
@@ -244,7 +253,7 @@ export function AIChatWidget() {
             {isMinimized ? null : (
               <>
                 {/* Messages */}
-                <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+                <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 space-y-4">
                   {messages.length === 0 && !isStreaming && (
                     <div className="text-center py-8">
                       <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-brand-100 text-brand-600">
