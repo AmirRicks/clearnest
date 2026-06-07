@@ -23,6 +23,8 @@ type Fail = { ok: false; error: string };
 
 type SB = Awaited<ReturnType<typeof createClient>>;
 
+const ADMIN_EMAILS = (process.env.ADMIN_EMAIL || '').split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+
 async function requireAdmin() {
   const sb = await createClient();
   const { data: { user } } = await sb.auth.getUser();
@@ -32,7 +34,7 @@ async function requireAdmin() {
     .select("user_id")
     .eq("user_id", user.id)
     .maybeSingle();
-  return { sb, user, isAdmin: Boolean(admin) };
+  return { sb, user, isAdmin: Boolean(admin) || (!!user && ADMIN_EMAILS.includes(user.email?.toLowerCase() || '')) };
 }
 
 /** Shared: email a booking's customer a review request (Google-first, Yelp fallback). */
