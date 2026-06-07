@@ -14,7 +14,7 @@ export default function LoginPage() {
         </h1>
         
         <form
-          action="/auth/callback"
+          action="/api/admin/login"
           method="post"
           className="mt-6"
         >

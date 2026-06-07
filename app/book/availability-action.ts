@@ -1,5 +1,6 @@
 "use server";
 
+import { z } from "zod";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { format, startOfMonth, endOfMonth, addMonths, startOfDay, addDays } from "date-fns";
 
@@ -29,13 +30,16 @@ function generateFreeAvailability(clientToday: string): DayAvailability[] {
 }
 
 export async function getAvailability(monthDateStr: string, clientTodayStr?: string): Promise<DayAvailability[]> {
-  const todaySource = clientTodayStr || monthDateStr;
+  const parsedMonth = z.string().regex(/^\d{4}-\d{2}(?:-\d{2})?$/).safeParse(monthDateStr);
+  if (!parsedMonth.success) return [];
+
+  const todaySource = clientTodayStr || parsedMonth.data;
   if (!isSupabaseConfigured()) return generateFreeAvailability(todaySource);
 
   try {
     const supabase = await createClient();
     
-    const baseDate = new Date(monthDateStr);
+    const baseDate = new Date(parsedMonth.data);
     const start = startOfMonth(isNaN(baseDate.getTime()) ? new Date() : baseDate);
     const end = endOfMonth(addMonths(start, 1));
 

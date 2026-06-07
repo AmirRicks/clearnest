@@ -23,8 +23,11 @@ const ALPHABET = "ACDEFGHJKLMNPQRTUVWXY3479";
 
 /** Generate a code like CN-GIFT-7K4P-Q9XF (sortable-ish, easy to read aloud). */
 export function generateGiftCode(): string {
-  const block = (len: number) =>
-    Array.from({ length: len }, () => ALPHABET[Math.floor(Math.random() * ALPHABET.length)]).join("");
+  const block = (len: number) => {
+    const buf = new Uint8Array(len);
+    crypto.getRandomValues(buf);
+    return Array.from(buf, (b) => ALPHABET[b % ALPHABET.length]).join("");
+  };
   return `CN-GIFT-${block(4)}-${block(4)}`;
 }
 

@@ -3,7 +3,8 @@ import { Twilio } from "twilio";
 import { z } from "zod";
 import { BUSINESS } from "@/lib/utils";
 import { sendLeadNotification, sendLeadAutoReply } from "@/lib/email";
-import supabaseAdmin from "@/lib/supabase-admin";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { checkRateLimit, rateLimitKey } from "@/lib/rate-limit";
 
 const LeadSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -35,6 +36,14 @@ async function sendSms(to: string, body: string) {
 }
 
 export async function POST(request: Request) {
+  const rl = checkRateLimit(rateLimitKey(request), { maxRequests: 3, windowMs: 60000 });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { ok: false, error: "Too many submissions. Please wait a minute and try again." },
+      { status: 429 }
+    );
+  }
+
   const data = await request.formData();
   const raw = {
     name: data.get("name"),
@@ -85,8 +94,9 @@ Message: ${message}`;
   // --- End Email Flow ---
   
   // --- Start Supabase Lead Logging ---
-  if (supabaseAdmin) {
-    const { error: dbError } = await supabaseAdmin.from("leads").insert({
+  const admin = createAdminClient();
+  if (admin) {
+    const { error: dbError } = await admin.from("leads").insert({
       name,
       phone,
       email,

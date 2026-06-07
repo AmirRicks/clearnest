@@ -22,6 +22,7 @@ function Inner() {
   const [email, setEmail] = useState(prefill);
   const [sent, setSent] = useState(false);
   const [pending, setPending] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -37,6 +38,8 @@ function Inner() {
       });
       if (error) throw error;
       setSent(true);
+      setCooldown(30);
+      const timer = setInterval(() => setCooldown((c) => { if (c <= 1) { clearInterval(timer); return 0; } return c - 1; }), 1000);
       toast.success("Check your email for the sign-in link.");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Couldn’t send link.");
@@ -59,8 +62,16 @@ function Inner() {
         </p>
 
         {sent ? (
-          <div className="mt-6 rounded-2xl border border-success/30 bg-success/5 p-4 text-sm text-success">
-            We sent a sign-in link to <strong>{email}</strong>. Open it on this device.
+          <div className="mt-6 grid gap-3 rounded-2xl border border-success/30 bg-success/5 p-4 text-sm text-success">
+            <p>We sent a sign-in link to <strong>{email}</strong>. Open it on this device.</p>
+            <button
+              type="button"
+              disabled={cooldown > 0}
+              onClick={() => { setSent(false); setEmail(email); }}
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-charcoal px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
+            >
+              {cooldown > 0 ? `Resend in ${cooldown}s` : "Send again"}
+            </button>
           </div>
         ) : (
           <form onSubmit={onSubmit} className="mt-6 grid gap-4">
