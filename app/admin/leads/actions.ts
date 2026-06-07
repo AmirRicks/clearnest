@@ -6,12 +6,28 @@ import { z } from "zod";
 import { estimatePrice, SERVICES } from "@/lib/pricing";
 import { sendBookingConfirmation } from "@/lib/email";
 
+async function requireAdmin() {
+  const sb = await createClient();
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) return null;
+  const { data: admin } = await sb
+    .from("admins")
+    .select("user_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  return admin ? sb : null;
+}
+
 export async function updateLeadStatus(id: string, newStatus: string) {
-  const supabase = await createClient();
+  const supabase = await requireAdmin();
+  if (!supabase) return { ok: false, error: "Not authorized." };
+
+  const statusCheck = z.enum(["new", "contacted", "won", "lost"]).safeParse(newStatus);
+  if (!statusCheck.success) return { ok: false, error: "Invalid status." };
 
   const { error } = await supabase
     .from("leads")
-    .update({ status: newStatus })
+    .update({ status: statusCheck.data })
     .eq("id", id);
 
   if (error) {
@@ -31,21 +47,37 @@ const BookingFromLeadSchema = z.object({
   zip: z.string().min(4),
 });
 
-export async function createBookingFromLead(lead: any, bookingDetails: unknown): Promise<{ok: boolean, error?: string}> {
+const LeadSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().nullable().optional(),
+  email: z.string().nullable().optional(),
+  phone: z.string().nullable().optional(),
+  service_id: z.string().nullable().optional(),
+  bedrooms: z.coerce.number().int().min(0).nullable().optional(),
+  bathrooms: z.coerce.number().int().min(0).nullable().optional(),
+  sqft: z.coerce.number().int().min(0).nullable().optional(),
+});
+
+export async function createBookingFromLead(lead: unknown, bookingDetails: unknown): Promise<{ok: boolean, error?: string}> {
+  const supabase = await requireAdmin();
+  if (!supabase) return { ok: false, error: "Not authorized." };
+
+  const parsedLead = LeadSchema.safeParse(lead);
+  if (!parsedLead.success) {
+    return { ok: false, error: "Invalid lead data." };
+  }
+  const l = parsedLead.data;
+
   const parsedDetails = BookingFromLeadSchema.safeParse(bookingDetails);
   if (!parsedDetails.success) {
     return { ok: false, error: "Invalid booking details provided." };
   }
   const details = parsedDetails.data;
-  
-  const supabase = await createClient();
 
-  // A lead doesn't have beds/baths/sqft, so we use defaults for now.
-  // Phase 2 could involve AI estimation or more fields in the modal.
-  const serviceId = lead.service_id || 'standard';
-  const bedrooms = lead.bedrooms || 2;
-  const bathrooms = lead.bathrooms || 2;
-  const sqft = lead.sqft || 1500;
+  const serviceId = (l.service_id || 'standard') as keyof typeof SERVICES;
+  const bedrooms = l.bedrooms ?? 2;
+  const bathrooms = l.bathrooms ?? 2;
+  const sqft = l.sqft ?? 1500;
 
   const { low, high } = estimatePrice({ serviceId, bedrooms, bathrooms, sqft, addonIds: [], frequency: 'one_time' });
 
@@ -60,9 +92,9 @@ export async function createBookingFromLead(lead: any, bookingDetails: unknown):
       sqft,
       estimated_low: low,
       estimated_high: high,
-      customer_name: lead.name,
-      customer_email: lead.email,
-      customer_phone: lead.phone,
+      customer_name: l.name,
+      customer_email: l.email,
+      customer_phone: l.phone,
       address_line1: details.addressLine1,
       address_line2: details.addressLine2,
       city: details.city,
@@ -78,12 +110,12 @@ export async function createBookingFromLead(lead: any, bookingDetails: unknown):
   }
 
   // 2. Update the lead status to 'won'
-  await supabase.from("leads").update({ status: 'won' }).eq("id", lead.id);
+  await supabase.from("leads").update({ status: 'won' }).eq("id", l.id);
   
   // 3. Send confirmation email (fire and forget)
   void sendBookingConfirmation({
-    to: lead.email,
-    customerName: lead.name,
+    to: l.email ?? "",
+    customerName: l.name ?? "",
     serviceName: SERVICES[serviceId as keyof typeof SERVICES].name,
     scheduledFor: details.scheduledFor,
     address: `${details.addressLine1}, ${details.city}, UT ${details.zip}`,

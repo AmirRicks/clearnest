@@ -10,7 +10,7 @@ export default async function AdminSettings() {
     );
   }
   const sb = await createClient();
-  const { data } = await sb.from("site_settings").select("*");
+  const { data } = await sb.from("site_settings").select("key, value");
   const map = Object.fromEntries((data ?? []).map((r) => [r.key, r.value]));
 
   return (

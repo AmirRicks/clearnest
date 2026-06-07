@@ -1,8 +1,10 @@
 "use server";
 
 import { z } from "zod";
+import { headers } from "next/headers";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { sendLeadNotification, sendLeadAutoReply } from "@/lib/email";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const leadSchema = z.object({
   name: z.string().max(120).optional().nullable(),
@@ -21,6 +23,15 @@ const leadSchema = z.object({
 export type LeadResult = { ok: true } | { ok: false; error: string };
 
 export async function submitLead(input: unknown): Promise<LeadResult> {
+  const h = await headers();
+  const rl = checkRateLimit(h.get("x-forwarded-for") ?? "unknown", {
+    maxRequests: 5,
+    windowMs: 60000,
+  });
+  if (!rl.allowed) {
+    return { ok: false, error: "You've submitted too many requests. Please wait a minute." };
+  }
+
   const parsed = leadSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "Please add a name and a phone or email." };
   const d = parsed.data;

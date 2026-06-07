@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { stripe } from "@/lib/stripe";
-import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { isSupabaseConfigured } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendGiftCardToRecipient, sendGiftReceipt } from "@/lib/email";
 
@@ -39,8 +39,8 @@ export async function POST(request: Request) {
     const invoice = event.data.object as { metadata?: { bookingId?: string }; id?: string };
     const bookingId = invoice.metadata?.bookingId;
     if (bookingId) {
-      const sb = await createClient();
-      await sb.from("bookings").update({ status: "paid" }).eq("id", bookingId);
+      const sb = createAdminClient();
+      if (sb) await sb.from("bookings").update({ status: "paid" }).eq("id", bookingId);
     }
   }
 

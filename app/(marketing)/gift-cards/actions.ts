@@ -1,6 +1,5 @@
 "use server";
 
-import { headers } from "next/headers";
 import { z } from "zod";
 import { createGiftCheckout } from "@/lib/stripe";
 import { generateGiftCode, normalizeGiftAmount } from "@/lib/gift";
@@ -46,10 +45,7 @@ export async function startGiftCheckout(
     return { ok: false, error: "Choose a gift amount between $50 and $1,000.", field: "amount" };
   }
 
-  const h = await headers();
-  const host = h.get("x-forwarded-host") ?? h.get("host") ?? "clearnest.services";
-  const proto = h.get("x-forwarded-proto") ?? (host.includes("localhost") ? "http" : "https");
-  const origin = `${proto}://${host}`;
+  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? "https://clearnest.services";
 
   const code = generateGiftCode();
 

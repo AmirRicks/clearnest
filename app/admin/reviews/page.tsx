@@ -24,7 +24,7 @@ export default async function AdminReviews() {
   const sb = await createClient();
   const { data, error } = await sb
     .from("reviews")
-    .select("*")
+    .select("id, customer_name, location, rating, body, source, featured, reviewed_at, created_at")
     .order("featured", { ascending: false })
     .order("reviewed_at", { ascending: false });
   if (error) {
