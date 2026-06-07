@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" width="1080" height="1920">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f0f7fb"/>
+      <stop offset="100%" stop-color="#fdfdfb"/>
+    </linearGradient>
+    <linearGradient id="accentBar" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#2b88a8"/>
+      <stop offset="100%" stop-color="#1b556c"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1080" height="1920" fill="url(#bg)"/>
+
+  <!-- Decorative -->
+  <rect x="-100" y="300" width="500" height="500" rx="100" fill="#2b88a8" opacity="0.03" transform="rotate(-15, 150, 550)"/>
+  <rect x="700" y="1400" width="400" height="400" rx="80" fill="#2b88a8" opacity="0.03" transform="rotate(10, 900, 1600)"/>
+
+  <!-- Top accent -->
+  <rect x="0" y="0" width="1080" height="8" fill="url(#accentBar)"/>
+
+  <!-- Logo -->
+  <g transform="translate(80, 60)">
+    <g transform="scale(0.6)">
+      <path d="M0 60 L40 0 L80 60 Z" fill="none" stroke="#1b556c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10 60 Q10 95 40 100 Q70 95 70 60" fill="none" stroke="#1b556c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="40" cy="85" r="4" fill="#c9a96e"/>
+    </g>
+    <text x="60" y="30" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="28" font-weight="700" fill="#1a1d22">ClearNest</text>
+    <text x="60" y="52" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="11" font-weight="500" fill="#4a5159" letter-spacing="3">CLEANING SERVICES</text>
+  </g>
+
+  <!-- Badge -->
+  <g transform="translate(80, 200)">
+    <rect x="0" y="0" width="200" height="44" rx="22" fill="#1b556c"/>
+    <text x="100" y="28" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="14" font-weight="600" fill="#ffffff" text-anchor="middle">FROM $110</text>
+  </g>
+
+  <!-- Headline -->
+  <text x="80" y="440" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="72" font-weight="800" fill="#1a1d22" line-height="1.1">
+    <tspan x="80" dy="0">Standard</tspan>
+    <tspan x="80" dy="80">Cleaning</tspan>
+  </text>
+
+  <text x="80" y="650" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="24" fill="#4a5159" line-height="1.6">
+    <tspan x="80" dy="0">Your weekly or biweekly maintenance</tspan>
+    <tspan x="80" dy="40">clean. Consistent quality, every visit.</tspan>
+  </text>
+
+  <!-- What's included -->
+  <g transform="translate(80, 780)">
+    <text x="0" y="0" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="18" font-weight="700" fill="#2b88a8" letter-spacing="2">WHAT'S INCLUDED</text>
+
+    <g transform="translate(0, 50)">
+      <line x1="0" y1="0" x2="40" y2="0" stroke="#2b88a8" stroke-width="3" stroke-linecap="round"/>
+      <text x="60" y="6" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="20" font-weight="500" fill="#1a1d22">Vacuum &amp; mop all floors</text>
+    </g>
+    <g transform="translate(0, 100)">
+      <line x1="0" y1="0" x2="40" y2="0" stroke="#2b88a8" stroke-width="3" stroke-linecap="round"/>
+      <text x="60" y="6" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="20" font-weight="500" fill="#1a1d22">Dust all accessible surfaces</text>
+    </g>
+    <g transform="translate(0, 150)">
+      <line x1="0" y1="0" x2="40" y2="0" stroke="#2b88a8" stroke-width="3" stroke-linecap="round"/>
+      <text x="60" y="6" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="20" font-weight="500" fill="#1a1d22">Kitchen counters, sink, appliances</text>
+    </g>
+    <g transform="translate(0, 200)">
+      <line x1="0" y1="0" x2="40" y2="0" stroke="#2b88a8" stroke-width="3" stroke-linecap="round"/>
+      <text x="60" y="6" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="20" font-weight="500" fill="#1a1d22">Bathroom scrub &amp; sanitize</text>
+    </g>
+    <g transform="translate(0, 250)">
+      <line x1="0" y1="0" x2="40" y2="0" stroke="#2b88a8" stroke-width="3" stroke-linecap="round"/>
+      <text x="60" y="6" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="20" font-weight="500" fill="#1a1d22">Empty trash &amp; replace liners</text>
+    </g>
+    <g transform="translate(0, 300)">
+      <line x1="0" y1="0" x2="40" y2="0" stroke="#2b88a8" stroke-width="3" stroke-linecap="round"/>
+      <text x="60" y="6" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="20" font-weight="500" fill="#1a1d22">60-point ClearNest checklist</text>
+    </g>
+  </g>
+
+  <!-- Pricing highlight -->
+  <g transform="translate(80, 1200)">
+    <rect x="0" y="0" width="920" height="120" rx="20" fill="#1b556c"/>
+    <text x="460" y="50" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="16" fill="#aed6e7" text-anchor="middle">RECURRING DISCOUNTS AVAILABLE</text>
+    <text x="460" y="90" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="22" font-weight="700" fill="#ffffff" text-anchor="middle">Weekly 20% · Biweekly 15% · Monthly 10%</text>
+  </g>
+
+  <!-- CTA -->
+  <rect x="80" y="1380" width="920" height="80" rx="40" fill="#1a1d22"/>
+  <text x="540" y="1432" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="26" font-weight="700" fill="#ffffff" text-anchor="middle">Book Standard Cleaning →</text>
+
+  <!-- Footer -->
+  <g transform="translate(80, 1530)">
+    <text x="0" y="0" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="16" fill="#4a5159">clearnest.services · (801) 441-0726</text>
+  </g>
+
+  <!-- Bottom accent -->
+  <rect x="0" y="1912" width="1080" height="8" fill="url(#accentBar)"/>
+</svg>

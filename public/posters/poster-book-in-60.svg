@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" width="1080" height="1920">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fdfdfb"/>
+      <stop offset="100%" stop-color="#f6f6f1"/>
+    </linearGradient>
+    <linearGradient id="accentBar" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#2b88a8"/>
+      <stop offset="100%" stop-color="#1b556c"/>
+    </linearGradient>
+    <linearGradient id="ctaGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1a1d22"/>
+      <stop offset="100%" stop-color="#2b88a8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1080" height="1920" fill="url(#bg)"/>
+
+  <!-- Decorative shapes -->
+  <circle cx="100" cy="200" r="300" fill="#2b88a8" opacity="0.03"/>
+  <circle cx="980" cy="1600" r="400" fill="#2b88a8" opacity="0.04"/>
+  <circle cx="540" cy="900" r="250" fill="#c9a96e" opacity="0.03"/>
+
+  <!-- Top accent line -->
+  <rect x="0" y="0" width="1080" height="8" fill="url(#accentBar)"/>
+
+  <!-- Logo area -->
+  <g transform="translate(80, 60)">
+    <!-- Brand mark -->
+    <g transform="scale(0.6)">
+      <path d="M0 60 L40 0 L80 60 Z" fill="none" stroke="#1b556c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10 60 Q10 95 40 100 Q70 95 70 60" fill="none" stroke="#1b556c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="40" cy="85" r="4" fill="#c9a96e"/>
+    </g>
+    <text x="60" y="30" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="28" font-weight="700" fill="#1a1d22">ClearNest</text>
+    <text x="60" y="52" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="11" font-weight="500" fill="#4a5159" letter-spacing="3">CLEANING SERVICES</text>
+  </g>
+
+  <!-- Main headline -->
+  <text x="80" y="420" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="22" font-weight="600" fill="#2b88a8" letter-spacing="3">BOOK IN 60 SECONDS</text>
+
+  <text x="80" y="490" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="72" font-weight="800" fill="#1a1d22" line-height="1.1">
+    <tspan x="80" dy="0">Your Home</tspan>
+    <tspan x="80" dy="80">Deserves</tspan>
+    <tspan x="80" dy="80">a Clean Nest</tspan>
+  </text>
+
+  <!-- Subtext -->
+  <text x="80" y="740" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="24" fill="#4a5159" line-height="1.6">
+    <tspan x="80" dy="0">Professional home cleaning in</tspan>
+    <tspan x="80" dy="40">Salt Lake County. No phone tag,</tspan>
+    <tspan x="80" dy="40">no upfront charges. Just a</tspan>
+    <tspan x="80" dy="40">noticeably cleaner home.</tspan>
+  </text>
+
+  <!-- Feature list -->
+  <g transform="translate(80, 900)">
+    <rect x="0" y="0" width="920" height="2" fill="#d4d8dc"/>
+    <g transform="translate(0, 40)">
+      <circle cx="16" cy="16" r="16" fill="#2b88a8" opacity="0.1"/>
+      <text x="16" y="22" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="18" font-weight="700" fill="#2b88a8" text-anchor="middle">✓</text>
+      <text x="48" y="22" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="22" font-weight="600" fill="#1a1d22">Book online — 60 seconds, no signup</text>
+    </g>
+    <g transform="translate(0, 100)">
+      <circle cx="16" cy="16" r="16" fill="#2b88a8" opacity="0.1"/>
+      <text x="16" y="22" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="18" font-weight="700" fill="#2b88a8" text-anchor="middle">✓</text>
+      <text x="48" y="22" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="22" font-weight="600" fill="#1a1d22">Pay after the clean — zero upfront</text>
+    </g>
+    <g transform="translate(0, 160)">
+      <circle cx="16" cy="16" r="16" fill="#2b88a8" opacity="0.1"/>
+      <text x="16" y="22" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="18" font-weight="700" fill="#2b88a8" text-anchor="middle">✓</text>
+      <text x="48" y="22" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="22" font-weight="600" fill="#1a1d22">Insured, bonded, background-checked</text>
+    </g>
+    <g transform="translate(0, 220)">
+      <circle cx="16" cy="16" r="16" fill="#2b88a8" opacity="0.1"/>
+      <text x="16" y="22" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="18" font-weight="700" fill="#2b88a8" text-anchor="middle">✓</text>
+      <text x="48" y="22" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="22" font-weight="600" fill="#1a1d22">Eco &amp; pet-safe products</text>
+    </g>
+  </g>
+
+  <!-- CTA Button -->
+  <rect x="80" y="1260" width="920" height="80" rx="40" fill="url(#ctaGrad)"/>
+  <text x="540" y="1312" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="26" font-weight="700" fill="#ffffff" text-anchor="middle">Book Your Cleaning →</text>
+
+  <!-- Trust badges -->
+  <g transform="translate(80, 1420)">
+    <text x="0" y="0" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="16" fill="#4a5159" text-anchor="middle">★★★★★ 5.0 Average Rating</text>
+  </g>
+
+  <!-- Footer -->
+  <g transform="translate(80, 1540)">
+    <text x="0" y="0" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="18" font-weight="600" fill="#1a1d22">ClearNest Cleaning Services</text>
+    <text x="0" y="30" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="16" fill="#4a5159">Salt Lake County, Utah</text>
+    <text x="0" y="55" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="16" fill="#4a5159">clearnest.services</text>
+    <text x="0" y="80" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="16" fill="#4a5159">(801) 441-0726</text>
+  </g>
+
+  <!-- Bottom accent line -->
+  <rect x="0" y="1912" width="1080" height="8" fill="url(#accentBar)"/>
+</svg>
