@@ -30,6 +30,7 @@ direct.
 The black tank doesn't work, so **the business cards are designed with no black and no grey** — every element is brand **blue or gold** (the QR is dark blue, not black) on a white background. So they print perfectly on color inks alone.
 - In the print dialog, make sure **"Print in grayscale / black & white" is OFF**.
 - The **business cards use Avery template 28371** (Letter, 10 per sheet, 3.5 × 2 in). Load the Avery sheet, print at **100% / Actual size**, and the cards land right on the perforations.
+- **If your printer feeds a little off** (cards creeping out of the lines toward the top of the sheet): the card content is now **centered with a ~0.35in safe margin** all around, so it stays readable inside each cell even with minor drift. To minimize drift: select **"Actual Size / 100%" (never "Fit")**, load **one sheet at a time**, and feed it squarely against the tray's edge guide. If a sheet still drifts badly, run a plain-paper test first and nudge the tray guide before loading the real Avery sheet.
 - *(The poster and door hanger were made earlier in the darker palette — ask me to recolor them for this printer before you print those.)*
 
 ### Paper recommendations
