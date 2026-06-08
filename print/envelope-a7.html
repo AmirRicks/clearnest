@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>ClearNest — A7 Envelope Front (5.27 × 7.24 in)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  /* ClearNest A7 envelope front — printed straight onto a 5.27 x 7.24 in
+     peel-and-stick A7 envelope. The envelope becomes a branded "package" you
+     hand out door-to-door with business cards + a folded poster inside.
+
+     PRINTER NOTES (HP Smart Tank Plus 550):
+     • NO black, NO grey — only brand blue + gold ink. The white is the
+       envelope itself (we print no background fill, to save ink + look clean).
+     • DRIFT-TOLERANT: the printer feeds envelopes a little off, so ALL content
+       is centered with a big ~0.55in safe margin on every side. Even if the
+       envelope feeds crooked, nothing lands on the edges or seams.
+     • Print at 100% / Actual Size. Paper size = A7 envelope (5.27 x 7.24 in). */
+  @page { size: 5.27in 7.24in; margin: 0; }
+  @media print { .screen-only { display: none; } }
+
+  :root {
+    --blue:      #0E6F92;
+    --blue-deep: #0A5570;
+    --blue-soft: #2F8AA8;
+    --gold:      #C7972F;
+  }
+  html, body { margin: 0; }   /* NO background fill — the white envelope is the background */
+  body {
+    font-family: -apple-system, "Helvetica Neue", "Geist", "Inter", system-ui, Arial, sans-serif;
+    color: var(--blue);
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  @media screen {
+    html, body { background: #dfe7ea; }   /* preview backdrop only — never prints */
+    body { padding: 30px; display: grid; place-items: center; }
+    .env { background: #fff; box-shadow: 0 30px 80px -20px rgba(14,111,146,.35); outline: 1px solid rgba(47,138,168,.25); }
+  }
+
+  .env {
+    width: 5.27in; height: 7.24in;
+    box-sizing: border-box;
+    background: transparent;             /* let the white envelope be the bg */
+    position: relative; overflow: hidden;
+    /* === SAFE ZONE: big margins so feed drift can't push content off === */
+    padding: 0.62in 0.55in;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+  }
+
+  /* Brand lockup */
+  .lockup { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .mark { width: 0.62in; height: 0.62in; color: var(--blue); }
+  .name { font-size: 31px; font-weight: 800; letter-spacing: -0.015em; color: var(--blue); line-height: 1; }
+  .strap { font-size: 9px; font-weight: 600; letter-spacing: 0.32em; text-transform: uppercase; color: var(--blue-soft); }
+
+  .rule { width: 1.1in; height: 2px; background: var(--gold); border-radius: 2px; margin: 0.16in 0; }
+
+  .eyebrow { font-size: 9.5px; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: var(--blue-soft); }
+  .headline {
+    font-size: 25px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.08;
+    color: var(--blue); margin: 7px 0 0;
+  }
+  .headline .accent { color: var(--gold); }
+  .mission {
+    font-size: 12.5px; font-weight: 500; line-height: 1.5; color: var(--blue-soft);
+    margin: 0.13in 0 0; max-width: 3.7in;
+  }
+  .mission strong { color: var(--blue); font-weight: 700; }
+
+  .trust {
+    margin-top: 0.16in; font-size: 8px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--blue-soft); line-height: 1.5;
+  }
+  .trust .dot { color: var(--gold); margin: 0 4px; }
+
+  .inside {
+    margin-top: 0.2in;
+    border: 1.5px solid var(--gold);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.02em; color: var(--blue);
+  }
+  .inside .pop { color: var(--gold); }
+
+  /* push the contact block toward the bottom of the safe zone */
+  .spacer { flex: 1 1 auto; min-height: 0.14in; }
+
+  .contact { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .phone { font-size: 27px; font-weight: 800; letter-spacing: -0.01em; color: var(--blue-deep); line-height: 1; font-feature-settings: "tnum" 1, "lnum" 1; }
+  .web { font-size: 13px; font-weight: 700; color: var(--blue); }
+  .qrwrap { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 0.12in; }
+  .qrwrap img { width: 1.05in; height: 1.05in; display: block; }
+  .qrwrap .cap { font-size: 8px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--blue-soft); }
+
+  .screen-only {
+    position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%);
+    padding: 8px 14px; background: var(--blue-deep); color: #fff;
+    border-radius: 999px; font-size: 12px; text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="env">
+  <div class="lockup">
+    <svg class="mark" viewBox="0 0 64 64" fill="none">
+      <path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/>
+      <circle cx="32" cy="38" r="3.4" fill="#C7972F"/>
+    </svg>
+    <div class="name">ClearNest</div>
+    <div class="strap">Cleaning Services</div>
+  </div>
+
+  <div class="rule"></div>
+
+  <div class="eyebrow">Our Mission</div>
+  <div class="headline">A Cleaner Home.<br/><span class="accent">A Clearer Mind.</span></div>
+  <div class="mission">
+    ClearNest is your local, insured, family- &amp; pet-safe cleaning team. We
+    earn your trust every visit — and <strong>you only pay after the clean.</strong>
+    No deposits, no pressure, just a home you&rsquo;ll love coming back to.
+  </div>
+
+  <div class="trust">
+    Insured &amp; bonded <span class="dot">&middot;</span> Background-checked
+    <span class="dot">&middot;</span> Eco &amp; pet-safe
+  </div>
+
+  <div class="inside">Inside: how to book + <span class="pop">20% off your first clean</span></div>
+
+  <div class="spacer"></div>
+
+  <div class="contact">
+    <div class="phone">(801) 441-0726</div>
+    <div class="web">clearnest.services</div>
+    <div class="qrwrap">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=520x520&margin=0&qzone=0&format=svg&color=0a5570&bgcolor=ffffff&data=https%3A%2F%2Fclearnest.services" alt="Scan to book at clearnest.services"/>
+      <div class="cap">Scan &middot; Book in 60 sec</div>
+    </div>
+  </div>
+</div>
+<div class="screen-only">⌘P / Ctrl+P → Paper: A7 envelope (5.27×7.24in) · Scale: 100% / Actual Size · Background graphics ON</div>
+</body>
+</html>
