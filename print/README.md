@@ -11,7 +11,7 @@ direct.
 |---|---|---|
 | `poster.html` | 8.5 × 11 in (US Letter) | Coffee-shop bulletin boards, gyms, libraries, laundromats, apartment lobbies |
 | `business-cards.html` | 10 cards on Letter — **Avery 28371** (3.5 × 2 in, single-sided) | Hand out at every job, leave at counters, exchange with neighbors |
-| `envelope-a7.html` | **A7 envelope — front + back** (5.27 × 7.24 in, 2 pages) | Print on peel-and-stick A7 envelopes → stuff a card + folded poster inside → hand the whole branded "package" out door-to-door |
+| `envelope-a7.html` | **A7 envelope cover — landscape** (7.24 × 5.27 in) | Print on peel-and-stick A7 envelopes → stuff a card + folded poster inside → hand the whole branded "package" out door-to-door |
 | `door-hanger.html` | 4.25 × 11 in (Letter, left half) | Canvass the neighbors after every job |
 
 ## Print instructions
@@ -32,8 +32,7 @@ The black tank doesn't work, so **the business cards are designed with no black 
 - In the print dialog, make sure **"Print in grayscale / black & white" is OFF**.
 - The **business cards use Avery template 28371** (Letter, 10 per sheet, 3.5 × 2 in). Load the Avery sheet, print at **100% / Actual size**, and the cards land right on the perforations.
 - **If your printer feeds a little off** (cards creeping out of the lines toward the top of the sheet): the card content is now **centered with a ~0.35in safe margin** all around, so it stays readable inside each cell even with minor drift. To minimize drift: select **"Actual Size / 100%" (never "Fit")**, load **one sheet at a time**, and feed it squarely against the tray's edge guide. If a sheet still drifts badly, run a plain-paper test first and nudge the tray guide before loading the real Avery sheet.
-- **A7 envelopes (`envelope-a7.html`):** In the print dialog set **Paper Size = A7 envelope** (or a Custom size of **5.27 × 7.24 in**) and **Scale = 100% / Actual Size**. Load **one envelope at a time** in the main tray, **print-side UP**, flap closed, and slide the width guide snug against it. The whole design is centered with a big ~0.55in margin, so even if the envelope feeds a little crooked everything stays safely on the front. Tip: run your **first test on a plain sheet of paper** (or a spare envelope) to confirm it pulls straight before using a good one.
-  - **Front + back:** the PDF is **2 pages** — **page 1 = front**, **page 2 = back** (a clean logo + tagline). Print page 1 on the front first, then re-feed the same envelope flipped to print page 2 on the back. The back is centered so it clears the flap; if your envelope's flap/seam gets in the way, just print page 1 (the front alone is complete) and leave the back blank.
+- **A7 envelopes (`envelope-a7.html`):** The design is **LANDSCAPE (7.24 × 5.27 in)** to match how the A7 envelope is actually held/fed (wide, flap on the long top edge). In the print dialog set **Paper Size = A7 envelope** (or Custom **7.24 × 5.27 in**), **Orientation = Landscape**, **Scale = 100% / Actual Size**, backgrounds ON. Print on the **smooth FRONT side** (not the flap side). The logo + tagline sit dead-center with a big ~1in margin all around, so even a crooked feed keeps everything centered and nothing gets cut off. Tip: run your **first test on a plain sheet** (or a spare envelope) to confirm it feeds straight and lands centered.
 - *(The poster and door hanger were made earlier in the darker palette — ask me to recolor them for this printer before you print those.)*
 
 ### Paper recommendations
