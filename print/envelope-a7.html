@@ -5,139 +5,91 @@
 <title>ClearNest — A7 Envelope Front (5.27 × 7.24 in)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <style>
-  /* ClearNest A7 envelope front — printed straight onto a 5.27 x 7.24 in
-     peel-and-stick A7 envelope. The envelope becomes a branded "package" you
-     hand out door-to-door with business cards + a folded poster inside.
-
-     PRINTER NOTES (HP Smart Tank Plus 550):
-     • NO black, NO grey — only brand blue + gold ink. The white is the
-       envelope itself (we print no background fill, to save ink + look clean).
-     • DRIFT-TOLERANT: the printer feeds envelopes a little off, so ALL content
-       is centered with a big ~0.55in safe margin on every side. Even if the
-       envelope feeds crooked, nothing lands on the edges or seams.
-     • Print at 100% / Actual Size. Paper size = A7 envelope (5.27 x 7.24 in). */
+  /* ClearNest A7 envelope front (Pen+Gear A7 peel & stick, 5.27 x 7.24 in).
+     Uses the REAL ClearNest logo (logo.svg) + the local QR (qr-code.svg),
+     recolored printer-safe. HP Smart Tank Plus 550: NO black/grey (blue+gold
+     ink only), NO background fill (the white envelope is the background),
+     content centered with a ~0.55in safe margin so feed drift can't push it
+     off. Print at 100% / Actual Size, paper size = A7 envelope. */
   @page { size: 5.27in 7.24in; margin: 0; }
   @media print { .screen-only { display: none; } }
+  :root { --blue:#0E6F92; --blue-deep:#0A5570; --blue-soft:#2F8AA8; --gold:#C7972F; }
+  html, body { margin:0; }
+  body { font-family:-apple-system,"Helvetica Neue","Inter",system-ui,Arial,sans-serif;
+    color:var(--blue); -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  @media screen { html,body{background:#dfe7ea;} body{padding:30px;display:grid;place-items:center;}
+    .env{background:#fff;box-shadow:0 30px 80px -20px rgba(14,111,146,.35);outline:1px solid rgba(47,138,168,.25);} }
 
-  :root {
-    --blue:      #0E6F92;
-    --blue-deep: #0A5570;
-    --blue-soft: #2F8AA8;
-    --gold:      #C7972F;
-  }
-  html, body { margin: 0; }   /* NO background fill — the white envelope is the background */
-  body {
-    font-family: -apple-system, "Helvetica Neue", "Geist", "Inter", system-ui, Arial, sans-serif;
-    color: var(--blue);
-    -webkit-print-color-adjust: exact; print-color-adjust: exact;
-  }
-  @media screen {
-    html, body { background: #dfe7ea; }   /* preview backdrop only — never prints */
-    body { padding: 30px; display: grid; place-items: center; }
-    .env { background: #fff; box-shadow: 0 30px 80px -20px rgba(14,111,146,.35); outline: 1px solid rgba(47,138,168,.25); }
-  }
+  .env { width:5.27in; height:7.24in; box-sizing:border-box; position:relative; overflow:hidden;
+    padding:0.6in 0.5in; display:flex; flex-direction:column; align-items:center; text-align:center; }
 
-  .env {
-    width: 5.27in; height: 7.24in;
-    box-sizing: border-box;
-    background: transparent;             /* let the white envelope be the bg */
-    position: relative; overflow: hidden;
-    /* === SAFE ZONE: big margins so feed drift can't push content off === */
-    padding: 0.62in 0.55in;
-    display: flex; flex-direction: column; align-items: center; text-align: center;
-  }
+  .logosvg { width:3.35in; height:auto; display:block; }
+  .rule { width:1.15in; height:2px; background:var(--gold); border-radius:2px; margin:0.2in 0 0.16in; }
 
-  /* Brand lockup */
-  .lockup { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-  .mark { width: 0.62in; height: 0.62in; color: var(--blue); }
-  .name { font-size: 31px; font-weight: 800; letter-spacing: -0.015em; color: var(--blue); line-height: 1; }
-  .strap { font-size: 9px; font-weight: 600; letter-spacing: 0.32em; text-transform: uppercase; color: var(--blue-soft); }
-
-  .rule { width: 1.1in; height: 2px; background: var(--gold); border-radius: 2px; margin: 0.16in 0; }
-
-  .eyebrow { font-size: 9.5px; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: var(--blue-soft); }
-  .headline {
-    font-size: 25px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.08;
-    color: var(--blue); margin: 7px 0 0;
-  }
-  .headline .accent { color: var(--gold); }
-  .mission {
-    font-size: 12.5px; font-weight: 500; line-height: 1.5; color: var(--blue-soft);
-    margin: 0.13in 0 0; max-width: 3.7in;
-  }
-  .mission strong { color: var(--blue); font-weight: 700; }
-
-  .trust {
-    margin-top: 0.16in; font-size: 8px; font-weight: 700; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--blue-soft); line-height: 1.5;
-  }
-  .trust .dot { color: var(--gold); margin: 0 4px; }
-
-  .inside {
-    margin-top: 0.2in;
-    border: 1.5px solid var(--gold);
-    border-radius: 999px;
-    padding: 6px 14px;
-    font-size: 10px; font-weight: 700; letter-spacing: 0.02em; color: var(--blue);
-  }
-  .inside .pop { color: var(--gold); }
-
-  /* push the contact block toward the bottom of the safe zone */
-  .spacer { flex: 1 1 auto; min-height: 0.14in; }
-
-  .contact { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .phone { font-size: 27px; font-weight: 800; letter-spacing: -0.01em; color: var(--blue-deep); line-height: 1; font-feature-settings: "tnum" 1, "lnum" 1; }
-  .web { font-size: 13px; font-weight: 700; color: var(--blue); }
-  .qrwrap { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 0.12in; }
-  .qrwrap img { width: 1.05in; height: 1.05in; display: block; }
-  .qrwrap .cap { font-size: 8px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--blue-soft); }
-
-  .screen-only {
-    position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%);
-    padding: 8px 14px; background: var(--blue-deep); color: #fff;
-    border-radius: 999px; font-size: 12px; text-align: center;
-  }
+  .eyebrow { font-size:9.5px; font-weight:700; letter-spacing:0.3em; text-transform:uppercase; color:var(--blue-soft); }
+  .headline { font-size:25px; font-weight:800; letter-spacing:-0.02em; line-height:1.08; color:var(--blue); margin:7px 0 0; }
+  .headline .accent { color:var(--gold); }
+  .mission { font-size:12.5px; font-weight:500; line-height:1.5; color:var(--blue-soft); margin:0.13in 0 0; max-width:3.7in; }
+  .mission strong { color:var(--blue); font-weight:700; }
+  .trust { margin-top:0.16in; font-size:8px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--blue-soft); }
+  .trust .dot { color:var(--gold); margin:0 4px; }
+  .inside { margin-top:0.2in; border:1.5px solid var(--gold); border-radius:999px; padding:6px 14px;
+    font-size:10px; font-weight:700; color:var(--blue); }
+  .inside .pop { color:var(--gold); }
+  .spacer { flex:1 1 auto; min-height:0.12in; }
+  .contact { display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .phone { font-size:27px; font-weight:800; letter-spacing:-0.01em; color:var(--blue-deep); line-height:1; font-feature-settings:"tnum" 1,"lnum" 1; }
+  .web { font-size:13px; font-weight:700; color:var(--blue); }
+  .qrwrap { display:flex; flex-direction:column; align-items:center; gap:4px; margin-top:0.12in; }
+  .qrsvg { width:1.05in; height:1.05in; display:block; }
+  .qrcap { font-size:8px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--blue-soft); }
+  .screen-only { position:fixed; bottom:14px; left:50%; transform:translateX(-50%); padding:8px 14px;
+    background:var(--blue-deep); color:#fff; border-radius:999px; font-size:12px; text-align:center; }
 </style>
 </head>
 <body>
 <div class="env">
-  <div class="lockup">
-    <svg class="mark" viewBox="0 0 64 64" fill="none">
-      <path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/>
-      <circle cx="32" cy="38" r="3.4" fill="#C7972F"/>
-    </svg>
-    <div class="name">ClearNest</div>
-    <div class="strap">Cleaning Services</div>
-  </div>
+  <svg class="logosvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" fill="none" role="img" aria-label="ClearNest Cleaning Services">
+  <title>ClearNest Cleaning Services</title>
+  <!-- Mark -->
+  <g transform="translate(8, 8)">
+    <path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="#0E6F92" stroke-width="4.5" stroke-linejoin="round"/>
+    <circle cx="32" cy="38" r="3" fill="#C7972F"/>
+  </g>
+  <!-- Wordmark -->
+  <g transform="translate(90, 0)">
+    <text x="0" y="44" font-family="-apple-system, 'Helvetica Neue', Arial, sans-serif" font-weight="600" font-size="32" letter-spacing="-0.5" fill="#0A5570">ClearNest</text>
+    <text x="2" y="62" font-family="-apple-system, 'Helvetica Neue', Arial, sans-serif" font-weight="500" font-size="10" letter-spacing="4.4" fill="#2F8AA8">CLEANING SERVICES</text>
+  </g>
+</svg>
 
   <div class="rule"></div>
-
   <div class="eyebrow">Our Mission</div>
   <div class="headline">A Cleaner Home.<br/><span class="accent">A Clearer Mind.</span></div>
   <div class="mission">
-    ClearNest is your local, insured, family- &amp; pet-safe cleaning team. We
-    earn your trust every visit — and <strong>you only pay after the clean.</strong>
-    No deposits, no pressure, just a home you&rsquo;ll love coming back to.
+    Your local, insured, family- &amp; pet-safe cleaning team. We earn your trust
+    every visit — and <strong>you only pay after the clean.</strong> No deposits,
+    no pressure, just a home you&rsquo;ll love coming back to.
   </div>
-
-  <div class="trust">
-    Insured &amp; bonded <span class="dot">&middot;</span> Background-checked
-    <span class="dot">&middot;</span> Eco &amp; pet-safe
-  </div>
-
+  <div class="trust">Insured &amp; bonded <span class="dot">&middot;</span> Background-checked <span class="dot">&middot;</span> Eco &amp; pet-safe</div>
   <div class="inside">Inside: how to book + <span class="pop">20% off your first clean</span></div>
-
   <div class="spacer"></div>
-
   <div class="contact">
     <div class="phone">(801) 441-0726</div>
     <div class="web">clearnest.services</div>
     <div class="qrwrap">
-      <img src="https://api.qrserver.com/v1/create-qr-code/?size=520x520&margin=0&qzone=0&format=svg&color=0a5570&bgcolor=ffffff&data=https%3A%2F%2Fclearnest.services" alt="Scan to book at clearnest.services"/>
-      <div class="cap">Scan &middot; Book in 60 sec</div>
-    </div>
+<svg class="qrsvg" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 600 600">
+	<!-- Created with https://api.qrserver.com (QR Code API, see goQR.me/api for information) -->
+	<title>QR Code</title>
+	<desc>https://clearnest.services</desc>
+	<rect style="fill:rgb(255, 255, 255);fill-opacity:1" x="0" y="0" width="600" height="600" />
+	<g id="elements">
+		<path style="fill:rgb(10, 85, 112)" d="M 0,0 l 24,0 0,24 -24,0 z M 24,0 l 24,0 0,24 -24,0 z M 48,0 l 24,0 0,24 -24,0 z M 72,0 l 24,0 0,24 -24,0 z M 96,0 l 24,0 0,24 -24,0 z M 120,0 l 24,0 0,24 -24,0 z M 144,0 l 24,0 0,24 -24,0 z M 216,0 l 24,0 0,24 -24,0 z M 312,0 l 24,0 0,24 -24,0 z M 432,0 l 24,0 0,24 -24,0 z M 456,0 l 24,0 0,24 -24,0 z M 480,0 l 24,0 0,24 -24,0 z M 504,0 l 24,0 0,24 -24,0 z M 528,0 l 24,0 0,24 -24,0 z M 552,0 l 24,0 0,24 -24,0 z M 576,0 l 24,0 0,24 -24,0 z M 0,24 l 24,0 0,24 -24,0 z M 144,24 l 24,0 0,24 -24,0 z M 192,24 l 24,0 0,24 -24,0 z M 216,24 l 24,0 0,24 -24,0 z M 264,24 l 24,0 0,24 -24,0 z M 288,24 l 24,0 0,24 -24,0 z M 312,24 l 24,0 0,24 -24,0 z M 336,24 l 24,0 0,24 -24,0 z M 360,24 l 24,0 0,24 -24,0 z M 432,24 l 24,0 0,24 -24,0 z M 576,24 l 24,0 0,24 -24,0 z M 0,48 l 24,0 0,24 -24,0 z M 48,48 l 24,0 0,24 -24,0 z M 72,48 l 24,0 0,24 -24,0 z M 96,48 l 24,0 0,24 -24,0 z M 144,48 l 24,0 0,24 -24,0 z M 216,48 l 24,0 0,24 -24,0 z M 240,48 l 24,0 0,24 -24,0 z M 264,48 l 24,0 0,24 -24,0 z M 360,48 l 24,0 0,24 -24,0 z M 384,48 l 24,0 0,24 -24,0 z M 432,48 l 24,0 0,24 -24,0 z M 480,48 l 24,0 0,24 -24,0 z M 504,48 l 24,0 0,24 -24,0 z M 528,48 l 24,0 0,24 -24,0 z M 576,48 l 24,0 0,24 -24,0 z M 0,72 l 24,0 0,24 -24,0 z M 48,72 l 24,0 0,24 -24,0 z M 72,72 l 24,0 0,24 -24,0 z M 96,72 l 24,0 0,24 -24,0 z M 144,72 l 24,0 0,24 -24,0 z M 192,72 l 24,0 0,24 -24,0 z M 216,72 l 24,0 0,24 -24,0 z M 264,72 l 24,0 0,24 -24,0 z M 312,72 l 24,0 0,24 -24,0 z M 336,72 l 24,0 0,24 -24,0 z M 360,72 l 24,0 0,24 -24,0 z M 384,72 l 24,0 0,24 -24,0 z M 432,72 l 24,0 0,24 -24,0 z M 480,72 l 24,0 0,24 -24,0 z M 504,72 l 24,0 0,24 -24,0 z M 528,72 l 24,0 0,24 -24,0 z M 576,72 l 24,0 0,24 -24,0 z M 0,96 l 24,0 0,24 -24,0 z M 48,96 l 24,0 0,24 -24,0 z M 72,96 l 24,0 0,24 -24,0 z M 96,96 l 24,0 0,24 -24,0 z M 144,96 l 24,0 0,24 -24,0 z M 240,96 l 24,0 0,24 -24,0 z M 288,96 l 24,0 0,24 -24,0 z M 336,96 l 24,0 0,24 -24,0 z M 384,96 l 24,0 0,24 -24,0 z M 432,96 l 24,0 0,24 -24,0 z M 480,96 l 24,0 0,24 -24,0 z M 504,96 l 24,0 0,24 -24,0 z M 528,96 l 24,0 0,24 -24,0 z M 576,96 l 24,0 0,24 -24,0 z M 0,120 l 24,0 0,24 -24,0 z M 144,120 l 24,0 0,24 -24,0 z M 192,120 l 24,0 0,24 -24,0 z M 240,120 l 24,0 0,24 -24,0 z M 312,120 l 24,0 0,24 -24,0 z M 360,120 l 24,0 0,24 -24,0 z M 384,120 l 24,0 0,24 -24,0 z M 432,120 l 24,0 0,24 -24,0 z M 576,120 l 24,0 0,24 -24,0 z M 0,144 l 24,0 0,24 -24,0 z M 24,144 l 24,0 0,24 -24,0 z M 48,144 l 24,0 0,24 -24,0 z M 72,144 l 24,0 0,24 -24,0 z M 96,144 l 24,0 0,24 -24,0 z M 120,144 l 24,0 0,24 -24,0 z M 144,144 l 24,0 0,24 -24,0 z M 192,144 l 24,0 0,24 -24,0 z M 240,144 l 24,0 0,24 -24,0 z M 288,144 l 24,0 0,24 -24,0 z M 336,144 l 24,0 0,24 -24,0 z M 384,144 l 24,0 0,24 -24,0 z M 432,144 l 24,0 0,24 -24,0 z M 456,144 l 24,0 0,24 -24,0 z M 480,144 l 24,0 0,24 -24,0 z M 504,144 l 24,0 0,24 -24,0 z M 528,144 l 24,0 0,24 -24,0 z M 552,144 l 24,0 0,24 -24,0 z M 576,144 l 24,0 0,24 -24,0 z M 288,168 l 24,0 0,24 -24,0 z M 336,168 l 24,0 0,24 -24,0 z M 0,192 l 24,0 0,24 -24,0 z M 24,192 l 24,0 0,24 -24,0 z M 48,192 l 24,0 0,24 -24,0 z M 72,192 l 24,0 0,24 -24,0 z M 96,192 l 24,0 0,24 -24,0 z M 144,192 l 24,0 0,24 -24,0 z M 168,192 l 24,0 0,24 -24,0 z M 192,192 l 24,0 0,24 -24,0 z M 216,192 l 24,0 0,24 -24,0 z M 240,192 l 24,0 0,24 -24,0 z M 288,192 l 24,0 0,24 -24,0 z M 312,192 l 24,0 0,24 -24,0 z M 336,192 l 24,0 0,24 -24,0 z M 360,192 l 24,0 0,24 -24,0 z M 384,192 l 24,0 0,24 -24,0 z M 408,192 l 24,0 0,24 -24,0 z M 456,192 l 24,0 0,24 -24,0 z M 504,192 l 24,0 0,24 -24,0 z M 552,192 l 24,0 0,24 -24,0 z M 24,216 l 24,0 0,24 -24,0 z M 72,216 l 24,0 0,24 -24,0 z M 96,216 l 24,0 0,24 -24,0 z M 120,216 l 24,0 0,24 -24,0 z M 216,216 l 24,0 0,24 -24,0 z M 384,216 l 24,0 0,24 -24,0 z M 456,216 l 24,0 0,24 -24,0 z M 552,216 l 24,0 0,24 -24,0 z M 24,240 l 24,0 0,24 -24,0 z M 72,240 l 24,0 0,24 -24,0 z M 96,240 l 24,0 0,24 -24,0 z M 120,240 l 24,0 0,24 -24,0 z M 144,240 l 24,0 0,24 -24,0 z M 192,240 l 24,0 0,24 -24,0 z M 216,240 l 24,0 0,24 -24,0 z M 264,240 l 24,0 0,24 -24,0 z M 288,240 l 24,0 0,24 -24,0 z M 336,240 l 24,0 0,24 -24,0 z M 360,240 l 24,0 0,24 -24,0 z M 384,240 l 24,0 0,24 -24,0 z M 408,240 l 24,0 0,24 -24,0 z M 456,240 l 24,0 0,24 -24,0 z M 480,240 l 24,0 0,24 -24,0 z M 504,240 l 24,0 0,24 -24,0 z M 552,240 l 24,0 0,24 -24,0 z M 576,240 l 24,0 0,24 -24,0 z M 0,264 l 24,0 0,24 -24,0 z M 48,264 l 24,0 0,24 -24,0 z M 72,264 l 24,0 0,24 -24,0 z M 96,264 l 24,0 0,24 -24,0 z M 192,264 l 24,0 0,24 -24,0 z M 216,264 l 24,0 0,24 -24,0 z M 240,264 l 24,0 0,24 -24,0 z M 264,264 l 24,0 0,24 -24,0 z M 336,264 l 24,0 0,24 -24,0 z M 360,264 l 24,0 0,24 -24,0 z M 384,264 l 24,0 0,24 -24,0 z M 432,264 l 24,0 0,24 -24,0 z M 576,264 l 24,0 0,24 -24,0 z M 48,288 l 24,0 0,24 -24,0 z M 96,288 l 24,0 0,24 -24,0 z M 120,288 l 24,0 0,24 -24,0 z M 144,288 l 24,0 0,24 -24,0 z M 216,288 l 24,0 0,24 -24,0 z M 264,288 l 24,0 0,24 -24,0 z M 288,288 l 24,0 0,24 -24,0 z M 312,288 l 24,0 0,24 -24,0 z M 336,288 l 24,0 0,24 -24,0 z M 360,288 l 24,0 0,24 -24,0 z M 408,288 l 24,0 0,24 -24,0 z M 432,288 l 24,0 0,24 -24,0 z M 480,288 l 24,0 0,24 -24,0 z M 528,288 l 24,0 0,24 -24,0 z M 552,288 l 24,0 0,24 -24,0 z M 576,288 l 24,0 0,24 -24,0 z M 0,312 l 24,0 0,24 -24,0 z M 72,312 l 24,0 0,24 -24,0 z M 96,312 l 24,0 0,24 -24,0 z M 120,312 l 24,0 0,24 -24,0 z M 168,312 l 24,0 0,24 -24,0 z M 192,312 l 24,0 0,24 -24,0 z M 216,312 l 24,0 0,24 -24,0 z M 240,312 l 24,0 0,24 -24,0 z M 288,312 l 24,0 0,24 -24,0 z M 336,312 l 24,0 0,24 -24,0 z M 384,312 l 24,0 0,24 -24,0 z M 456,312 l 24,0 0,24 -24,0 z M 504,312 l 24,0 0,24 -24,0 z M 552,312 l 24,0 0,24 -24,0 z M 0,336 l 24,0 0,24 -24,0 z M 144,336 l 24,0 0,24 -24,0 z M 168,336 l 24,0 0,24 -24,0 z M 192,336 l 24,0 0,24 -24,0 z M 312,336 l 24,0 0,24 -24,0 z M 360,336 l 24,0 0,24 -24,0 z M 408,336 l 24,0 0,24 -24,0 z M 432,336 l 24,0 0,24 -24,0 z M 456,336 l 24,0 0,24 -24,0 z M 480,336 l 24,0 0,24 -24,0 z M 504,336 l 24,0 0,24 -24,0 z M 552,336 l 24,0 0,24 -24,0 z M 576,336 l 24,0 0,24 -24,0 z M 0,360 l 24,0 0,24 -24,0 z M 96,360 l 24,0 0,24 -24,0 z M 120,360 l 24,0 0,24 -24,0 z M 168,360 l 24,0 0,24 -24,0 z M 240,360 l 24,0 0,24 -24,0 z M 264,360 l 24,0 0,24 -24,0 z M 288,360 l 24,0 0,24 -24,0 z M 384,360 l 24,0 0,24 -24,0 z M 408,360 l 24,0 0,24 -24,0 z M 432,360 l 24,0 0,24 -24,0 z M 456,360 l 24,0 0,24 -24,0 z M 480,360 l 24,0 0,24 -24,0 z M 576,360 l 24,0 0,24 -24,0 z M 0,384 l 24,0 0,24 -24,0 z M 96,384 l 24,0 0,24 -24,0 z M 120,384 l 24,0 0,24 -24,0 z M 144,384 l 24,0 0,24 -24,0 z M 192,384 l 24,0 0,24 -24,0 z M 216,384 l 24,0 0,24 -24,0 z M 312,384 l 24,0 0,24 -24,0 z M 336,384 l 24,0 0,24 -24,0 z M 384,384 l 24,0 0,24 -24,0 z M 408,384 l 24,0 0,24 -24,0 z M 432,384 l 24,0 0,24 -24,0 z M 456,384 l 24,0 0,24 -24,0 z M 480,384 l 24,0 0,24 -24,0 z M 528,384 l 24,0 0,24 -24,0 z M 192,408 l 24,0 0,24 -24,0 z M 240,408 l 24,0 0,24 -24,0 z M 264,408 l 24,0 0,24 -24,0 z M 336,408 l 24,0 0,24 -24,0 z M 360,408 l 24,0 0,24 -24,0 z M 384,408 l 24,0 0,24 -24,0 z M 480,408 l 24,0 0,24 -24,0 z M 504,408 l 24,0 0,24 -24,0 z M 0,432 l 24,0 0,24 -24,0 z M 24,432 l 24,0 0,24 -24,0 z M 48,432 l 24,0 0,24 -24,0 z M 72,432 l 24,0 0,24 -24,0 z M 96,432 l 24,0 0,24 -24,0 z M 120,432 l 24,0 0,24 -24,0 z M 144,432 l 24,0 0,24 -24,0 z M 192,432 l 24,0 0,24 -24,0 z M 312,432 l 24,0 0,24 -24,0 z M 336,432 l 24,0 0,24 -24,0 z M 384,432 l 24,0 0,24 -24,0 z M 432,432 l 24,0 0,24 -24,0 z M 480,432 l 24,0 0,24 -24,0 z M 528,432 l 24,0 0,24 -24,0 z M 552,432 l 24,0 0,24 -24,0 z M 576,432 l 24,0 0,24 -24,0 z M 0,456 l 24,0 0,24 -24,0 z M 144,456 l 24,0 0,24 -24,0 z M 216,456 l 24,0 0,24 -24,0 z M 240,456 l 24,0 0,24 -24,0 z M 384,456 l 24,0 0,24 -24,0 z M 480,456 l 24,0 0,24 -24,0 z M 504,456 l 24,0 0,24 -24,0 z M 0,480 l 24,0 0,24 -24,0 z M 48,480 l 24,0 0,24 -24,0 z M 72,480 l 24,0 0,24 -24,0 z M 96,480 l 24,0 0,24 -24,0 z M 144,480 l 24,0 0,24 -24,0 z M 192,480 l 24,0 0,24 -24,0 z M 216,480 l 24,0 0,24 -24,0 z M 288,480 l 24,0 0,24 -24,0 z M 312,480 l 24,0 0,24 -24,0 z M 336,480 l 24,0 0,24 -24,0 z M 360,480 l 24,0 0,24 -24,0 z M 384,480 l 24,0 0,24 -24,0 z M 408,480 l 24,0 0,24 -24,0 z M 432,480 l 24,0 0,24 -24,0 z M 456,480 l 24,0 0,24 -24,0 z M 480,480 l 24,0 0,24 -24,0 z M 528,480 l 24,0 0,24 -24,0 z M 0,504 l 24,0 0,24 -24,0 z M 48,504 l 24,0 0,24 -24,0 z M 72,504 l 24,0 0,24 -24,0 z M 96,504 l 24,0 0,24 -24,0 z M 144,504 l 24,0 0,24 -24,0 z M 192,504 l 24,0 0,24 -24,0 z M 240,504 l 24,0 0,24 -24,0 z M 264,504 l 24,0 0,24 -24,0 z M 312,504 l 24,0 0,24 -24,0 z M 360,504 l 24,0 0,24 -24,0 z M 384,504 l 24,0 0,24 -24,0 z M 408,504 l 24,0 0,24 -24,0 z M 432,504 l 24,0 0,24 -24,0 z M 480,504 l 24,0 0,24 -24,0 z M 504,504 l 24,0 0,24 -24,0 z M 528,504 l 24,0 0,24 -24,0 z M 552,504 l 24,0 0,24 -24,0 z M 576,504 l 24,0 0,24 -24,0 z M 0,528 l 24,0 0,24 -24,0 z M 48,528 l 24,0 0,24 -24,0 z M 72,528 l 24,0 0,24 -24,0 z M 96,528 l 24,0 0,24 -24,0 z M 144,528 l 24,0 0,24 -24,0 z M 192,528 l 24,0 0,24 -24,0 z M 216,528 l 24,0 0,24 -24,0 z M 240,528 l 24,0 0,24 -24,0 z M 360,528 l 24,0 0,24 -24,0 z M 504,528 l 24,0 0,24 -24,0 z M 528,528 l 24,0 0,24 -24,0 z M 576,528 l 24,0 0,24 -24,0 z M 0,552 l 24,0 0,24 -24,0 z M 144,552 l 24,0 0,24 -24,0 z M 192,552 l 24,0 0,24 -24,0 z M 240,552 l 24,0 0,24 -24,0 z M 264,552 l 24,0 0,24 -24,0 z M 288,552 l 24,0 0,24 -24,0 z M 336,552 l 24,0 0,24 -24,0 z M 384,552 l 24,0 0,24 -24,0 z M 432,552 l 24,0 0,24 -24,0 z M 456,552 l 24,0 0,24 -24,0 z M 480,552 l 24,0 0,24 -24,0 z M 504,552 l 24,0 0,24 -24,0 z M 576,552 l 24,0 0,24 -24,0 z M 0,576 l 24,0 0,24 -24,0 z M 24,576 l 24,0 0,24 -24,0 z M 48,576 l 24,0 0,24 -24,0 z M 72,576 l 24,0 0,24 -24,0 z M 96,576 l 24,0 0,24 -24,0 z M 120,576 l 24,0 0,24 -24,0 z M 144,576 l 24,0 0,24 -24,0 z M 192,576 l 24,0 0,24 -24,0 z M 216,576 l 24,0 0,24 -24,0 z M 288,576 l 24,0 0,24 -24,0 z M 312,576 l 24,0 0,24 -24,0 z M 336,576 l 24,0 0,24 -24,0 z M 408,576 l 24,0 0,24 -24,0 z M 432,576 l 24,0 0,24 -24,0 z M 456,576 l 24,0 0,24 -24,0 z M 480,576 l 24,0 0,24 -24,0 z M 504,576 l 24,0 0,24 -24,0 z M 528,576 l 24,0 0,24 -24,0 z M 552,576 l 24,0 0,24 -24,0 z M 576,576 l 24,0 0,24 -24,0 z " />
+	</g>
+</svg>
+<div class="qrcap">Scan &middot; Book in 60 sec</div></div>
   </div>
 </div>
-<div class="screen-only">⌘P / Ctrl+P → Paper: A7 envelope (5.27×7.24in) · Scale: 100% / Actual Size · Background graphics ON</div>
+<div class="screen-only">Paper: A7 envelope (5.27×7.24in) · Scale: 100% / Actual Size · Background graphics ON</div>
 </body>
 </html>
