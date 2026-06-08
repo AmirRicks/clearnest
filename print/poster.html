@@ -10,18 +10,18 @@
   @media print { body { margin: 0; } .screen-only { display: none; } }
 
   :root {
-    --paper: #f6f6f1;
-    --background: #fdfdfb;
-    --stone: #d4d8dc;
-    --graphite: #4a5159;
-    --charcoal: #1a1d22;
+    --paper: #ffffff;
+    --background: #ffffff;
+    --stone: #CFE6EF;
+    --graphite: #2F8AA8;
+    --charcoal: #0A5570;
     --brand-50: #f0f7fb;
     --brand-100: #d6eaf3;
     --brand-300: #7ebed8;
     --brand-500: #2b88a8;
-    --brand-700: #1b556c;
-    --brand-800: #194653;
-    --accent: #c9a96e;
+    --brand-700: #0E6F92;
+    --brand-800: #0A5570;
+    --accent: #C7972F;
   }
 
   html, body { background: #e9e6dc; }
@@ -36,7 +36,7 @@
   /* Screen-only paper preview frame */
   @media screen {
     body { display: grid; place-items: center; padding: 30px; }
-    .poster { box-shadow: 0 30px 80px -20px rgba(15,23,42,.25), 0 6px 18px -6px rgba(15,23,42,.18); }
+    .poster { box-shadow: 0 30px 80px -20px rgba(14,111,146,.25), 0 6px 18px -6px rgba(14,111,146,.18); }
   }
 
   /* ===== Poster ===== */
@@ -70,7 +70,7 @@
   /* Hairline guides */
   .frame {
     position: absolute; inset: 0.35in;
-    border: 1px solid rgba(27,85,108,.18);
+    border: 1px solid rgba(14,111,146,.18);
     border-radius: 0.28in;
     z-index: 0;
   }
@@ -100,7 +100,7 @@
   .eyebrow {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 5px 11px;
-    border: 1px solid rgba(74,81,89,.22);
+    border: 1px solid rgba(47,138,168,.22);
     border-radius: 999px;
     background: rgba(253,253,251,.7);
     font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--graphite);
@@ -131,7 +131,7 @@
   .chip {
     padding: 7px 14px; border-radius: 999px;
     background: rgba(253,253,251,.78);
-    border: 1px solid rgba(74,81,89,.18);
+    border: 1px solid rgba(47,138,168,.18);
     font-size: 12px; font-weight: 600; color: var(--charcoal);
     display: inline-flex; align-items: center; gap: 6px;
   }
@@ -143,10 +143,10 @@
     padding: 0.34in 0.42in;
     border-radius: 0.26in;
     background: linear-gradient(135deg, rgba(255,255,255,0.78), rgba(240,247,251,0.6));
-    border: 1px solid rgba(27,85,108,0.16);
+    border: 1px solid rgba(14,111,146,0.16);
     box-shadow:
       0 1px 0 rgba(255,255,255,0.7) inset,
-      0 24px 50px -30px rgba(27,85,108,0.30);
+      0 24px 50px -30px rgba(14,111,146,0.30);
     display: grid;
     grid-template-columns: 1fr auto;
     gap: 0.2in;
@@ -194,9 +194,9 @@
   .qr {
     width: 1.55in; height: 1.55in;
     padding: 0.12in; border-radius: 0.18in;
-    background: #fff; border: 1px solid rgba(74,81,89,0.18);
+    background: #fff; border: 1px solid rgba(47,138,168,0.18);
     display: grid; place-items: center;
-    box-shadow: 0 18px 36px -20px rgba(15,23,42,0.25);
+    box-shadow: 0 18px 36px -20px rgba(14,111,146,0.25);
   }
   .qr img { width: 100%; height: 100%; display: block; }
   .qr-cap { margin-top: 6px; text-align: center; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--graphite); }
@@ -205,7 +205,7 @@
   .trust {
     margin-top: 0.34in;
     padding-top: 0.18in;
-    border-top: 1px solid rgba(74,81,89,0.15);
+    border-top: 1px solid rgba(47,138,168,0.15);
     display: flex; align-items: center; justify-content: space-between;
     font-size: 11px; color: var(--graphite); letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500;
   }
@@ -216,7 +216,7 @@
   /* Screen-only hint */
   .screen-only {
     position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%);
-    padding: 8px 14px; background: rgba(26,29,34,0.92); color: #fff;
+    padding: 8px 14px; background: rgba(10,85,112,0.92); color: #fff;
     border-radius: 999px; font-size: 12px; letter-spacing: 0.05em;
     font-family: -apple-system, sans-serif;
   }
@@ -233,7 +233,7 @@
     <div class="lockup">
       <svg class="mark" viewBox="0 0 64 64" fill="none" role="img" aria-label="ClearNest">
         <path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/>
-        <circle cx="32" cy="38" r="3" fill="#c9a96e"/>
+        <circle cx="32" cy="38" r="3" fill="#C7972F"/>
       </svg>
       <div class="word">
         <span class="name">ClearNest</span>
@@ -281,7 +281,7 @@
       </div>
       <div>
         <div class="qr">
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=0&qzone=0&format=svg&data=https%3A%2F%2Fclearnest.services" alt="Scan to book at clearnest.services"/>
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=0&qzone=0&format=svg&color=0a5570&data=https%3A%2F%2Fclearnest.services" alt="Scan to book at clearnest.services"/>
         </div>
         <div class="qr-cap">Scan · Book in 60 sec</div>
       </div>
