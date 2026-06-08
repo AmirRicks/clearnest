@@ -2,189 +2,315 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>ClearNest — Business Cards (10-up sheet)</title>
+<title>ClearNest — Business Cards (Avery 28371, 10-up)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <style>
-  /* US business card: 3.5" × 2" — 10-up on a letter sheet (2 col × 5 row).
-     Print double-sided on letter card stock (or regular paper for prototyping),
-     then trim along the hairline guides. */
-  @page { size: letter portrait; margin: 0.5in 0.75in; }
-  @media print { body { margin: 0; } .screen-only { display: none; } }
+  /* ClearNest business cards — Avery 28371 / 5371 / 8371 layout.
+     US Letter, 10 cards (2 columns × 5 rows), each 3.5in × 2in.
+     Margins: 0.5in top/bottom, 0.75in left/right, NO gutters (cards butt to
+     the micro-perforations). Single-sided: each card is complete on its own.
+
+     PRINTER NOTE — tuned for the HP Smart Tank Plus 550 (the black tank is
+     dead). This design uses ONLY color inks: blues, gold, white. There is
+     NO black and NO grey anywhere (text is brand blue, the QR is dark blue).
+     Print at 100% scale, margins "None", background graphics ON. */
+  @page { size: letter portrait; margin: 0; }
+  @media print { body { margin: 0; background: #fff; } .screen-only { display: none; } }
 
   :root {
-    --paper: #f6f6f1;
-    --background: #fdfdfb;
-    --graphite: #4a5159;
-    --charcoal: #1a1d22;
-    --brand-700: #1b556c;
-    --brand-800: #194653;
-    --accent: #c9a96e;
+    --blue:      #0E6F92;  /* primary — logo, name, phone */
+    --blue-deep: #0A5570;  /* QR + emphasis */
+    --blue-soft: #2F8AA8;  /* secondary text (replaces grey) */
+    --gold:      #C7972F;  /* warm accent (yellow family) */
+    --tint:      #EAF6FB;  /* very light cyan panel */
+    --white:     #ffffff;
   }
-  html, body { background: #e9e6dc; }
+  html, body { background: #dfe7ea; }
   body {
     margin: 0;
     font-family: -apple-system, "Helvetica Neue", "Geist", "Inter", system-ui, Arial, sans-serif;
-    color: var(--charcoal);
+    color: var(--blue);
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
   @media screen {
-    body { padding: 30px; display: grid; place-items: center; gap: 24px; }
-    .sheet { box-shadow: 0 30px 80px -20px rgba(15,23,42,.25), 0 6px 18px -6px rgba(15,23,42,.18); }
+    body { padding: 28px; display: grid; place-items: center; }
+    .sheet { box-shadow: 0 30px 80px -20px rgba(14,111,146,.35), 0 6px 18px -6px rgba(14,111,146,.25); }
   }
 
   .sheet {
     width: 8.5in; height: 11in;
-    background: var(--background);
-    padding: 0.5in 0.75in;
+    background: var(--white);
     box-sizing: border-box;
+    padding: 0.5in 0.75in;            /* Avery 28371 outer margins */
     display: grid;
     grid-template-columns: 3.5in 3.5in;
     grid-template-rows: repeat(5, 2in);
-    page-break-after: always;
+    /* no gap — perforations sit exactly on the cell edges */
   }
-  .sheet:last-child { page-break-after: auto; }
 
   .card {
     width: 3.5in; height: 2in;
     box-sizing: border-box;
-    background: var(--paper);
-    border: 1px dashed rgba(74,81,89,0.22); /* hairline cut guide */
+    background: var(--white);
     position: relative;
     overflow: hidden;
+    padding: 0.17in 0.2in;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  /* faint cyan glow — prints on the color inks, adds depth without any grey */
+  .card::before {
+    content: ""; position: absolute;
+    width: 1.5in; height: 1.5in; border-radius: 50%;
+    top: -0.65in; right: -0.45in;
+    background: radial-gradient(circle, rgba(47,138,168,.20), transparent 70%);
+  }
+  .card::after {
+    content: ""; position: absolute;
+    width: 1.1in; height: 1.1in; border-radius: 50%;
+    bottom: -0.55in; left: -0.35in;
+    background: radial-gradient(circle, rgba(199,151,47,.16), transparent 70%);
   }
 
-  /* ========== FRONT ========== */
-  .card.front {
-    padding: 0.22in 0.26in;
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-  }
-  .card.front::before {
-    content: "";
-    position: absolute;
-    width: 1.6in; height: 1.6in;
-    border-radius: 50%;
-    top: -0.6in; right: -0.5in;
-    background: radial-gradient(circle, rgba(126,190,216,.35), transparent 70%);
-    filter: blur(20px);
-  }
-  .front .lockup { display: flex; align-items: center; gap: 8px; position: relative; }
-  .front .mark { width: 28px; height: 28px; color: var(--brand-700); }
-  .front .name {
-    font-size: 16px; font-weight: 700; letter-spacing: -0.01em; color: var(--charcoal); line-height: 1;
-  }
-  .front .strap {
-    font-size: 7.5px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--graphite); margin-top: 3px; line-height: 1;
-  }
-  .front .tagline {
-    align-self: end;
-    font-size: 13px; font-weight: 600; letter-spacing: -0.01em;
-    line-height: 1.15; color: var(--charcoal); position: relative;
-  }
-  .front .tagline .accent { color: var(--brand-700); }
-  .front .foot {
-    font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--graphite); font-weight: 500;
-    display: flex; justify-content: space-between; position: relative;
-  }
+  .top { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; position: relative; }
+  .lockup { display: flex; align-items: center; gap: 7px; }
+  .mark { width: 27px; height: 27px; color: var(--blue); flex: none; }
+  .name { font-size: 16px; font-weight: 800; letter-spacing: -0.01em; color: var(--blue); line-height: 1; }
+  .strap { font-size: 6.5px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--blue-soft); margin-top: 3px; line-height: 1; }
 
-  /* ========== BACK ========== */
-  .card.back {
-    padding: 0.22in 0.26in;
-    background: var(--brand-800);
-    color: #fff;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 0.18in;
-    align-items: center;
-  }
-  .card.back::before {
-    content: "";
-    position: absolute;
-    width: 1.4in; height: 1.4in;
-    border-radius: 50%;
-    bottom: -0.7in; left: -0.4in;
-    background: radial-gradient(circle, rgba(201,169,110,.35), transparent 70%);
-    filter: blur(20px);
-  }
-  .back .info { display: flex; flex-direction: column; gap: 4px; position: relative; }
-  .back .info .label {
-    font-size: 7px; letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.6;
-  }
-  .back .info .phone {
-    font-size: 17px; font-weight: 700; letter-spacing: -0.01em; line-height: 1;
-    font-feature-settings: "tnum" 1, "lnum" 1;
-  }
-  .back .info .url {
-    font-size: 13px; font-weight: 600; color: #fff; opacity: 0.95; margin-top: 4px;
-  }
-  .back .info .email {
-    font-size: 10px; opacity: 0.75;
-  }
-  .back .info .row { display: flex; flex-direction: column; gap: 2px; }
-  .back .info .accent-dot { color: var(--accent); }
-  .back .qr {
-    width: 1.4in; height: 1.4in;
-    background: #fff; padding: 0.08in; box-sizing: border-box; border-radius: 4px;
-    display: grid; place-items: center; position: relative;
-  }
-  .back .qr img { width: 100%; height: 100%; display: block; }
+  .qr { text-align: center; flex: none; }
+  .qr img { width: 0.74in; height: 0.74in; display: block; }
+  .qr .cap { font-size: 5.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--blue-soft); margin-top: 2px; }
+
+  .tagline { font-size: 11.5px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.12; color: var(--blue); position: relative; }
+  .tagline .accent { color: var(--gold); }
+
+  .contact { position: relative; }
+  .phone { font-size: 17px; font-weight: 800; letter-spacing: -0.01em; color: var(--blue-deep); line-height: 1; font-feature-settings: "tnum" 1, "lnum" 1; }
+  .web { font-size: 9px; font-weight: 700; color: var(--blue); margin-top: 3px; letter-spacing: 0.01em; }
+  .meta { font-size: 7px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--blue-soft); margin-top: 3px; }
+  .meta .dot { color: var(--gold); }
 
   .screen-only {
     position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%);
-    padding: 8px 14px; background: rgba(26,29,34,0.92); color: #fff;
-    border-radius: 999px; font-size: 12px;
+    padding: 8px 14px; background: var(--blue-deep); color: #fff;
+    border-radius: 999px; font-size: 12px; text-align: center;
   }
 </style>
 </head>
 <body>
-
-<!-- ============ PAGE 1: FRONT (5 cards × 2 columns = 10) ============ -->
-<div class="sheet" aria-label="Card fronts (10-up)">
-
-  <!-- Reusable front card template (10 copies) -->
-  <!-- 1 -->
-  <div class="card front">
-    <div class="lockup">
-      <svg class="mark" viewBox="0 0 64 64" fill="none">
-        <path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/>
-        <circle cx="32" cy="38" r="3" fill="#c9a96e"/>
-      </svg>
-      <div>
-        <div class="name">ClearNest</div>
-        <div class="strap">Cleaning Services</div>
+<div class="sheet" aria-label="ClearNest business cards — Avery 28371, 10 per sheet">
+  <div class="card">
+    <div class="top">
+      <div class="lockup">
+        <svg class="mark" viewBox="0 0 64 64" fill="none">
+          <path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/>
+          <circle cx="32" cy="38" r="3" fill="#C7972F"/>
+        </svg>
+        <div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div>
+      </div>
+      <div class="qr">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&margin=0&qzone=0&format=svg&color=0a5570&bgcolor=ffffff&data=https%3A%2F%2Fclearnest.services" alt="Book at clearnest.services"/>
+        <div class="cap">Scan to book</div>
       </div>
     </div>
     <div class="tagline">A Cleaner Home.<br/><span class="accent">A Clearer Mind.</span></div>
-    <div class="foot"><span>Salt Lake City + 40 mi</span><span>Pay after the clean</span></div>
+    <div class="contact">
+      <div class="phone">(801) 441-0726</div>
+      <div class="web">clearnest.services</div>
+      <div class="meta">Salt Lake City + 40 mi &nbsp;<span class="dot">&middot;</span>&nbsp; Pay after the clean</div>
+    </div>
   </div>
-  <!-- 2 --><div class="card front"><div class="lockup"><svg class="mark" viewBox="0 0 64 64" fill="none"><path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="38" r="3" fill="#c9a96e"/></svg><div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div></div><div class="tagline">A Cleaner Home.<br/><span class="accent">A Clearer Mind.</span></div><div class="foot"><span>Salt Lake City + 40 mi</span><span>Pay after the clean</span></div></div>
-  <!-- 3 --><div class="card front"><div class="lockup"><svg class="mark" viewBox="0 0 64 64" fill="none"><path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="38" r="3" fill="#c9a96e"/></svg><div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div></div><div class="tagline">A Cleaner Home.<br/><span class="accent">A Clearer Mind.</span></div><div class="foot"><span>Salt Lake City + 40 mi</span><span>Pay after the clean</span></div></div>
-  <!-- 4 --><div class="card front"><div class="lockup"><svg class="mark" viewBox="0 0 64 64" fill="none"><path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="38" r="3" fill="#c9a96e"/></svg><div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div></div><div class="tagline">A Cleaner Home.<br/><span class="accent">A Clearer Mind.</span></div><div class="foot"><span>Salt Lake City + 40 mi</span><span>Pay after the clean</span></div></div>
-  <!-- 5 --><div class="card front"><div class="lockup"><svg class="mark" viewBox="0 0 64 64" fill="none"><path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="38" r="3" fill="#c9a96e"/></svg><div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div></div><div class="tagline">A Cleaner Home.<br/><span class="accent">A Clearer Mind.</span></div><div class="foot"><span>Salt Lake City + 40 mi</span><span>Pay after the clean</span></div></div>
-  <!-- 6 --><div class="card front"><div class="lockup"><svg class="mark" viewBox="0 0 64 64" fill="none"><path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="38" r="3" fill="#c9a96e"/></svg><div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div></div><div class="tagline">A Cleaner Home.<br/><span class="accent">A Clearer Mind.</span></div><div class="foot"><span>Salt Lake City + 40 mi</span><span>Pay after the clean</span></div></div>
-  <!-- 7 --><div class="card front"><div class="lockup"><svg class="mark" viewBox="0 0 64 64" fill="none"><path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="38" r="3" fill="#c9a96e"/></svg><div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div></div><div class="tagline">A Cleaner Home.<br/><span class="accent">A Clearer Mind.</span></div><div class="foot"><span>Salt Lake City + 40 mi</span><span>Pay after the clean</span></div></div>
-  <!-- 8 --><div class="card front"><div class="lockup"><svg class="mark" viewBox="0 0 64 64" fill="none"><path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="38" r="3" fill="#c9a96e"/></svg><div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div></div><div class="tagline">A Cleaner Home.<br/><span class="accent">A Clearer Mind.</span></div><div class="foot"><span>Salt Lake City + 40 mi</span><span>Pay after the clean</span></div></div>
-  <!-- 9 --><div class="card front"><div class="lockup"><svg class="mark" viewBox="0 0 64 64" fill="none"><path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="38" r="3" fill="#c9a96e"/></svg><div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div></div><div class="tagline">A Cleaner Home.<br/><span class="accent">A Clearer Mind.</span></div><div class="foot"><span>Salt Lake City + 40 mi</span><span>Pay after the clean</span></div></div>
-  <!-- 10 --><div class="card front"><div class="lockup"><svg class="mark" viewBox="0 0 64 64" fill="none"><path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="38" r="3" fill="#c9a96e"/></svg><div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div></div><div class="tagline">A Cleaner Home.<br/><span class="accent">A Clearer Mind.</span></div><div class="foot"><span>Salt Lake City + 40 mi</span><span>Pay after the clean</span></div></div>
+  <div class="card">
+    <div class="top">
+      <div class="lockup">
+        <svg class="mark" viewBox="0 0 64 64" fill="none">
+          <path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/>
+          <circle cx="32" cy="38" r="3" fill="#C7972F"/>
+        </svg>
+        <div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div>
+      </div>
+      <div class="qr">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&margin=0&qzone=0&format=svg&color=0a5570&bgcolor=ffffff&data=https%3A%2F%2Fclearnest.services" alt="Book at clearnest.services"/>
+        <div class="cap">Scan to book</div>
+      </div>
+    </div>
+    <div class="tagline">A Cleaner Home.<br/><span class="accent">A Clearer Mind.</span></div>
+    <div class="contact">
+      <div class="phone">(801) 441-0726</div>
+      <div class="web">clearnest.services</div>
+      <div class="meta">Salt Lake City + 40 mi &nbsp;<span class="dot">&middot;</span>&nbsp; Pay after the clean</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="top">
+      <div class="lockup">
+        <svg class="mark" viewBox="0 0 64 64" fill="none">
+          <path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/>
+          <circle cx="32" cy="38" r="3" fill="#C7972F"/>
+        </svg>
+        <div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div>
+      </div>
+      <div class="qr">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&margin=0&qzone=0&format=svg&color=0a5570&bgcolor=ffffff&data=https%3A%2F%2Fclearnest.services" alt="Book at clearnest.services"/>
+        <div class="cap">Scan to book</div>
+      </div>
+    </div>
+    <div class="tagline">A Cleaner Home.<br/><span class="accent">A Clearer Mind.</span></div>
+    <div class="contact">
+      <div class="phone">(801) 441-0726</div>
+      <div class="web">clearnest.services</div>
+      <div class="meta">Salt Lake City + 40 mi &nbsp;<span class="dot">&middot;</span>&nbsp; Pay after the clean</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="top">
+      <div class="lockup">
+        <svg class="mark" viewBox="0 0 64 64" fill="none">
+          <path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/>
+          <circle cx="32" cy="38" r="3" fill="#C7972F"/>
+        </svg>
+        <div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div>
+      </div>
+      <div class="qr">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&margin=0&qzone=0&format=svg&color=0a5570&bgcolor=ffffff&data=https%3A%2F%2Fclearnest.services" alt="Book at clearnest.services"/>
+        <div class="cap">Scan to book</div>
+      </div>
+    </div>
+    <div class="tagline">A Cleaner Home.<br/><span class="accent">A Clearer Mind.</span></div>
+    <div class="contact">
+      <div class="phone">(801) 441-0726</div>
+      <div class="web">clearnest.services</div>
+      <div class="meta">Salt Lake City + 40 mi &nbsp;<span class="dot">&middot;</span>&nbsp; Pay after the clean</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="top">
+      <div class="lockup">
+        <svg class="mark" viewBox="0 0 64 64" fill="none">
+          <path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/>
+          <circle cx="32" cy="38" r="3" fill="#C7972F"/>
+        </svg>
+        <div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div>
+      </div>
+      <div class="qr">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&margin=0&qzone=0&format=svg&color=0a5570&bgcolor=ffffff&data=https%3A%2F%2Fclearnest.services" alt="Book at clearnest.services"/>
+        <div class="cap">Scan to book</div>
+      </div>
+    </div>
+    <div class="tagline">A Cleaner Home.<br/><span class="accent">A Clearer Mind.</span></div>
+    <div class="contact">
+      <div class="phone">(801) 441-0726</div>
+      <div class="web">clearnest.services</div>
+      <div class="meta">Salt Lake City + 40 mi &nbsp;<span class="dot">&middot;</span>&nbsp; Pay after the clean</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="top">
+      <div class="lockup">
+        <svg class="mark" viewBox="0 0 64 64" fill="none">
+          <path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/>
+          <circle cx="32" cy="38" r="3" fill="#C7972F"/>
+        </svg>
+        <div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div>
+      </div>
+      <div class="qr">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&margin=0&qzone=0&format=svg&color=0a5570&bgcolor=ffffff&data=https%3A%2F%2Fclearnest.services" alt="Book at clearnest.services"/>
+        <div class="cap">Scan to book</div>
+      </div>
+    </div>
+    <div class="tagline">A Cleaner Home.<br/><span class="accent">A Clearer Mind.</span></div>
+    <div class="contact">
+      <div class="phone">(801) 441-0726</div>
+      <div class="web">clearnest.services</div>
+      <div class="meta">Salt Lake City + 40 mi &nbsp;<span class="dot">&middot;</span>&nbsp; Pay after the clean</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="top">
+      <div class="lockup">
+        <svg class="mark" viewBox="0 0 64 64" fill="none">
+          <path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/>
+          <circle cx="32" cy="38" r="3" fill="#C7972F"/>
+        </svg>
+        <div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div>
+      </div>
+      <div class="qr">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&margin=0&qzone=0&format=svg&color=0a5570&bgcolor=ffffff&data=https%3A%2F%2Fclearnest.services" alt="Book at clearnest.services"/>
+        <div class="cap">Scan to book</div>
+      </div>
+    </div>
+    <div class="tagline">A Cleaner Home.<br/><span class="accent">A Clearer Mind.</span></div>
+    <div class="contact">
+      <div class="phone">(801) 441-0726</div>
+      <div class="web">clearnest.services</div>
+      <div class="meta">Salt Lake City + 40 mi &nbsp;<span class="dot">&middot;</span>&nbsp; Pay after the clean</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="top">
+      <div class="lockup">
+        <svg class="mark" viewBox="0 0 64 64" fill="none">
+          <path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/>
+          <circle cx="32" cy="38" r="3" fill="#C7972F"/>
+        </svg>
+        <div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div>
+      </div>
+      <div class="qr">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&margin=0&qzone=0&format=svg&color=0a5570&bgcolor=ffffff&data=https%3A%2F%2Fclearnest.services" alt="Book at clearnest.services"/>
+        <div class="cap">Scan to book</div>
+      </div>
+    </div>
+    <div class="tagline">A Cleaner Home.<br/><span class="accent">A Clearer Mind.</span></div>
+    <div class="contact">
+      <div class="phone">(801) 441-0726</div>
+      <div class="web">clearnest.services</div>
+      <div class="meta">Salt Lake City + 40 mi &nbsp;<span class="dot">&middot;</span>&nbsp; Pay after the clean</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="top">
+      <div class="lockup">
+        <svg class="mark" viewBox="0 0 64 64" fill="none">
+          <path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/>
+          <circle cx="32" cy="38" r="3" fill="#C7972F"/>
+        </svg>
+        <div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div>
+      </div>
+      <div class="qr">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&margin=0&qzone=0&format=svg&color=0a5570&bgcolor=ffffff&data=https%3A%2F%2Fclearnest.services" alt="Book at clearnest.services"/>
+        <div class="cap">Scan to book</div>
+      </div>
+    </div>
+    <div class="tagline">A Cleaner Home.<br/><span class="accent">A Clearer Mind.</span></div>
+    <div class="contact">
+      <div class="phone">(801) 441-0726</div>
+      <div class="web">clearnest.services</div>
+      <div class="meta">Salt Lake City + 40 mi &nbsp;<span class="dot">&middot;</span>&nbsp; Pay after the clean</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="top">
+      <div class="lockup">
+        <svg class="mark" viewBox="0 0 64 64" fill="none">
+          <path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/>
+          <circle cx="32" cy="38" r="3" fill="#C7972F"/>
+        </svg>
+        <div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div>
+      </div>
+      <div class="qr">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&margin=0&qzone=0&format=svg&color=0a5570&bgcolor=ffffff&data=https%3A%2F%2Fclearnest.services" alt="Book at clearnest.services"/>
+        <div class="cap">Scan to book</div>
+      </div>
+    </div>
+    <div class="tagline">A Cleaner Home.<br/><span class="accent">A Clearer Mind.</span></div>
+    <div class="contact">
+      <div class="phone">(801) 441-0726</div>
+      <div class="web">clearnest.services</div>
+      <div class="meta">Salt Lake City + 40 mi &nbsp;<span class="dot">&middot;</span>&nbsp; Pay after the clean</div>
+    </div>
+  </div>
 </div>
-
-<!-- ============ PAGE 2: BACK (mirror order so duplex aligns) ============ -->
-<div class="sheet" aria-label="Card backs (10-up)">
-  <!-- Back card template (10 copies, mirrored for duplex: cards on row N are flipped horizontally vs page 1 so back-to-front alignment works on a long-edge duplex print) -->
-  <!-- 1 --><div class="card back"><div class="info"><div class="row"><div class="label">Call · Text</div><div class="phone">(801) 441-0726</div></div><div class="row"><div class="url">clearnest.services</div><div class="email">clearnest.services@gmail.com</div></div><div class="row"><div class="label" style="margin-top:4px;"><span class="accent-dot">●</span> 20% off your first clean</div></div></div><div class="qr"><img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=0&qzone=0&format=svg&data=https%3A%2F%2Fclearnest.services" alt="clearnest.services QR code"/></div></div>
-  <!-- 2 --><div class="card back"><div class="info"><div class="row"><div class="label">Call · Text</div><div class="phone">(801) 441-0726</div></div><div class="row"><div class="url">clearnest.services</div><div class="email">clearnest.services@gmail.com</div></div><div class="row"><div class="label" style="margin-top:4px;"><span class="accent-dot">●</span> 20% off your first clean</div></div></div><div class="qr"><img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=0&qzone=0&format=svg&data=https%3A%2F%2Fclearnest.services" alt="clearnest.services QR code"/></div></div>
-  <!-- 3 --><div class="card back"><div class="info"><div class="row"><div class="label">Call · Text</div><div class="phone">(801) 441-0726</div></div><div class="row"><div class="url">clearnest.services</div><div class="email">clearnest.services@gmail.com</div></div><div class="row"><div class="label" style="margin-top:4px;"><span class="accent-dot">●</span> 20% off your first clean</div></div></div><div class="qr"><img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=0&qzone=0&format=svg&data=https%3A%2F%2Fclearnest.services" alt="clearnest.services QR code"/></div></div>
-  <!-- 4 --><div class="card back"><div class="info"><div class="row"><div class="label">Call · Text</div><div class="phone">(801) 441-0726</div></div><div class="row"><div class="url">clearnest.services</div><div class="email">clearnest.services@gmail.com</div></div><div class="row"><div class="label" style="margin-top:4px;"><span class="accent-dot">●</span> 20% off your first clean</div></div></div><div class="qr"><img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=0&qzone=0&format=svg&data=https%3A%2F%2Fclearnest.services" alt="clearnest.services QR code"/></div></div>
-  <!-- 5 --><div class="card back"><div class="info"><div class="row"><div class="label">Call · Text</div><div class="phone">(801) 441-0726</div></div><div class="row"><div class="url">clearnest.services</div><div class="email">clearnest.services@gmail.com</div></div><div class="row"><div class="label" style="margin-top:4px;"><span class="accent-dot">●</span> 20% off your first clean</div></div></div><div class="qr"><img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=0&qzone=0&format=svg&data=https%3A%2F%2Fclearnest.services" alt="clearnest.services QR code"/></div></div>
-  <!-- 6 --><div class="card back"><div class="info"><div class="row"><div class="label">Call · Text</div><div class="phone">(801) 441-0726</div></div><div class="row"><div class="url">clearnest.services</div><div class="email">clearnest.services@gmail.com</div></div><div class="row"><div class="label" style="margin-top:4px;"><span class="accent-dot">●</span> 20% off your first clean</div></div></div><div class="qr"><img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=0&qzone=0&format=svg&data=https%3A%2F%2Fclearnest.services" alt="clearnest.services QR code"/></div></div>
-  <!-- 7 --><div class="card back"><div class="info"><div class="row"><div class="label">Call · Text</div><div class="phone">(801) 441-0726</div></div><div class="row"><div class="url">clearnest.services</div><div class="email">clearnest.services@gmail.com</div></div><div class="row"><div class="label" style="margin-top:4px;"><span class="accent-dot">●</span> 20% off your first clean</div></div></div><div class="qr"><img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=0&qzone=0&format=svg&data=https%3A%2F%2Fclearnest.services" alt="clearnest.services QR code"/></div></div>
-  <!-- 8 --><div class="card back"><div class="info"><div class="row"><div class="label">Call · Text</div><div class="phone">(801) 441-0726</div></div><div class="row"><div class="url">clearnest.services</div><div class="email">clearnest.services@gmail.com</div></div><div class="row"><div class="label" style="margin-top:4px;"><span class="accent-dot">●</span> 20% off your first clean</div></div></div><div class="qr"><img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=0&qzone=0&format=svg&data=https%3A%2F%2Fclearnest.services" alt="clearnest.services QR code"/></div></div>
-  <!-- 9 --><div class="card back"><div class="info"><div class="row"><div class="label">Call · Text</div><div class="phone">(801) 441-0726</div></div><div class="row"><div class="url">clearnest.services</div><div class="email">clearnest.services@gmail.com</div></div><div class="row"><div class="label" style="margin-top:4px;"><span class="accent-dot">●</span> 20% off your first clean</div></div></div><div class="qr"><img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=0&qzone=0&format=svg&data=https%3A%2F%2Fclearnest.services" alt="clearnest.services QR code"/></div></div>
-  <!-- 10 --><div class="card back"><div class="info"><div class="row"><div class="label">Call · Text</div><div class="phone">(801) 441-0726</div></div><div class="row"><div class="url">clearnest.services</div><div class="email">clearnest.services@gmail.com</div></div><div class="row"><div class="label" style="margin-top:4px;"><span class="accent-dot">●</span> 20% off your first clean</div></div></div><div class="qr"><img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=0&qzone=0&format=svg&data=https%3A%2F%2Fclearnest.services" alt="clearnest.services QR code"/></div></div>
-</div>
-
-<div class="screen-only">⌘P / Ctrl+P → Letter, no margins, scale 100%, double-sided (long-edge). Then trim along dashed guides.</div>
-
+<div class="screen-only">⌘P / Ctrl+P → Letter · Margins: None · Scale: 100% · Background graphics: ON. Snap apart along the perforations.</div>
 </body>
 </html>

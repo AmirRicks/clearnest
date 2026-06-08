@@ -10,7 +10,7 @@ direct.
 | File | Size | Use |
 |---|---|---|
 | `poster.html` | 8.5 × 11 in (US Letter) | Coffee-shop bulletin boards, gyms, libraries, laundromats, apartment lobbies |
-| `business-cards.html` | 10 cards on Letter (front + back) | Hand out at every job, leave at counters, exchange with neighbors |
+| `business-cards.html` | 10 cards on Letter — **Avery 28371** (3.5 × 2 in, single-sided) | Hand out at every job, leave at counters, exchange with neighbors |
 | `door-hanger.html` | 4.25 × 11 in (Letter, left half) | Canvass the neighbors after every job |
 
 ## Print instructions
@@ -26,6 +26,12 @@ direct.
 4. Save → send to your printer, or upload the PDF to a print shop (FedEx,
    Office Depot, Staples, Vistaprint).
 
+### ⚠️ Your printer — HP Smart Tank Plus 550 (color inks only)
+The black tank doesn't work, so **the business cards are designed with no black and no grey** — every element is brand **blue or gold** (the QR is dark blue, not black) on a white background. So they print perfectly on color inks alone.
+- In the print dialog, make sure **"Print in grayscale / black & white" is OFF**.
+- The **business cards use Avery template 28371** (Letter, 10 per sheet, 3.5 × 2 in). Load the Avery sheet, print at **100% / Actual size**, and the cards land right on the perforations.
+- *(The poster and door hanger were made earlier in the darker palette — ask me to recolor them for this printer before you print those.)*
+
 ### Paper recommendations
 - **Poster:** matte presentation paper, 80–100 lb cover.
 - **Business cards:** matte card stock, 14–16 pt. (Or print on regular
@@ -34,9 +40,7 @@ direct.
 
 ### After printing
 - **Poster:** pin to community boards.
-- **Business cards:** trim along the dashed guides. (Letter sheet holds 10
-  cards; cut into 2 columns × 5 rows.) If double-siding at home, set "long-edge"
-  binding so the back aligns with the front.
+- **Business cards:** snap apart along the **micro-perforations** — no cutting needed. (Avery 28371 sheet holds 10 cards, 2 columns × 5 rows.) Each card is complete on one side, so single-sided printing is all you need.
 - **Door hanger:** trim the rectangle, cut out the dashed oval at the top
   for the doorknob.
 
@@ -67,9 +71,11 @@ files) so nothing breaks if you move the file around.
 - **One mark, one story.** A peaked roof above a curved nest cradle, with
   a gold spark inside — that's the *Clear Nest*. It's the same mark in
   the website nav, favicon, and these prints.
-- **Premium paper aesthetic.** Soft `#f6f6f1` cream background + subtle
-  brand-teal and gold ambient gradients = the liquid-glass language of
-  the site, carried into print.
+- **Premium paper aesthetic.** Clean white background + subtle brand-blue
+  and gold ambient gradients = the liquid-glass language of the site,
+  carried into print. (Business cards are recolored to a pure blue/gold,
+  no-black/no-grey palette for the HP Smart Tank Plus 550 — see the printer
+  note above.)
 - **No bucket-of-supplies clipart.** Most cleaning marketing reaches for
   the same generic mop-and-bubbles imagery. ClearNest is positioned as a
   premium, trust-led service — the prints reflect that.
