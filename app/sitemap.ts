@@ -19,6 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/contact",
     "/agreement",
     "/book",
+    "/airbnb-cleaning",
   ];
   const core: MetadataRoute.Sitemap = routes.map((path) => ({
     url: `${BASE}${path}`,
@@ -27,7 +28,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority:
       path === ""
         ? 1
-        : path === "/book" || path === "/services" || path === "/house-cleaning"
+        : path === "/book" || path === "/services" || path === "/house-cleaning" || path === "/airbnb-cleaning"
           ? 0.9
           : 0.7,
   }));

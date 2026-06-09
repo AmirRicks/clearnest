@@ -48,7 +48,7 @@ export function LocalBusinessJsonLd() {
     })),
     openingHoursSpecification: {
       "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      dayOfWeek: ["Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
       opens: "07:00",
       closes: "19:00",
     },
@@ -56,7 +56,7 @@ export function LocalBusinessJsonLd() {
       "@type": "Offer",
       itemOffered: { "@type": "Service", name: s.name, description: s.blurb },
     })),
-    sameAs: [BUSINESS.yelpUrl],
+    sameAs: [BUSINESS.yelpUrl, ...(BUSINESS.gbpUrl ? [BUSINESS.gbpUrl] : [])],
   };
   return (
     <script

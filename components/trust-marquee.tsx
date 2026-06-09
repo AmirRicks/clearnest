@@ -7,7 +7,7 @@ const ITEMS = [
   { icon: Clock, label: "Same-day rescheduling" },
   { icon: Sparkles, label: "60-point checklist" },
   { icon: Leaf, label: "Family & pet safe" },
-  { icon: Star, label: "5.0 average rating" },
+  { icon: Star, label: "Satisfaction promised" },
   { icon: MapPin, label: "Salt Lake County" },
   { icon: Home, label: "Locally owned" },
 ];

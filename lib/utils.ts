@@ -15,8 +15,9 @@ export const BUSINESS = {
   email: "clearnest.services@gmail.com",
   emailHref: "mailto:clearnest.services@gmail.com",
   serviceArea: "Salt Lake City and within 40 miles, Utah",
-  hours: "Mon–Sat · 7:00 AM – 7:00 PM",
+  hours: "Tue–Sat · 7:00 AM – 7:00 PM",
   yelpUrl: process.env.NEXT_PUBLIC_YELP_URL ?? "https://www.yelp.com/biz/clearnest-cleaning-services",
+  gbpUrl: process.env.NEXT_PUBLIC_GBP_URL ?? "",
 } as const;
 
 export function formatCurrencyRange(low: number, high: number) {
