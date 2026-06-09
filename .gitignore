@@ -47,3 +47,6 @@ supabase/.temp/
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Graphify knowledge graph (generated artifact — auto-rebuilt on commit)
+graphify-out/
