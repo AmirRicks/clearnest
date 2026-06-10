@@ -1,87 +1,80 @@
 "use server";
 
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
-import { format, startOfMonth, endOfMonth, addMonths, startOfDay, addDays } from "date-fns";
+import {
+  ACTIVE_BOOKING_STATUSES,
+  buildAvailabilityRange,
+  bucketBookings,
+  denverDateStr,
+  type DayAvailability,
+} from "@/lib/availability";
 
-export type TimeSlot = "07:00" | "09:00" | "11:00" | "13:00" | "15:00" | "17:00";
-export const ALL_SLOTS: TimeSlot[] = ["07:00", "09:00", "11:00", "13:00", "15:00", "17:00"];
+/**
+ * Availability for the inclusive date range the calendar is rendering.
+ * `startStr`/`endStr` are YYYY-MM-DD (the grid's first and last visible cells),
+ * so the returned map covers EXACTLY what the UI shows — no holes.
+ *
+ * Reads bookings with the service-role client (bypasses RLS — works whether or
+ * not the public-select policy is applied), and FAILS OPEN on any problem: a
+ * missing DB, a query error, or an empty result all yield free future open
+ * days rather than a calendar full of false "unavailable" dates.
+ */
+export async function getAvailability(
+  startStr: string,
+  endStr: string,
+): Promise<DayAvailability[]> {
+  const todayStr = denverDateStr();
 
-export interface DayAvailability {
-  date: string; // YYYY-MM-DD
-  status: "free" | "limited" | "busy";
-  availableSlots: TimeSlot[];
-}
+  // Validate inputs; fall back to a sane 60-day window if the client sent junk.
+  const start = /^\d{4}-\d{2}-\d{2}$/.test(startStr) ? startStr : todayStr;
+  const end = /^\d{4}-\d{2}-\d{2}$/.test(endStr) && endStr >= start ? endStr : addDaysStr(start, 60);
 
-function generateFreeAvailability(clientToday: string): DayAvailability[] {
-  const result: DayAvailability[] = [];
-  const today = startOfDay(new Date(clientToday));
-  const end = addDays(today, 60);
-
-  for (let d = new Date(today); d <= end; d.setDate(d.getDate() + 1)) {
-    const dateStr = format(d, "yyyy-MM-dd");
-    if (d <= today || d.getDay() === 0) {
-      result.push({ date: dateStr, status: "busy", availableSlots: [] });
-    } else {
-      result.push({ date: dateStr, status: "free", availableSlots: [...ALL_SLOTS] });
-    }
+  // Prefer the service-role client (no RLS dependency). Fall back to the
+  // cookie/anon client, then to "no DB" — all of which fail open.
+  const db = createAdminClient() ?? (isSupabaseConfigured() ? await createClient() : null);
+  if (!db) {
+    return buildAvailabilityRange(start, end, {}, todayStr);
   }
-  return result;
-}
-
-export async function getAvailability(monthDateStr: string, clientTodayStr?: string): Promise<DayAvailability[]> {
-  const todaySource = clientTodayStr || monthDateStr;
-  if (!isSupabaseConfigured()) return generateFreeAvailability(todaySource);
 
   try {
-    const supabase = await createClient();
-    
-    const baseDate = new Date(monthDateStr);
-    const start = startOfMonth(isNaN(baseDate.getTime()) ? new Date() : baseDate);
-    const end = endOfMonth(addMonths(start, 1));
+    // Widen the UTC query window by a day on each side so bookings near the
+    // Denver day boundary are still captured before we bucket them by local day.
+    const lowerISO = toUtcBoundary(start, -1);
+    const upperISO = toUtcBoundary(end, +2);
 
-    const bookedSlotsByDate: Record<string, Set<string>> = {};
-
-    const { data: bookings } = await supabase
+    const { data: bookings, error } = await db
       .from("bookings")
-      .select("scheduled_for")
-      .in("status", ["pending", "confirmed", "in_progress", "paid", "invoiced"])
-      .gte("scheduled_for", start.toISOString())
-      .lte("scheduled_for", end.toISOString());
+      .select("scheduled_for, status")
+      .in("status", ACTIVE_BOOKING_STATUSES as unknown as string[])
+      .gte("scheduled_for", lowerISO)
+      .lt("scheduled_for", upperISO);
 
-    if (bookings) {
-      for (const b of bookings) {
-        const d = new Date(b.scheduled_for);
-        const dateStr = format(d, "yyyy-MM-dd");
-        const timeStr = format(d, "HH:mm");
-        if (!bookedSlotsByDate[dateStr]) bookedSlotsByDate[dateStr] = new Set();
-        bookedSlotsByDate[dateStr].add(timeStr);
-      }
+    if (error) {
+      console.warn("[ClearNest] availability query failed — failing open:", error.message);
+      return buildAvailabilityRange(start, end, {}, todayStr);
     }
 
-    const availability: DayAvailability[] = [];
-    const clientCutoff = startOfDay(new Date(todaySource));
-
-    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-      const dateStr = format(d, "yyyy-MM-dd");
-      if (d <= clientCutoff) {
-        availability.push({ date: dateStr, status: "busy", availableSlots: [] });
-        continue;
-      }
-      if (d.getDay() === 0) {
-        availability.push({ date: dateStr, status: "busy", availableSlots: [] });
-        continue;
-      }
-      const takenSlots = bookedSlotsByDate[dateStr] || new Set();
-      const availableSlots = ALL_SLOTS.filter(slot => !takenSlots.has(slot));
-      let status: "free" | "limited" | "busy" = "free";
-      if (availableSlots.length === 0) status = "busy";
-      else if (availableSlots.length <= 2) status = "limited";
-      availability.push({ date: dateStr, status, availableSlots });
-    }
-
-    return availability;
+    const bookedByDate = bucketBookings(bookings ?? []);
+    return buildAvailabilityRange(start, end, bookedByDate, todayStr);
   } catch (err) {
-    console.error("Availability fetch error:", err);
-    return generateFreeAvailability(todaySource);
+    console.error("[ClearNest] availability fetch threw — failing open:", err);
+    return buildAvailabilityRange(start, end, {}, todayStr);
   }
+}
+
+/** YYYY-MM-DD shifted by N days, via UTC date math (DST-proof). */
+function addDaysStr(dateStr: string, days: number): string {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  dt.setUTCDate(dt.getUTCDate() + days);
+  return dt.toISOString().slice(0, 10);
+}
+
+/** An ISO instant at UTC midnight of (dateStr + offsetDays) — a safe query bound. */
+function toUtcBoundary(dateStr: string, offsetDays: number): string {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  dt.setUTCDate(dt.getUTCDate() + offsetDays);
+  return dt.toISOString();
 }

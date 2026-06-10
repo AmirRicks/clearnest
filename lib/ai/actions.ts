@@ -1,8 +1,16 @@
 import { createServerClient } from "@/lib/supabase/server-client";
-import { format, startOfDay } from "date-fns";
-
-const ALL_SLOTS = ["07:00", "09:00", "11:00", "13:00", "15:00", "17:00"] as const;
-type TimeSlot = (typeof ALL_SLOTS)[number];
+import { createAdminClient } from "@/lib/supabase/admin";
+import { format } from "date-fns";
+import {
+  ACTIVE_BOOKING_STATUSES,
+  computeDayAvailability,
+  denverDateStr,
+  denverTimeStr,
+  isOpenDay,
+  nextDateStr,
+  slotLabel,
+  type TimeSlot,
+} from "@/lib/availability";
 
 type Result<T = void> = { ok: true; data: T } | { ok: false; error: string };
 
@@ -207,85 +215,96 @@ export async function createRefundRequest(input: {
 }
 
 // ----- AVAILABILITY CHECK -----
+// Uses the SAME shared module as the customer calendar (lib/availability) so the
+// AI and the calendar can never disagree. Denver timezone, Tue–Sat, fail-open.
+
+/** "Tuesday, June 16" for a YYYY-MM-DD date (rendered at local noon to avoid tz drift). */
+function labelDate(ds: string): string {
+  return format(new Date(`${ds}T12:00:00`), "EEEE, MMMM d");
+}
+
+/** ISO instant at UTC midnight of (ds + offsetDays) — a safe query bound. */
+function utcShift(ds: string, offsetDays: number): string {
+  const [y, m, d] = ds.split("-").map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  dt.setUTCDate(dt.getUTCDate() + offsetDays);
+  return dt.toISOString();
+}
 
 export async function checkAvailability(
   dateStr: string,
 ): Promise<{ available: boolean; availableSlots: TimeSlot[]; message: string }> {
-  const date = new Date(dateStr);
-  const dayOfWeek = date.getDay();
-
-  if (dayOfWeek === 0) {
-    return {
-      available: false,
-      availableSlots: [],
-      message: "We're closed on Sundays. Please choose a Monday through Saturday.",
-    };
-  }
-
-  const todayStart = startOfDay(new Date());
-  if (date <= todayStart) {
-    return {
-      available: false,
-      availableSlots: [],
-      message: "That date is today or in the past. Please choose a future date.",
-    };
-  }
-
-  const dayStart = startOfDay(date);
-  const dayEnd = new Date(dayStart);
-  dayEnd.setDate(dayEnd.getDate() + 1);
-
-  const { data: bookings } = await getDb()
-    .from("bookings")
-    .select("scheduled_for")
-    .in("status", ["pending", "confirmed", "in_progress", "paid", "invoiced"])
-    .gte("scheduled_for", dayStart.toISOString())
-    .lt("scheduled_for", dayEnd.toISOString());
-
-  const takenSlots = new Set<string>();
-  if (bookings) {
-    for (const b of bookings) {
-      const h = format(new Date(b.scheduled_for), "HH:mm");
-      takenSlots.add(h);
+  // Normalize to a Denver YYYY-MM-DD (accept ISO date or anything Date can parse).
+  let ds = (dateStr || "").trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(ds)) {
+    const d = new Date(ds);
+    if (isNaN(d.getTime())) {
+      return {
+        available: false,
+        availableSlots: [],
+        message: "I couldn't read that date — could you give it as a weekday and date, like 'Tuesday, June 16'?",
+      };
     }
+    ds = denverDateStr(d);
   }
 
-  const availableSlots = ALL_SLOTS.filter((s) => !takenSlots.has(s)) as TimeSlot[];
+  const today = denverDateStr();
+  if (ds <= today) {
+    return {
+      available: false,
+      availableSlots: [],
+      message:
+        ds < today
+          ? "That date has already passed — please pick an upcoming day."
+          : "We need 24 hours' notice, so today isn't bookable. The earliest is tomorrow — want me to check it?",
+    };
+  }
+  if (!isOpenDay(ds)) {
+    return {
+      available: false,
+      availableSlots: [],
+      message: "We're closed Sundays and Mondays — we clean Tuesday through Saturday. Want me to find the next open day?",
+    };
+  }
 
-  if (availableSlots.length === 0) {
-    const nextDay = new Date(dayStart);
+  // Read booked slots for the day. Service-role client (no RLS dependency); on
+  // any failure we fail open and treat the day as fully available.
+  let bookedSlots: string[] = [];
+  try {
+    const db = createAdminClient() ?? getDb();
+    const { data } = await db
+      .from("bookings")
+      .select("scheduled_for, status")
+      .in("status", ACTIVE_BOOKING_STATUSES as unknown as string[])
+      .gte("scheduled_for", utcShift(ds, -1))
+      .lt("scheduled_for", utcShift(ds, 2));
+    bookedSlots = (data ?? [])
+      .filter((r) => denverDateStr(new Date(r.scheduled_for)) === ds)
+      .map((r) => denverTimeStr(new Date(r.scheduled_for)));
+  } catch {
+    // fail open
+  }
+
+  const day = computeDayAvailability(ds, bookedSlots, today);
+
+  if (day.availableSlots.length === 0) {
     const suggestions: string[] = [];
-    for (let i = 1; i <= 7; i++) {
-      nextDay.setDate(nextDay.getDate() + 1);
-      if (nextDay.getDay() === 0) continue;
-      const nextDayStr = format(nextDay, "yyyy-MM-dd");
-      const { availableSlots: nextSlots } = await checkAvailability(nextDayStr);
-      if (nextSlots.length > 0) {
-        suggestions.push(format(nextDay, "EEEE, MMMM d"));
-        if (suggestions.length >= 3) break;
-      }
+    let probe = ds;
+    for (let i = 0; i < 10 && suggestions.length < 3; i++) {
+      probe = nextDateStr(probe);
+      if (isOpenDay(probe)) suggestions.push(labelDate(probe));
     }
-
     return {
       available: false,
       availableSlots: [],
-      message: `That date is fully booked.${suggestions.length > 0 ? ` Available dates: ${suggestions.join(", ")}.` : ""}`,
+      message: `${labelDate(ds)} is fully booked.${suggestions.length ? ` The next open days are ${suggestions.join(", ")}.` : ""}`,
     };
   }
 
-  const timeList = availableSlots
-    .map((s) => {
-      const h = parseInt(s.split(":")[0]);
-      if (h === 0) return "12:00 AM";
-      if (h < 12) return `${h}:00 AM`;
-      if (h === 12) return "12:00 PM";
-      return `${h - 12}:00 PM`;
-    })
-    .join(", ");
-
+  const timeList = day.availableSlots.map(slotLabel).join(", ");
   return {
     available: true,
-    availableSlots,
-    message: `Available times on ${format(date, "EEEE, MMMM d")}: ${timeList}.`,
+    availableSlots: day.availableSlots,
+    message: `${labelDate(ds)} has these times open: ${timeList}.`,
   };
 }

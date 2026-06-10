@@ -225,7 +225,7 @@ export async function sendLeadAutoReply(input: {
   const first = input.customerName?.trim().split(" ")[0];
   const body = `
     <p style="margin:0 0 16px;color:#4a5159;line-height:1.6;">
-      Hi ${first ? escape(first) : "there"} — thanks for reaching out to ClearNest! We've got your request and we'll text or email your quote shortly. We answer Monday–Saturday, 7am–7pm.
+      Hi ${first ? escape(first) : "there"} — thanks for reaching out to ClearNest! We've got your request and we'll text or email your quote shortly. We answer Tuesday–Saturday, 7am–7pm.
     </p>
     <div style="border-top:1px solid #e6e1d6;margin-top:16px;padding-top:16px;font-size:13px;color:#4a5159;line-height:1.6;">
       <strong style="color:#1a1d22;">Want the fastest answer?</strong> Text or call us at
@@ -332,6 +332,51 @@ export async function sendGiftReceipt(input: {
     subject: "Your ClearNest gift card — receipt",
     html: shell("Gift card confirmed 🎉", body),
     replyTo: BUSINESS.email,
+  });
+}
+
+/**
+ * Notify the owner immediately when the AI receptionist flags something urgent
+ * — a refund request or a high-priority complaint (property damage, safety, an
+ * angry customer). Goes to LEAD_NOTIFY_EMAIL so it can be actioned fast.
+ */
+export async function sendEscalationNotification(input: {
+  kind: "refund" | "complaint" | "support";
+  priority?: "low" | "medium" | "high";
+  name?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  serviceDate?: string | null;
+  address?: string | null;
+  details: string;
+}) {
+  const to = process.env.LEAD_NOTIFY_EMAIL || BUSINESS.email;
+  const heading =
+    input.kind === "refund" ? "⚠️ Refund request" :
+    input.priority === "high" ? "🚨 HIGH PRIORITY complaint" : "New support request";
+  const digits = (input.phone || "").replace(/[^0-9+]/g, "");
+  const actions = digits
+    ? `<p style="margin:20px 0 0;text-align:center;">
+        <a href="tel:${digits}" style="display:inline-block;background:#1a1d22;color:#fff;padding:11px 20px;border-radius:999px;text-decoration:none;font-weight:600;font-size:14px;">📞 Call ${escape(input.phone || "")}</a>
+      </p>`
+    : "";
+  const body = `
+    <p style="margin:0 0 16px;color:#4a5159;line-height:1.6;">The AI receptionist flagged this for your review${input.kind === "refund" ? " — only you can approve a refund." : "."}</p>
+    ${row("Type", escape(input.kind))}
+    ${input.priority ? row("Priority", escape(input.priority.toUpperCase())) : ""}
+    ${row("Name", escape(input.name || "—"))}
+    ${row("Phone", escape(input.phone || "—"))}
+    ${row("Email", escape(input.email || "—"))}
+    ${input.serviceDate ? row("Service date", escape(input.serviceDate)) : ""}
+    ${input.address ? row("Address", escape(input.address)) : ""}
+    ${row("Details", escape(input.details))}
+    ${actions}
+  `;
+  return send({
+    to,
+    subject: `${heading} — ClearNest`,
+    html: shell(heading, body),
+    replyTo: input.email || undefined,
   });
 }
 

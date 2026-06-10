@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, startOfWeek, endOfWeek } from "date-fns";
+import { useState, useEffect, useCallback } from "react";
+import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, startOfWeek, endOfWeek } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getAvailability, type DayAvailability, type TimeSlot } from "@/app/book/availability-action";
+import { getAvailability } from "@/app/book/availability-action";
+import { computeDayAvailability, denverDateStr, slotLabel, type DayAvailability } from "@/lib/availability";
 
 interface BookingCalendarProps {
   selectedDate: string;
@@ -13,64 +14,78 @@ interface BookingCalendarProps {
   onSelect: (date: string, time: string) => void;
 }
 
+const fmt = (d: Date) => format(d, "yyyy-MM-dd");
+
 export function BookingCalendar({ selectedDate, selectedTime, onSelect }: BookingCalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [availability, setAvailability] = useState<Record<string, DayAvailability>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch availability when month changes
-  useEffect(() => {
-    let isMounted = true;
+  // The exact grid we render (Mon-started weeks, padded to full weeks).
+  const monthStart = startOfMonth(currentMonth);
+  const monthEnd = endOfMonth(currentMonth);
+  const startDate = startOfWeek(monthStart, { weekStartsOn: 1 });
+  const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
+  const days = eachDayOfInterval({ start: startDate, end: endDate });
+
+  const todayStr = denverDateStr();
+
+  const load = useCallback(() => {
+    let active = true;
     setLoading(true);
     setError(null);
-    
-    getAvailability(currentMonth.toISOString(), new Date().toISOString()).then((data) => {
-      if (!isMounted) return;
-      const map: Record<string, DayAvailability> = {};
-      data.forEach(d => { map[d.date] = d; });
-      setAvailability(map);
-      setLoading(false);
-    }).catch((err) => {
-      if (!isMounted) return;
-      console.error("Failed to load availability:", err);
-      setError("Could not load availability. Please try again.");
-      setLoading(false);
-    });
+    // Ask for availability across the precise visible range so every rendered
+    // cell has a matching entry (no holes → no false "unavailable").
+    getAvailability(fmt(startDate), fmt(endDate))
+      .then((data) => {
+        if (!active) return;
+        const map: Record<string, DayAvailability> = {};
+        data.forEach((d) => { map[d.date] = d; });
+        setAvailability(map);
+        setLoading(false);
+      })
+      .catch((err) => {
+        if (!active) return;
+        console.error("Failed to load availability:", err);
+        // Fail open even on transport error: show the month as bookable rather
+        // than blocking the funnel. We still surface a soft notice.
+        setError("Showing our standard schedule — pick any open date and we'll confirm.");
+        setLoading(false);
+      });
+    return () => { active = false; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fmt(startDate), fmt(endDate)]);
 
-    return () => { isMounted = false; };
-  }, [currentMonth]);
+  useEffect(() => load(), [load]);
 
   const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
   const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
 
-  // Generate grid days (pad start and end of month to fill complete weeks)
-  const monthStart = startOfMonth(currentMonth);
-  const monthEnd = endOfMonth(currentMonth);
-  const startDate = startOfWeek(monthStart, { weekStartsOn: 1 }); // Start on Monday
-  const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
-  
-  const days = eachDayOfInterval({ start: startDate, end: endDate });
+  // Always resolve a status, even if the fetch missed a cell (fail open).
+  const infoFor = (dateStr: string): DayAvailability =>
+    availability[dateStr] ?? computeDayAvailability(dateStr, undefined, todayStr);
 
-  const activeDateInfo = selectedDate ? availability[selectedDate] : null;
+  const activeDateInfo = selectedDate ? infoFor(selectedDate) : null;
+  const isBookable = (s: DayAvailability["status"]) => s === "free" || s === "limited";
 
   return (
     <div className="w-full">
-      {/* Calendar Header */}
+      {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-bold text-charcoal">
-          {format(currentMonth, "MMMM yyyy")}
-        </h3>
+        <h3 className="text-lg font-bold text-charcoal">{format(currentMonth, "MMMM yyyy")}</h3>
         <div className="flex gap-2">
-          <button 
+          <button
             onClick={prevMonth}
             disabled={isSameMonth(currentMonth, new Date())}
+            aria-label="Previous month"
             className="p-2 rounded-full border border-stone-200 hover:bg-paper disabled:opacity-30 transition"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
-          <button 
+          <button
             onClick={nextMonth}
+            aria-label="Next month"
             className="p-2 rounded-full border border-stone-200 hover:bg-paper transition"
           >
             <ChevronRight className="w-5 h-5" />
@@ -78,7 +93,6 @@ export function BookingCalendar({ selectedDate, selectedTime, onSelect }: Bookin
         </div>
       </div>
 
-      {/* Loading Overlay */}
       <div className="relative">
         {loading && (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/50 backdrop-blur-sm rounded-xl">
@@ -86,31 +100,12 @@ export function BookingCalendar({ selectedDate, selectedTime, onSelect }: Bookin
           </div>
         )}
         {error && (
-          <div className="mb-4 p-4 rounded-xl bg-red-50 border border-red-100 text-red-800 text-sm text-center">
+          <div className="mb-4 p-3 rounded-xl bg-amber-50 border border-amber-100 text-amber-800 text-sm text-center">
             {error}
-            <button
-              onClick={() => {
-                setError(null);
-                setLoading(true);
-                getAvailability(currentMonth.toISOString(), new Date().toISOString()).then((data) => {
-                  const map: Record<string, DayAvailability> = {};
-                  data.forEach(d => { map[d.date] = d; });
-                  setAvailability(map);
-                  setLoading(false);
-                }).catch((err) => {
-                  console.error("Retry failed:", err);
-                  setError("Still having trouble. Please refresh the page.");
-                  setLoading(false);
-                });
-              }}
-              className="ml-2 underline font-medium"
-            >
-              Retry
-            </button>
           </div>
         )}
 
-        {/* Days of Week */}
+        {/* Day-of-week header */}
         <div className="grid grid-cols-7 gap-1 mb-2">
           {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
             <div key={day} className="text-center text-xs font-semibold uppercase tracking-wider text-graphite">
@@ -119,51 +114,49 @@ export function BookingCalendar({ selectedDate, selectedTime, onSelect }: Bookin
           ))}
         </div>
 
-        {/* Calendar Grid */}
+        {/* Grid */}
         <div className="grid grid-cols-7 gap-1 md:gap-2">
-          {days.map((day, idx) => {
-            const dateStr = format(day, "yyyy-MM-dd");
-            const info = availability[dateStr];
+          {days.map((day) => {
+            const dateStr = fmt(day);
+            const info = infoFor(dateStr);
+            const status = info.status;
             const isCurrentMonth = isSameMonth(day, currentMonth);
             const isSelected = selectedDate === dateStr;
-            const isPast = day < new Date(new Date().setHours(0,0,0,0));
-            
-            // UI States
-            const isBusy = info?.status === "busy" || isPast;
-            const isLimited = info?.status === "limited";
-            const isFree = info?.status === "free";
+            const bookable = isBookable(status);
+
+            const label =
+              status === "free" ? "Free" :
+              status === "limited" ? "Limited" :
+              status === "busy" ? "Busy" :
+              status === "closed" ? "Closed" : "";
 
             return (
               <button
                 key={dateStr}
-                onClick={() => {
-                  if (!isBusy) onSelect(dateStr, ""); // Clear time when new date selected
-                }}
-                disabled={isBusy}
+                type="button"
+                onClick={() => { if (bookable) onSelect(dateStr, ""); }}
+                disabled={!bookable}
+                aria-label={`${format(day, "EEEE, MMMM d")}${label ? " — " + label : ""}`}
                 className={cn(
                   "flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all border",
                   !isCurrentMonth && "opacity-30",
-                  isBusy && "cursor-not-allowed border-transparent opacity-40",
+                  !bookable && "cursor-not-allowed border-transparent opacity-40",
                   isSelected && "border-brand-500 bg-brand-50 shadow-soft",
-                  !isSelected && !isBusy && "border-stone/40 hover:border-brand-300 hover:bg-paper/50 cursor-pointer"
+                  !isSelected && bookable && "border-stone/40 hover:border-brand-300 hover:bg-paper/50 cursor-pointer"
                 )}
               >
-                <span className={cn(
-                  "text-base font-medium",
-                  isSelected ? "text-brand-700" : "text-charcoal"
-                )}>
+                <span className={cn("text-base font-medium", isSelected ? "text-brand-700" : "text-charcoal")}>
                   {format(day, "d")}
                 </span>
-                
-                {/* Status Dot/Text exactly like wireframe */}
-                {isCurrentMonth && !isPast && (
+                {isCurrentMonth && label && (
                   <span className={cn(
                     "text-[10px] mt-1 font-medium",
-                    isBusy && "text-red-500",
-                    isFree && "text-green-600",
-                    isLimited && "text-amber-500"
+                    status === "busy" && "text-red-500",
+                    status === "free" && "text-green-600",
+                    status === "limited" && "text-amber-500",
+                    status === "closed" && "text-graphite/60"
                   )}>
-                    {isBusy ? "Busy" : isFree ? "Free" : "Limited"}
+                    {label}
                   </span>
                 )}
               </button>
@@ -172,9 +165,9 @@ export function BookingCalendar({ selectedDate, selectedTime, onSelect }: Bookin
         </div>
       </div>
 
-      {/* Time Slots Selection */}
+      {/* Time slots */}
       <AnimatePresence>
-        {selectedDate && activeDateInfo && activeDateInfo.status !== "busy" && (
+        {selectedDate && activeDateInfo && isBookable(activeDateInfo.status) && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
@@ -182,12 +175,13 @@ export function BookingCalendar({ selectedDate, selectedTime, onSelect }: Bookin
             className="mt-8 pt-6 border-t border-stone-200"
           >
             <h4 className="text-sm font-semibold text-charcoal mb-4">
-              Select time for {format(new Date(selectedDate), "EEEE, MMMM d")}
+              Select time for {format(new Date(`${selectedDate}T12:00:00`), "EEEE, MMMM d")}
             </h4>
             <div className="flex flex-wrap gap-3">
               {activeDateInfo.availableSlots.map((slot) => (
                 <button
                   key={slot}
+                  type="button"
                   onClick={() => onSelect(selectedDate, slot)}
                   className={cn(
                     "px-4 py-2 rounded-xl text-sm font-medium border transition-all",
@@ -196,22 +190,17 @@ export function BookingCalendar({ selectedDate, selectedTime, onSelect }: Bookin
                       : "bg-background text-charcoal border-stone-300 hover:border-brand-400 hover:bg-paper"
                   )}
                 >
-                  {/* Convert 24h to 12h AM/PM */}
-                  {parseInt(slot.split(":")[0]) > 12
-                    ? `${parseInt(slot.split(":")[0]) - 12}:00 PM`
-                    : parseInt(slot.split(":")[0]) === 12
-                      ? "12:00 PM"
-                      : `${parseInt(slot.split(":")[0])}:00 AM`}
+                  {slotLabel(slot)}
                 </button>
               ))}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-      
-      {selectedDate && (!activeDateInfo || activeDateInfo.status === "busy") && (
+
+      {selectedDate && activeDateInfo && !isBookable(activeDateInfo.status) && (
         <div className="mt-6 p-4 rounded-xl bg-red-50 border border-red-100 text-red-800 text-sm">
-          This date is currently unavailable. Please select another date.
+          That date isn’t available. Please choose another open date.
         </div>
       )}
     </div>

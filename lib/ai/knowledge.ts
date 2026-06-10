@@ -63,8 +63,8 @@ Salt Lake City, Sandy, West Jordan, South Jordan, Murray, Draper, Holladay, Cott
 ## BUSINESS INFO
 - Phone: (801) 441-0726
 - Email: clearnest.services@gmail.com
-- Hours: Monday–Saturday, 7am–7pm
-- Closed: Sundays
+- Hours: Tuesday–Saturday, 7am–7pm
+- Closed: Sunday and Monday
 - Website: clearnest.services
 - Pay after the clean — we send a hosted invoice the day of service
 - Payment methods: card, Apple Pay, Google Pay

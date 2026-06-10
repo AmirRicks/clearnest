@@ -75,8 +75,8 @@ export function AIChatWidget() {
     });
   }, []);
 
-  const sendMessage = useCallback(async () => {
-    const text = input.trim();
+  const sendMessage = useCallback(async (textOverride?: string) => {
+    const text = (typeof textOverride === "string" ? textOverride : input).trim();
     if (!text || isStreaming) return;
     setInput("");
     setIsStreaming(true);
@@ -118,6 +118,7 @@ export function AIChatWidget() {
       const decoder = new TextDecoder();
       let fullResponse = "";
       let buffer = "";
+      let added = false;
 
       while (true) {
         const { done, value } = await reader.read();
@@ -147,6 +148,7 @@ export function AIChatWidget() {
                 }
                 addMessage({ role: "assistant", content: fullResponse });
                 setStreamingContent("");
+                added = true;
                 break;
               case "tool_results":
                 // Tool results are logged silently
@@ -156,8 +158,9 @@ export function AIChatWidget() {
         }
       }
 
-      // Handle any remaining buffer data
-      if (fullResponse && !messages.some((m) => m.content === fullResponse && m.role === "assistant")) {
+      // If the stream ended without a `done` event (e.g. dropped connection),
+      // still persist what we received — but never double-add.
+      if (!added && fullResponse) {
         addMessage({ role: "assistant", content: fullResponse });
         setStreamingContent("");
       }
@@ -274,10 +277,7 @@ export function AIChatWidget() {
                         ].map((q) => (
                           <button
                             key={q}
-                            onClick={() => {
-                              setInput(q);
-                              setTimeout(sendMessage, 100);
-                            }}
+                            onClick={() => sendMessage(q)}
                             className="rounded-full border border-stone/70 px-3 py-1.5 text-xs text-graphite hover:border-brand-300 hover:bg-brand-50 transition"
                           >
                             {q}
@@ -329,7 +329,7 @@ export function AIChatWidget() {
                       className="flex-1 rounded-xl border border-stone/70 bg-paper px-4 py-2.5 text-sm text-charcoal placeholder:text-graphite/50 focus:outline-none focus:border-brand-400 transition disabled:opacity-50"
                     />
                     <button
-                      onClick={sendMessage}
+                      onClick={() => sendMessage()}
                       disabled={!input.trim() || isStreaming}
                       className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-charcoal text-white hover:bg-brand-700 transition disabled:opacity-40"
                       aria-label="Send"

@@ -1,21 +1,37 @@
 export type AIConfig = {
-  provider: "openrouter" | "deepseek" | "gemini";
-  model: string;
   apiKey: string;
   baseUrl: string;
+  /** Models tried in order — the first that responds wins (free models are
+   *  flaky/rate-limited, so we always keep fallbacks). */
+  models: string[];
   maxTokens: number;
   temperature: number;
 };
 
+/**
+ * Curated free OpenRouter stack (valid IDs as of 2026). The previous value
+ * `"openrouter/free"` is NOT a real model and made every request 400 — the AI
+ * receptionist could never answer. Keep these as known-good free models.
+ */
+const FREE_MODELS = [
+  "openai/gpt-oss-20b:free",
+  "meta-llama/llama-3.3-70b-instruct:free",
+  "microsoft/phi-3.5-mini-128k-instruct:free",
+];
+
 export function getAIConfig(): AIConfig | null {
-  const key = process.env.AI_API_KEY;
+  // Accept either name so prod (AI_API_KEY) and the Brain's standard
+  // (OPENROUTER_API_KEY) both work.
+  const key = process.env.AI_API_KEY || process.env.OPENROUTER_API_KEY;
   if (!key) return null;
 
+  // Optional comma-separated override, else the curated free stack.
+  const override = process.env.AI_MODELS?.split(",").map((s) => s.trim()).filter(Boolean);
+
   return {
-    provider: "openrouter",
-    model: "openrouter/free",
     apiKey: key,
-    baseUrl: "https://openrouter.ai/api/v1",
+    baseUrl: process.env.AI_BASE_URL || "https://openrouter.ai/api/v1",
+    models: override && override.length ? override : FREE_MODELS,
     maxTokens: 2048,
     temperature: 0.7,
   };
@@ -26,6 +42,12 @@ export type ChatMessage = {
   content: string;
 };
 
+/**
+ * Stream a chat completion, trying each configured model until one starts
+ * responding. A model that fails at request time (bad id, 404, 429) is skipped
+ * BEFORE any tokens are emitted, so the user never sees duplicated/garbled
+ * output. Returns the full text.
+ */
 export async function streamAIResponse(
   messages: ChatMessage[],
   onToken: (token: string) => void,
@@ -33,11 +55,30 @@ export async function streamAIResponse(
 ): Promise<string> {
   const config = getAIConfig();
   if (!config) {
-    const fallback = "AI system is not configured. Please set AI_API_KEY in environment variables.";
+    const fallback = "Our assistant is offline right now — please call (801) 441-0726 and we'll help you straight away.";
     onToken(fallback);
     return fallback;
   }
 
+  let lastErr: unknown = null;
+  for (const model of config.models) {
+    try {
+      return await streamOne(config, model, messages, onToken, signal);
+    } catch (err) {
+      lastErr = err;
+      console.warn(`[AI] model ${model} failed, trying next:`, (err as Error)?.message);
+    }
+  }
+  throw lastErr ?? new Error("All AI models failed");
+}
+
+async function streamOne(
+  config: AIConfig,
+  model: string,
+  messages: ChatMessage[],
+  onToken: (token: string) => void,
+  signal?: AbortSignal,
+): Promise<string> {
   const res = await fetch(`${config.baseUrl}/chat/completions`, {
     method: "POST",
     headers: {
@@ -47,7 +88,7 @@ export async function streamAIResponse(
       "X-Title": "ClearNest AI Receptionist",
     },
     body: JSON.stringify({
-      model: config.model,
+      model,
       messages,
       max_tokens: config.maxTokens,
       temperature: config.temperature,
@@ -57,8 +98,9 @@ export async function streamAIResponse(
   });
 
   if (!res.ok) {
-    const errText = await res.text();
-    throw new Error(`AI API error (${res.status}): ${errText}`);
+    const errText = await res.text().catch(() => "");
+    // Thrown before any token is emitted → safe to fall back to the next model.
+    throw new Error(`AI API error (${res.status}) on ${model}: ${errText.slice(0, 200)}`);
   }
 
   const reader = res.body?.getReader();
@@ -80,7 +122,7 @@ export async function streamAIResponse(
       try {
         const parsed = JSON.parse(data);
         const delta = parsed.choices?.[0]?.delta || {};
-        const content = delta.content || delta.reasoning || "";
+        const content = delta.content || "";
         if (content) {
           full += content;
           onToken(content);
