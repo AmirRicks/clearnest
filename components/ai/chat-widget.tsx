@@ -220,6 +220,9 @@ export function AIChatWidget() {
               height: isMinimized ? "auto" : undefined,
             }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            // Stop Lenis smooth-scroll from hijacking wheel/touch events over the
+            // widget so the conversation scrolls natively instead of the page.
+            data-lenis-prevent
             className={`fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-2rem)] ${
               isMinimized ? "" : "h-[600px] max-h-[calc(100vh-6rem)]"
             } rounded-2xl bg-background border border-stone/70 shadow-2xl flex flex-col overflow-hidden`}
