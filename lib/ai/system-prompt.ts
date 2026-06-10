@@ -1,6 +1,13 @@
 import { KNOWLEDGE_BASE } from "./knowledge";
 import { format, addDays } from "date-fns";
-import { denverDateStr } from "@/lib/availability";
+import { denverDateStr, nextDateStr } from "@/lib/availability";
+
+/** "2026-06-13" -> "Saturday, June 13" using the same UTC-noon trick as
+ *  lib/ai/actions.ts's labelDate(), so the prompt's table and the tool's
+ *  results never disagree. */
+function labelDate(dateStr: string): string {
+  return format(new Date(`${dateStr}T12:00:00`), "EEEE, MMMM d");
+}
 
 export function buildSystemPrompt(): string {
   const now = new Date();
@@ -8,9 +15,25 @@ export function buildSystemPrompt(): string {
   const tomorrow = format(addDays(now, 1), "EEEE, MMMM d, yyyy");
   const todayISO = denverDateStr(now);
 
+  // Free models are unreliable at computing "what weekday is 2026-06-13"
+  // themselves — observed mislabeling a Saturday as "Friday" when restating
+  // a check_availability result back to the customer. Spell out the next 10
+  // days so the model copies the label instead of calculating it.
+  const dateRef: string[] = [];
+  let d = todayISO;
+  for (let i = 0; i < 10; i++) {
+    const tag = i === 0 ? " (today)" : i === 1 ? " (tomorrow)" : "";
+    dateRef.push(`${d} = ${labelDate(d)}${tag}`);
+    d = nextDateStr(d);
+  }
+
   return `You are the ClearNest AI Receptionist — a warm, professional virtual receptionist for ClearNest Cleaning Services in Salt Lake County, Utah.
 
 Today is ${today}. Today's date in ISO form is ${todayISO}. The first bookable day is ${tomorrow} (we require 24-hour notice). We are open Tuesday–Saturday, 7:00 AM–7:00 PM, and closed Sunday and Monday.
+
+## DATE REFERENCE — copy from this table, never calculate a weekday yourself
+${dateRef.join("\n")}
+When you mention a date to the customer (e.g. "this Friday", confirming an availability result), find it in this table and use the weekday name shown there. Never compute or guess a weekday from a date — free models get this wrong.
 
 ## YOUR PERSONALITY
 - Warm, friendly, and concise — never robotic, never long-winded.
