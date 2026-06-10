@@ -283,6 +283,11 @@ export async function POST(req: NextRequest) {
     const stream = new ReadableStream({
       async start(controller) {
         const emit = (o: unknown) => controller.enqueue(encoder.encode(JSON.stringify(o) + "\n"));
+        let streamedAnyVisible = false;
+        const emitToken = (content: string) => {
+          streamedAnyVisible = true;
+          emit({ type: "token", content });
+        };
 
         // Emits visible tokens to the client while hiding any TOOL_CALL line.
         function makeVisible() {
@@ -294,11 +299,11 @@ export async function POST(req: NextRequest) {
               while ((nl = pending.indexOf("\n")) !== -1) {
                 const line = pending.slice(0, nl + 1);
                 pending = pending.slice(nl + 1);
-                if (!line.trim().startsWith("TOOL_CALL:")) emit({ type: "token", content: line });
+                if (!line.trim().startsWith("TOOL_CALL:")) emitToken(line);
               }
             },
             flush() {
-              if (pending && !pending.trim().startsWith("TOOL_CALL:")) emit({ type: "token", content: pending });
+              if (pending && !pending.trim().startsWith("TOOL_CALL:")) emitToken(pending);
               pending = "";
             },
           };
@@ -355,6 +360,11 @@ export async function POST(req: NextRequest) {
         }
 
         if (!finalAssistant) finalAssistant = "Thanks! Is there anything else I can help you with?";
+
+        // Never leave the customer with a blank bubble: if nothing visible was
+        // streamed (e.g. the model emitted only a tool call, or returned empty),
+        // send the final text now.
+        if (!streamedAnyVisible) emit({ type: "token", content: finalAssistant });
 
         if (loggedConvId && loggedConvId !== "unlogged") {
           try {

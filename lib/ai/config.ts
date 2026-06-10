@@ -13,9 +13,12 @@ export type AIConfig = {
  * `"openrouter/free"` is NOT a real model and made every request 400 — the AI
  * receptionist could never answer. Keep these as known-good free models.
  */
+// Llama 3.3 first: a clean instruct model that follows the TOOL_CALL protocol and
+// streams in `content` (not a separate reasoning channel), which the gpt-oss
+// reasoning model does not — that mismatch made tool queries come back blank.
 const FREE_MODELS = [
-  "openai/gpt-oss-20b:free",
   "meta-llama/llama-3.3-70b-instruct:free",
+  "openai/gpt-oss-20b:free",
   "microsoft/phi-3.5-mini-128k-instruct:free",
 ];
 
@@ -122,7 +125,8 @@ async function streamOne(
       try {
         const parsed = JSON.parse(data);
         const delta = parsed.choices?.[0]?.delta || {};
-        const content = delta.content || "";
+        // Reasoning models (e.g. gpt-oss) stream into `reasoning`, not `content`.
+        const content = delta.content || delta.reasoning || "";
         if (content) {
           full += content;
           onToken(content);
