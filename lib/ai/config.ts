@@ -13,13 +13,16 @@ export type AIConfig = {
  * `"openrouter/free"` is NOT a real model and made every request 400 — the AI
  * receptionist could never answer. Keep these as known-good free models.
  */
-// Llama 3.3 first: a clean instruct model that follows the TOOL_CALL protocol and
-// streams in `content` (not a separate reasoning channel), which the gpt-oss
-// reasoning model does not — that mismatch made tool queries come back blank.
+// Instruct models first (they stream the answer in `content` and follow the
+// TOOL_CALL protocol). The gpt-oss *reasoning* model is last resort only — it
+// streams into `reasoning`, which we hide, so it can yield an empty answer.
+// streamAIResponse skips any model that returns empty content, so a rate-limited
+// or reasoning-only model falls through to the next.
 const FREE_MODELS = [
   "meta-llama/llama-3.3-70b-instruct:free",
+  "google/gemma-4-31b-it:free",
+  "meta-llama/llama-3.2-3b-instruct:free",
   "openai/gpt-oss-20b:free",
-  "microsoft/phi-3.5-mini-128k-instruct:free",
 ];
 
 export function getAIConfig(): AIConfig | null {
@@ -66,7 +69,12 @@ export async function streamAIResponse(
   let lastErr: unknown = null;
   for (const model of config.models) {
     try {
-      return await streamOne(config, model, messages, onToken, signal);
+      const text = await streamOne(config, model, messages, onToken, signal);
+      // A model that returns nothing usable (rate-limited 200, or a reasoning
+      // model whose answer we hid) shouldn't win — fall through to the next.
+      if (text.trim()) return text;
+      lastErr = new Error(`empty content from ${model}`);
+      console.warn(`[AI] model ${model} returned empty content, trying next`);
     } catch (err) {
       lastErr = err;
       console.warn(`[AI] model ${model} failed, trying next:`, (err as Error)?.message);
