@@ -13,6 +13,7 @@ import {
   checkAvailability,
 } from "@/lib/ai/actions";
 import { sendLeadNotification, sendEscalationNotification } from "@/lib/email";
+import { denverDateStr, dayOfWeekForDateStr, nextDateStr } from "@/lib/availability";
 
 const RATE_LIMIT_WINDOW = 60_000; // 1 minute
 const MAX_REQUESTS_PER_WINDOW = 20;
@@ -227,6 +228,45 @@ async function runTools(
   return results;
 }
 
+const WEEKDAYS = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+const MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+
+/** Best-effort: pull a concrete future date (YYYY-MM-DD, Denver) out of free text.
+ *  Handles today/tomorrow, ISO, "June 19", and weekday names (next occurrence). */
+function extractDate(text: string): string | null {
+  const t = text.toLowerCase();
+  const today = denverDateStr();
+  if (/\btoday\b/.test(t)) return today;
+  if (/\btomorrow\b/.test(t)) return nextDateStr(today);
+
+  const iso = t.match(/\b(\d{4}-\d{2}-\d{2})\b/);
+  if (iso) return iso[1];
+
+  const md = t.match(/\b([a-z]{3,9})\s+(\d{1,2})(?:st|nd|rd|th)?\b/);
+  if (md) {
+    const mi = MONTHS.findIndex((m) => m.startsWith(md[1]));
+    const day = parseInt(md[2], 10);
+    if (mi >= 0 && day >= 1 && day <= 31) {
+      const [y] = today.split("-").map(Number);
+      const mk = (yr: number) => `${yr}-${String(mi + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+      let cand = mk(y);
+      if (cand < today) cand = mk(y + 1);
+      return cand;
+    }
+  }
+
+  for (let i = 0; i < 7; i++) {
+    if (new RegExp(`\\b${WEEKDAYS[i]}\\b`).test(t)) {
+      let d = nextDateStr(today);
+      for (let k = 0; k < 7; k++) {
+        if (dayOfWeekForDateStr(d) === i) return d;
+        d = nextDateStr(d);
+      }
+    }
+  }
+  return null;
+}
+
 export async function POST(req: NextRequest) {
   const ip = getClientIp(req);
   if (!checkRateLimit(ip)) {
@@ -270,9 +310,27 @@ export async function POST(req: NextRequest) {
       try { await updateConversation(convId, { category: intent.category }); } catch {}
     }
 
+    // Deterministic availability: for the most important question, don't depend
+    // on a free model emitting a perfect tool call. If they ask about
+    // availability/booking and we can read a date, fetch the real slots ourselves
+    // and hand them to the model so it just relays accurate info.
+    let availabilityNote = "";
+    if (intent.category === "availability" || intent.category === "booking") {
+      const date = extractDate(message);
+      if (date) {
+        try {
+          const avail = await checkAvailability(date);
+          availabilityNote =
+            "LIVE AVAILABILITY (already checked for the customer — relay this, do not call check_availability again): " +
+            avail.message;
+        } catch {}
+      }
+    }
+
     const trimmedHistory: ChatMessage[] = (history || []).slice(-10).map((m) => ({ role: m.role, content: m.content }));
     const baseMessages: ChatMessage[] = [
       { role: "system", content: buildSystemPrompt() },
+      ...(availabilityNote ? [{ role: "system", content: availabilityNote } as ChatMessage] : []),
       ...trimmedHistory,
       { role: "user", content: message },
     ];

@@ -110,7 +110,8 @@ async function streamOne(
   if (!reader) throw new Error("No response body");
 
   const decoder = new TextDecoder();
-  let full = "";
+  let content = "";    // the visible answer (streamed to the user)
+  let reasoning = "";  // the model's private monologue (NEVER shown)
 
   while (true) {
     const { done, value } = await reader.read();
@@ -125,17 +126,24 @@ async function streamOne(
       try {
         const parsed = JSON.parse(data);
         const delta = parsed.choices?.[0]?.delta || {};
-        // Reasoning models (e.g. gpt-oss) stream into `reasoning`, not `content`.
-        const content = delta.content || delta.reasoning || "";
-        if (content) {
-          full += content;
-          onToken(content);
+        if (delta.content) {
+          content += delta.content;
+          onToken(delta.content); // only real content reaches the customer
         }
+        if (delta.reasoning) reasoning += delta.reasoning; // captured, not shown
       } catch {
         // Skip malformed lines
       }
     }
   }
 
-  return full;
+  // Reasoning models (gpt-oss) sometimes place the TOOL_CALL line in the
+  // reasoning channel. Surface ONLY those lines for the parser — never the prose.
+  const toolLines = reasoning
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l.startsWith("TOOL_CALL:"));
+  let result = content;
+  if (toolLines.length) result += (result ? "\n" : "") + toolLines.join("\n");
+  return result;
 }
