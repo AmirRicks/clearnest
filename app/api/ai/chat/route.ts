@@ -11,6 +11,7 @@ import {
   createSupportTicket,
   createRefundRequest,
   checkAvailability,
+  estimateQuoteForAI,
 } from "@/lib/ai/actions";
 import { sendLeadNotification, sendEscalationNotification } from "@/lib/email";
 import { denverDateStr, dayOfWeekForDateStr, nextDateStr } from "@/lib/availability";
@@ -47,6 +48,7 @@ function extractJson(text: string): Record<string, unknown> | null {
 
 type ToolType =
   | "check_availability"
+  | "estimate_quote"
   | "create_lead"
   | "create_booking_request"
   | "create_ticket"
@@ -56,6 +58,7 @@ type ToolCall = { type: ToolType; args: Record<string, unknown> };
 
 const KNOWN_TOOLS: ToolType[] = [
   "check_availability",
+  "estimate_quote",
   "create_lead",
   "create_booking_request",
   "create_ticket",
@@ -104,6 +107,18 @@ async function runTools(
       switch (tool.type) {
         case "check_availability": {
           result = await checkAvailability(str(a.date || a.dateStr));
+          break;
+        }
+
+        case "estimate_quote": {
+          result = estimateQuoteForAI({
+            serviceId: str(a.serviceId || a.service) || undefined,
+            bedrooms: num(a.bedrooms),
+            bathrooms: num(a.bathrooms),
+            sqft: num(a.sqft),
+            addonIds: Array.isArray(a.addonIds) ? (a.addonIds as unknown[]).map(String) : undefined,
+            frequency: str(a.frequency) || undefined,
+          });
           break;
         }
 
@@ -267,6 +282,43 @@ function extractDate(text: string): string | null {
   return null;
 }
 
+const SERVICE_KEYWORDS: { id: string; re: RegExp }[] = [
+  { id: "deep", re: /\bdeep\b/i },
+  { id: "moveinout", re: /move[\s-]?(?:in|out)|moving/i },
+  { id: "airbnb", re: /airbnb|turnover|short[\s-]?term|\bstr\b|rental/i },
+  { id: "standard", re: /standard|regular|basic|routine|maintenance/i },
+];
+
+/** Best-effort: detect which service the customer is asking about. */
+function extractServiceId(text: string): string | undefined {
+  for (const s of SERVICE_KEYWORDS) if (s.re.test(text)) return s.id;
+  return undefined;
+}
+
+/** Best-effort: pull bedrooms / bathrooms / square footage out of free text so
+ *  we can compute an exact quote without waiting for a perfect tool call. */
+function extractHomeSize(text: string): { bedrooms?: number; bathrooms?: number; sqft?: number } {
+  const t = text.toLowerCase();
+  const out: { bedrooms?: number; bathrooms?: number; sqft?: number } = {};
+  // Square footage first so its digits aren't mistaken for a bedroom count.
+  const sf = t.match(/([\d,]{3,6})\s*(?:sq\s?\.?\s?ft|sqft|square\s?f(?:ee|oo)?t|\bsf\b)/);
+  if (sf) {
+    const n = parseInt(sf[1].replace(/,/g, ""), 10);
+    if (n >= 200 && n <= 12000) out.sqft = n;
+  }
+  const bd = t.match(/(\d{1,2})\s*(?:bed(?:room)?s?|\bbr\b|\bbd\b)/);
+  if (bd) {
+    const n = parseInt(bd[1], 10);
+    if (n >= 0 && n <= 8) out.bedrooms = n;
+  }
+  const ba = t.match(/(\d{1,2}(?:\.5)?)\s*(?:bath(?:room)?s?|\bba\b)/);
+  if (ba) {
+    const n = Math.round(parseFloat(ba[1]));
+    if (n >= 0 && n <= 8) out.bathrooms = n;
+  }
+  return out;
+}
+
 export async function POST(req: NextRequest) {
   const ip = getClientIp(req);
   if (!checkRateLimit(ip)) {
@@ -327,10 +379,34 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Deterministic pricing: same rationale as availability — free models can't
+    // be trusted to compute base + per-room + per-sqft (they under-quoted by ~half).
+    // If they ask about price/booking and we can read the home details, compute
+    // the exact range ourselves and hand it to the model to relay.
+    let quoteNote = "";
+    if (intent.category === "pricing" || intent.category === "booking") {
+      const size = extractHomeSize(message);
+      const svc = extractServiceId(message);
+      if (svc || size.bedrooms != null || size.sqft != null) {
+        try {
+          const q = estimateQuoteForAI({
+            serviceId: svc,
+            bedrooms: size.bedrooms,
+            bathrooms: size.bathrooms,
+            sqft: size.sqft,
+          });
+          quoteNote =
+            "LIVE QUOTE (already computed for the customer — relay this exact range, do not call estimate_quote again): " +
+            q.message;
+        } catch {}
+      }
+    }
+
     const trimmedHistory: ChatMessage[] = (history || []).slice(-10).map((m) => ({ role: m.role, content: m.content }));
     const baseMessages: ChatMessage[] = [
       { role: "system", content: buildSystemPrompt() },
       ...(availabilityNote ? [{ role: "system", content: availabilityNote } as ChatMessage] : []),
+      ...(quoteNote ? [{ role: "system", content: quoteNote } as ChatMessage] : []),
       ...trimmedHistory,
       { role: "user", content: message },
     ];

@@ -11,6 +11,15 @@ import {
   slotLabel,
   type TimeSlot,
 } from "@/lib/availability";
+import {
+  estimatePrice,
+  SERVICES,
+  ADDONS,
+  FREQUENCIES,
+  type ServiceId,
+  type AddonId,
+  type FrequencyId,
+} from "@/lib/pricing";
 
 type Result<T = void> = { ok: true; data: T } | { ok: false; error: string };
 
@@ -306,5 +315,94 @@ export async function checkAvailability(
     available: true,
     availableSlots: day.availableSlots,
     message: `${labelDate(ds)} has these times open: ${timeList}.`,
+  };
+}
+
+// ----- PRICE ESTIMATE -----
+// Deterministic quote from the SAME formula the website's booking estimator
+// uses (lib/pricing.estimatePrice), so the AI and the site can never disagree.
+// The AI knowledge base only lists base rates; without this tool the model
+// hallucinated totals ~half the real price for multi-bedroom homes.
+
+const VALID_SERVICE_IDS = Object.keys(SERVICES) as ServiceId[];
+const VALID_FREQUENCIES = Object.keys(FREQUENCIES) as FrequencyId[];
+
+/** Typical Salt Lake County home size by bedroom count, used when the customer
+ *  hasn't told us their square footage yet (so a quote is still possible). */
+function typicalSqft(bedrooms: number): number {
+  const map: Record<number, number> = { 0: 600, 1: 750, 2: 1100, 3: 1700, 4: 2300, 5: 2900, 6: 3500 };
+  return map[Math.max(0, Math.min(6, Math.round(bedrooms)))] ?? 1700;
+}
+
+export type QuoteResult = {
+  ok: true;
+  service: string;
+  serviceId: ServiceId;
+  bedrooms: number;
+  bathrooms: number;
+  sqft: number;
+  approximate: boolean;
+  low: number;
+  high: number;
+  mid: number;
+  discountPct: number;
+  message: string;
+};
+
+/** Compute an exact price range for a home. Fills sensible defaults for any
+ *  missing input so a partial question ("how much for a 3-bedroom?") still
+ *  yields a real number, and flags the result as approximate when it did. */
+export function estimateQuoteForAI(input: {
+  serviceId?: string;
+  bedrooms?: number;
+  bathrooms?: number;
+  sqft?: number;
+  addonIds?: string[];
+  frequency?: string;
+}): QuoteResult {
+  const serviceId: ServiceId = VALID_SERVICE_IDS.includes(input.serviceId as ServiceId)
+    ? (input.serviceId as ServiceId)
+    : "standard";
+
+  const bedrooms = Number.isFinite(input.bedrooms)
+    ? Math.max(0, Math.min(8, Math.round(input.bedrooms as number)))
+    : 3;
+  const bathroomsAssumed = !Number.isFinite(input.bathrooms);
+  const bathrooms = bathroomsAssumed
+    ? Math.max(1, bedrooms - 1)
+    : Math.max(0, Math.min(8, Math.round(input.bathrooms as number)));
+  const sqftAssumed = !Number.isFinite(input.sqft);
+  const sqft = sqftAssumed ? typicalSqft(bedrooms) : (input.sqft as number);
+
+  const addonIds = (input.addonIds ?? []).filter((id): id is AddonId => id in ADDONS);
+  const frequency: FrequencyId = VALID_FREQUENCIES.includes(input.frequency as FrequencyId)
+    ? (input.frequency as FrequencyId)
+    : "one_time";
+
+  const est = estimatePrice({ serviceId, bedrooms, bathrooms, sqft, addonIds, frequency });
+  const approximate = bathroomsAssumed || sqftAssumed;
+
+  const sizeStr = `${bedrooms} bed / ${bathrooms} bath${sqftAssumed ? "" : `, ~${sqft.toLocaleString()} sqft`}`;
+  const discountNote = est.discountPct > 0 ? ` (after ${est.discountPct}% recurring discount)` : "";
+  const approxNote = approximate
+    ? ` Approximate — based on a typical ${bedrooms}-bedroom home; confirm bathrooms and square footage to tighten it.`
+    : "";
+  const message =
+    `${SERVICES[serviceId].name} for a ${sizeStr} home: $${est.low}–$${est.high}${discountNote}. ` +
+    `Final price is confirmed at booking from the home's actual size.${approxNote}`;
+
+  return {
+    ok: true,
+    service: SERVICES[serviceId].name,
+    serviceId,
+    bedrooms,
+    bathrooms,
+    sqft,
+    approximate,
+    low: est.low,
+    high: est.high,
+    mid: est.mid,
+    discountPct: est.discountPct,
+    message,
   };
 }

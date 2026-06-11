@@ -1,32 +1,45 @@
 export const KNOWLEDGE_BASE = `
-## SERVICES
+## PRICING — how every quote is calculated
+A quote is NOT just the base rate. The total scales with the home:
+**total = base + (bedrooms × per-bedroom) + (bathrooms × per-bathroom) + (sqft × per-sqft rate).**
+The booking estimator then shows a range of about −8% to +18% around that total; the exact price is confirmed at booking from the home's real size. The base rate alone is only the starting point for a tiny home — never quote the base rate as the price for a multi-bedroom house.
+ALWAYS use the estimate_quote tool to get a real number — do not add these up yourself. If the customer hasn't given bedrooms/bathrooms/square footage, the tool fills in typical values for their bedroom count and you should say the quote is approximate until you confirm size.
 
-### Standard Cleaning
-- Base rate: $110
+### Standard Cleaning — routine maintenance
+- Rate: $110 base + $18 per bedroom + $22 per bathroom + $0.04 per sqft
+- Typical totals: 2 bed/1 bath ≈ $190–245 · 3 bed/2 bath ≈ $258–330 · 4 bed/3 bath ≈ $320–410
 - Includes: dusting all surfaces, vacuuming all floors, mopping hard floors, cleaning bathrooms (toilet, shower, sink, mirror), cleaning kitchen (countertops, sink, stovetop exterior), taking out trash, making beds (light), wiping doorknobs/light switches
 - Duration: 2-4 hours
 - Best for: routine weekly/biweekly/monthly maintenance cleaning
 
-### Deep Cleaning
-- Base rate: $195
+### Deep Cleaning — top-to-bottom reset
+- Rate: $195 base + $35 per bedroom + $45 per bathroom + $0.07 per sqft
+- Typical totals: 2 bed/1 bath ≈ $350–450 · 3 bed/2 bath ≈ $475–610 · 4 bed/3 bath ≈ $590–760
 - Includes everything in Standard plus: cleaning inside oven, cleaning inside refrigerator, washing baseboards, cleaning window tracks/sills, scrubbing grout, deep cleaning showers, interior cabinet fronts, wiping all blinds, cleaning light fixtures, behind/under appliances
 - Duration: 4-7 hours
 - Best for: first-time cleaning, seasonal cleaning, moving into a new home
 
 ### Move-In Cleaning
-- Base rate: $245
+- Rate: $245 base + $40 per bedroom + $55 per bathroom + $0.09 per sqft
+- Typical totals: 2 bed/1 bath ≈ $430–555 · 3 bed/2 bath ≈ $585–750 · 4 bed/3 bath ≈ $730–940
 - Focus: making an empty home spotless before moving in. Includes fridge/stove interior, cabinet interiors, all windowsills/tracks, baseboards, deep bathroom scrub, all floors vacuumed/mopped
 - Duration: 5-9 hours
 
 ### Move-Out Cleaning
-- Base rate: $245
+- Rate: same as Move-In — $245 base + $40 per bedroom + $55 per bathroom + $0.09 per sqft
 - Focus: meeting landlord or realtor standards for move-out. Same deep clean as move-in plus wall smudge removal. Satisfaction guaranteed to pass inspection.
 
-### Recurring Cleaning
-- Weekly: 20% off standard rates
-- Biweekly: 15% off standard rates
-- Monthly: 10% off standard rates
+### Airbnb Turnover
+- Rate: $125 base + $22 per bedroom + $28 per bathroom + $0.05 per sqft
+- Typical totals: 1-2 bed ≈ $225–290 · 3 bed ≈ $310–400
+- Includes: linens stripped/washed/remade, restock essentials checklist, trash/recycling/dishes reset, stage + inspect for next guest, damage and inventory report
+- Duration: 2-4 hours
+- Best for: short-term rental hosts who need a guest-ready turnover between stays
+
+### Recurring Cleaning (discount on any service above)
+- Weekly: 20% off · Biweekly: 15% off · Monthly: 10% off
 - First clean at the recurring rate includes a free deep clean upgrade
+- The estimate_quote tool applies these automatically when you pass a frequency
 
 ## POLICIES
 
