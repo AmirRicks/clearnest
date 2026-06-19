@@ -55,7 +55,7 @@ export function PriceEstimator({
                       : "border-stone/70 bg-background text-graphite hover:border-stone",
                   ].join(" ")}
                 >
-                  <span className="block text-[11px] uppercase tracking-[0.16em] text-graphite/70">
+                  <span className="block text-[11px] uppercase tracking-[0.16em] text-graphite">
                     {s.name.split(" ")[0]}
                   </span>
                   <span className="block font-semibold text-charcoal">
@@ -85,9 +85,11 @@ export function PriceEstimator({
               step={50}
               value={sqft}
               onChange={(e) => setSqft(Number(e.target.value))}
+              aria-label="Square footage of your home"
+              aria-valuetext={`${sqft.toLocaleString()} square feet`}
               className="mt-3 w-full accent-[var(--color-brand-500)]"
             />
-            <div className="mt-1 flex justify-between text-[11px] text-graphite/70">
+            <div className="mt-1 flex justify-between text-[11px] text-graphite">
               <span>400</span><span>1,500</span><span>3,000</span><span>5,000</span>
             </div>
           </div>

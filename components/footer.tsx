@@ -40,7 +40,7 @@ export function Footer() {
         </div>
 
         <div>
-          <h4 className="text-xs uppercase tracking-[0.18em] text-graphite/70">Services</h4>
+          <h2 className="text-xs uppercase tracking-[0.18em] text-graphite">Services</h2>
           <ul className="mt-4 space-y-2 text-sm">
             {[
               { href: "/services/standard-cleaning", l: "Standard Cleaning" },
@@ -61,7 +61,7 @@ export function Footer() {
         </div>
 
         <div>
-          <h4 className="text-xs uppercase tracking-[0.18em] text-graphite/70">Company</h4>
+          <h2 className="text-xs uppercase tracking-[0.18em] text-graphite">Company</h2>
           <ul className="mt-4 space-y-2 text-sm">
             {[
               { href: "/about", l: "About Us" },
@@ -84,7 +84,7 @@ export function Footer() {
 
       <div className="border-t border-stone/60">
         <div className="container-tight py-8">
-          <h4 className="text-xs uppercase tracking-[0.18em] text-graphite/70">Service areas</h4>
+          <h2 className="text-xs uppercase tracking-[0.18em] text-graphite">Service areas</h2>
           <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm">
             {LOCATIONS.map((loc) => (
               <Link

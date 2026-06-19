@@ -27,7 +27,7 @@ export function Logo({
           <span className="text-base font-semibold tracking-[-0.01em] text-charcoal">
             ClearNest
           </span>
-          <span className="mt-0.5 text-[10px] uppercase tracking-[0.22em] text-graphite/70">
+          <span className="mt-0.5 text-[10px] uppercase tracking-[0.22em] text-graphite">
             Cleaning Services
           </span>
         </span>

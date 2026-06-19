@@ -14,6 +14,12 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.join(__dirname),
   },
+  images: {
+    // AVIF first (≈20-30% smaller than WebP) then WebP fallback — shrinks the
+    // full-bleed hero photos, the page's LCP element. Cache optimized images a year.
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 31536000,
+  },
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },
