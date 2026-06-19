@@ -10,6 +10,7 @@ import { QuickLeadForm } from "./quick-lead-form";
 export function FloatingCta() {
   const [show, setShow] = useState(false);
   const [open, setOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setShow(window.scrollY > 700);
@@ -18,16 +19,25 @@ export function FloatingCta() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Hide while the AI chat is open so the two never overlap in the corner.
+  useEffect(() => {
+    const onChat = (e: Event) => setChatOpen(Boolean((e as CustomEvent).detail?.open));
+    window.addEventListener("clearnest:chat-toggle", onChat);
+    return () => window.removeEventListener("clearnest:chat-toggle", onChat);
+  }, []);
+
   return (
     <>
       <AnimatePresence>
-        {show && (
+        {show && !chatOpen && (
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 24 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-x-0 bottom-0 z-50 flex justify-center px-4 pb-4 sm:bottom-6 sm:right-6 sm:left-auto sm:justify-end sm:px-0 sm:pb-0"
+            // Mobile: a pill lifted above the corner chat bubble. Desktop: parked
+            // in the bottom-LEFT corner, opposite the chat bubble (bottom-right).
+            className="fixed inset-x-0 bottom-24 z-40 flex justify-center px-4 sm:inset-x-auto sm:bottom-6 sm:left-6 sm:right-auto sm:justify-start sm:px-0"
           >
             <div className="glass glass-specular flex w-full max-w-md items-center gap-2 rounded-full p-1.5 shadow-card sm:w-auto">
               <a

@@ -53,6 +53,12 @@ export function AIChatWidget() {
     if (savedConv) setConversationId(savedConv);
   }, []);
 
+  // Tell sibling floating UI (the Call / Free Quote bar) when the chat is open
+  // so it can step aside instead of overlapping the bubble.
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("clearnest:chat-toggle", { detail: { open: isOpen } }));
+  }, [isOpen]);
+
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   const isNearBottom = useCallback(() => {

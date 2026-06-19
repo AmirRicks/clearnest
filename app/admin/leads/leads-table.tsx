@@ -5,7 +5,8 @@ import { formatCurrencyRange } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { StatusSelect } from "./status-select";
 import { ApproveModal } from "./approve-modal";
-import { Sparkles, CalendarPlus } from "lucide-react";
+import { CalendarPlus } from "lucide-react";
+import type { FirstCleanResult } from "@/lib/first-clean";
 
 // Manual type definition to bypass broken type generation
 export type Lead = {
@@ -23,7 +24,42 @@ export type Lead = {
   estimated_high: number | null;
   message: string | null;
   status: string;
+  firstClean: FirstCleanResult;
 };
+
+function FirstCleanBadge({ result }: { result: FirstCleanResult }) {
+  const map = {
+    "first-time": {
+      label: "First clean · $25 off",
+      cls: "border-success/30 bg-success/10 text-success",
+      title: "No prior bookings found for this contact — eligible for the founding $25-off offer.",
+    },
+    upcoming: {
+      label: "Already booked",
+      cls: "border-amber-200 bg-amber-50 text-amber-700",
+      title: `First clean already scheduled (${result.upcoming} upcoming) — don't issue a new code.`,
+    },
+    returning: {
+      label: "Returning customer",
+      cls: "border-stone-300 bg-stone-100 text-stone-600",
+      title: `${result.served} completed clean(s) on file — NOT eligible for the first-clean offer.`,
+    },
+    unknown: {
+      label: "No contact match",
+      cls: "border-stone-200 bg-stone-50 text-graphite",
+      title: "No email or phone on this lead to match against bookings.",
+    },
+  } as const;
+  const m = map[result.status];
+  return (
+    <span
+      title={m.title}
+      className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium ${m.cls}`}
+    >
+      {m.label}
+    </span>
+  );
+}
 
 export function LeadsTable({ leads }: { leads: Lead[] }) {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
@@ -44,6 +80,7 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
                 <th className="px-6 py-4 font-semibold text-charcoal">Date</th>
                 <th className="px-6 py-4 font-semibold text-charcoal">Lead Info</th>
                 <th className="px-6 py-4 font-semibold text-charcoal">Source</th>
+                <th className="px-6 py-4 font-semibold text-charcoal">First clean?</th>
                 <th className="px-6 py-4 font-semibold text-charcoal">Status</th>
                 <th className="px-6 py-4 font-semibold text-charcoal text-right">Actions</th>
               </tr>
@@ -51,7 +88,7 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
             <tbody className="divide-y divide-stone/60">
               {leads?.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-graphite">
+                  <td colSpan={6} className="px-6 py-12 text-center text-graphite">
                     No leads yet. They will appear here when submitted.
                   </td>
                 </tr>
@@ -80,6 +117,9 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
                       <span className="inline-flex items-center rounded-md bg-stone-100 px-2 py-1 text-xs font-medium text-stone-600">
                         {lead.source}
                       </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <FirstCleanBadge result={lead.firstClean} />
                     </td>
                     <td className="px-6 py-4">
                       <StatusSelect id={lead.id} initialStatus={lead.status} />
