@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogOut, Users, Calendar, Bot } from "lucide-react";
+import { LogOut, Users, Calendar, Bot, ClipboardList } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 
 const NAV = [
   { href: "/admin/leads", label: "Leads", icon: Users },
+  { href: "/admin/bookings", label: "Bookings", icon: ClipboardList },
   { href: "/admin/calendar", label: "Calendar", icon: Calendar },
   { href: "/admin/ai/conversations", label: "AI", icon: Bot },
 ] as const;
