@@ -12,7 +12,8 @@ export function ApproveModal({ lead, isOpen, setIsOpen }: { lead: Lead | null; i
   const [pending, startTransition] = useTransition();
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
-  
+  const [promoCode, setPromoCode] = useState("");
+
   const [address, setAddress] = useState({ line1: "", line2: "", city: "", zip: "" });
 
   if (!lead) return null;
@@ -34,9 +35,11 @@ export function ApproveModal({ lead, isOpen, setIsOpen }: { lead: Lead | null; i
         addressLine2: address.line2,
         city: address.city,
         zip: address.zip,
+        promoCode: promoCode || null,
       });
       if (result.ok) {
         toast.success("Booking created! The calendar has been updated.");
+        if (result.note) toast.info(result.note);
         setIsOpen(false);
       } else {
         toast.error(result.error);
@@ -64,6 +67,34 @@ export function ApproveModal({ lead, isOpen, setIsOpen }: { lead: Lead | null; i
              <input placeholder="Address Line 2 (optional)" onChange={e => setAddress(a => ({...a, line2: e.target.value}))} className="w-full rounded-md border-stone-300"/>
              <input placeholder="City" onChange={e => setAddress(a => ({...a, city: e.target.value}))} className="w-full rounded-md border-stone-300"/>
              <input placeholder="ZIP Code" onChange={e => setAddress(a => ({...a, zip: e.target.value}))} className="w-full rounded-md border-stone-300"/>
+
+            <h3 className="font-semibold text-charcoal pt-4">Promo code (optional)</h3>
+            {lead.firstClean?.status === "first-time" && (
+              <p className="text-xs text-success">Eligible — no prior bookings for this customer.</p>
+            )}
+            {lead.firstClean?.status === "returning" && (
+              <p className="text-xs text-graphite">Returning customer — FOUNDING20 will be declined automatically.</p>
+            )}
+            {lead.firstClean?.status === "upcoming" && (
+              <p className="text-xs text-amber-700">Already has an upcoming booking.</p>
+            )}
+            <div className="flex gap-2">
+              <input
+                placeholder="e.g. FOUNDING20"
+                value={promoCode}
+                onChange={e => setPromoCode(e.target.value.toUpperCase())}
+                className="w-full rounded-md border-stone-300"
+              />
+              {lead.firstClean?.eligible && (
+                <button
+                  type="button"
+                  onClick={() => setPromoCode("FOUNDING20")}
+                  className="shrink-0 rounded-md border border-success/40 bg-success/5 px-3 text-xs font-semibold text-success transition hover:bg-success/10"
+                >
+                  Apply FOUNDING20
+                </button>
+              )}
+            </div>
           </div>
           <div>
             <h3 className="font-semibold text-charcoal mb-4">Select Date & Time</h3>
