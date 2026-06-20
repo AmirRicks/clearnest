@@ -48,17 +48,17 @@ export function ExitIntent() {
           <Sparkles className="h-3.5 w-3.5" /> Founding-customer offer
         </span>
         <h2 className="mt-4 text-2xl font-semibold tracking-tight text-charcoal sm:text-3xl">
-          $25 off your first clean
+          20% off your first clean
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-graphite">
           We're new in Salt Lake County and building our reputation one spotless home at a time.
-          Grab $25 off your first booking — leave your info and we'll send your quote + code.
+          Grab 20% off your first booking — leave your info and we'll send your quote + code.
           Pay after the clean, always.
         </p>
         <div className="mt-5">
           <QuickLeadForm
             defaults={{ source: "exit_intent" }}
-            cta="Claim $25 off"
+            cta="Claim 20% off"
             onDone={() => setTimeout(() => setOpen(false), 2800)}
           />
         </div>

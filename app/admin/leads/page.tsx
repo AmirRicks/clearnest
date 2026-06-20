@@ -38,7 +38,7 @@ export default async function LeadsPage() {
         <div className="flex gap-4 text-sm text-graphite">
           <span>Total: <strong className="text-charcoal">{leads?.length || 0}</strong></span>
           <span>New: <strong className="text-blue-600">{leads?.filter(l => l.status === 'new').length || 0}</strong></span>
-          <span>$25-off eligible: <strong className="text-success">{eligibleCount}</strong></span>
+          <span>20%-off eligible: <strong className="text-success">{eligibleCount}</strong></span>
         </div>
       </div>
 

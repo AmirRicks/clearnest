@@ -30,9 +30,9 @@ export type Lead = {
 function FirstCleanBadge({ result }: { result: FirstCleanResult }) {
   const map = {
     "first-time": {
-      label: "First clean · $25 off",
+      label: "First clean · 20% off",
       cls: "border-success/30 bg-success/10 text-success",
-      title: "No prior bookings found for this contact — eligible for the founding $25-off offer.",
+      title: "No prior bookings found for this contact — eligible for the founding 20%-off offer.",
     },
     upcoming: {
       label: "Already booked",

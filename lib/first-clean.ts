@@ -1,6 +1,6 @@
 /**
  * First-clean eligibility — does a lead qualify for the founding
- * "$25 off your first clean" offer?
+ * "20% off your first clean" offer?
  *
  * A lead qualifies ONLY if they've never had a clean delivered. We match a lead
  * to past bookings by normalized email OR phone (last 10 digits), so the same
@@ -23,7 +23,7 @@ export type BookingLite = {
 
 export type FirstCleanResult = {
   status: FirstCleanStatus;
-  eligible: boolean; // true = OK to give the $25-off first-clean offer
+  eligible: boolean; // true = OK to give the 20%-off first-clean offer
   served: number; // cleans actually delivered to this contact
   upcoming: number; // bookings scheduled but not yet served
 };
