@@ -5,6 +5,8 @@ import { z } from "zod";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { AGREEMENT_VERSION } from "@/lib/agreement";
 import { estimatePrice, SERVICES, type ServiceId } from "@/lib/pricing";
+import { validatePromo, discountRange } from "@/lib/promo";
+import type { BookingLite } from "@/lib/first-clean";
 import { sendBookingConfirmation } from "@/lib/email";
 
 const bookingSchema = z.object({
@@ -30,11 +32,12 @@ const bookingSchema = z.object({
   pets: z.string().max(200).optional().nullable(),
   specialRequests: z.string().max(800).optional().nullable(),
   giftCode: z.string().trim().max(40).optional().nullable(),
+  promoCode: z.string().trim().max(40).optional().nullable(),
   signatureDataUrl: z.string().startsWith("data:image/").max(2_000_000),
 });
 
 export type BookingResult =
-  | { ok: true; bookingId: string }
+  | { ok: true; bookingId: string; promoApplied?: boolean; promoNote?: string }
   | { ok: false; error: string };
 
 export async function submitBooking(input: unknown): Promise<BookingResult> {
@@ -65,6 +68,40 @@ export async function submitBooking(input: unknown): Promise<BookingResult> {
   try {
     const sb = await createClient();
 
+    // Validate the promo code server-side. FOUNDING20 is first-clean-only, so we
+    // check this customer against past bookings (by email/phone) — a returning
+    // customer who enters it is silently quoted standard pricing.
+    let finalLow = low;
+    let finalHigh = high;
+    let promoCode: string | null = null;
+    let promoPct = 0;
+    let promoApplied: boolean | undefined;
+    let promoNote: string | undefined;
+    if (data.promoCode) {
+      const { data: priorBookings } = await sb
+        .from("bookings")
+        .select("customer_email, customer_phone, status");
+      const v = validatePromo(
+        data.promoCode,
+        { email: data.customerEmail, phone: data.customerPhone },
+        (priorBookings ?? []) as BookingLite[]
+      );
+      if (v.ok) {
+        promoCode = v.promo.code;
+        promoPct = v.promo.percentOff;
+        ({ low: finalLow, high: finalHigh } = discountRange(low, high, promoPct));
+        promoApplied = true;
+      } else {
+        promoApplied = false;
+        promoNote =
+          v.reason === "not_first_clean"
+            ? "That code is for new customers only — your booking was placed at standard pricing."
+            : v.reason === "invalid"
+              ? "That promo code wasn't recognized — your booking was placed at standard pricing."
+              : undefined;
+      }
+    }
+
     const { data: agreement, error: agreementError } = await sb
       .from("agreements")
       .insert({
@@ -83,8 +120,8 @@ export async function submitBooking(input: unknown): Promise<BookingResult> {
       bedrooms: data.bedrooms,
       bathrooms: data.bathrooms,
       sqft: data.sqft,
-      estimated_low: low,
-      estimated_high: high,
+      estimated_low: finalLow,
+      estimated_high: finalHigh,
       customer_name: data.customerName,
       customer_email: data.customerEmail,
       customer_phone: data.customerPhone,
@@ -98,7 +135,7 @@ export async function submitBooking(input: unknown): Promise<BookingResult> {
       special_requests: data.specialRequests ?? null,
       agreement_id: agreement.id,
     };
-    const extendedRow = {
+    const revenueRow = {
       ...baseRow,
       frequency: data.frequency,
       addons: data.addons,
@@ -106,23 +143,35 @@ export async function submitBooking(input: unknown): Promise<BookingResult> {
       discount_pct: discountPct,
       gift_code: data.giftCode ? data.giftCode.toUpperCase() : null,
     };
+    const extendedRow = {
+      ...revenueRow,
+      promo_code: promoCode,
+      promo_discount_pct: promoPct,
+    };
 
-    // Insert with the revenue columns; if the 0004 migration hasn't been run
-    // yet (missing columns), fall back to the base row so bookings never break.
+    // Insert the fullest row we can; degrade gracefully so a missing migration
+    // never breaks a booking. The discounted estimate is in baseRow, so it
+    // persists at every tier. 0008 missing → lose only promo tracking; 0004
+    // missing → also lose frequency/add-ons/gift tracking.
     let booking: { id: string } | null = null;
     {
-      const first = await sb.from("bookings").insert(extendedRow).select("id").single();
-      if (first.error) {
+      let r = await sb.from("bookings").insert(extendedRow).select("id").single();
+      if (r.error) {
         console.warn(
-          "[ClearNest] booking insert with revenue columns failed — falling back (run migration 0004):",
-          first.error.message
+          "[ClearNest] insert with promo columns failed — falling back (run migration 0008):",
+          r.error.message
         );
-        const fallback = await sb.from("bookings").insert(baseRow).select("id").single();
-        if (fallback.error) throw fallback.error;
-        booking = fallback.data;
-      } else {
-        booking = first.data;
+        r = await sb.from("bookings").insert(revenueRow).select("id").single();
       }
+      if (r.error) {
+        console.warn(
+          "[ClearNest] insert with revenue columns failed — falling back (run migration 0004):",
+          r.error.message
+        );
+        r = await sb.from("bookings").insert(baseRow).select("id").single();
+      }
+      if (r.error) throw r.error;
+      booking = r.data;
     }
     if (!booking) throw new Error("Booking was not created.");
 
@@ -138,8 +187,8 @@ export async function submitBooking(input: unknown): Promise<BookingResult> {
       bedrooms: data.bedrooms,
       bathrooms: data.bathrooms,
       sqft: data.sqft,
-      estimated_low: low,
-      estimated_high: high,
+      estimated_low: finalLow,
+      estimated_high: finalHigh,
       message: data.specialRequests || null,
     }).select("id").single().then(({ error: leadErr }) => {
       if (leadErr) console.warn("[ClearNest] lead insert failed (non-fatal):", leadErr.message);
@@ -152,13 +201,13 @@ export async function submitBooking(input: unknown): Promise<BookingResult> {
       serviceName: SERVICES[data.serviceId as ServiceId].name,
       scheduledFor: data.scheduledFor,
       address: `${data.addressLine1}${data.addressLine2 ? `, ${data.addressLine2}` : ""}, ${data.city}, ${data.state} ${data.zip}`,
-      priceLow: low,
-      priceHigh: high,
+      priceLow: finalLow,
+      priceHigh: finalHigh,
       bookingId: booking.id,
     });
 
     revalidatePath("/admin");
-    return { ok: true, bookingId: booking.id };
+    return { ok: true, bookingId: booking.id, promoApplied, promoNote };
   } catch (err) {
     console.error("[ClearNest] booking insert failed", err);
     return {

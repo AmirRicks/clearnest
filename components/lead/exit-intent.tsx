@@ -52,9 +52,20 @@ export function ExitIntent() {
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-graphite">
           We're new in Salt Lake County and building our reputation one spotless home at a time.
-          Grab 20% off your first booking — leave your info and we'll send your quote + code.
-          Pay after the clean, always.
+          Grab 20% off your first booking — leave your info and we'll send your quote, or book
+          now with the code below. Pay after the clean, always.
         </p>
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <span className="inline-flex items-center gap-2 rounded-lg border border-dashed border-brand-300 bg-brand-50 px-3 py-1.5 text-sm font-semibold tracking-wide text-brand-700">
+            Code: FOUNDING20
+          </span>
+          <a
+            href="/book?promo=FOUNDING20"
+            className="text-xs font-medium text-brand-700 underline underline-offset-2 hover:text-brand-800"
+          >
+            Book now with 20% off →
+          </a>
+        </div>
         <div className="mt-5">
           <QuickLeadForm
             defaults={{ source: "exit_intent" }}

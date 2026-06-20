@@ -14,6 +14,7 @@ import {
   type AddonId,
   type FrequencyId,
 } from "@/lib/pricing";
+import { getPromo, discountRange } from "@/lib/promo";
 import { formatCurrencyRange } from "@/lib/utils";
 import { SignaturePad } from "./signature-pad";
 import { AGREEMENT_SECTIONS, AGREEMENT_VERSION } from "@/lib/agreement";
@@ -66,6 +67,7 @@ export function BookingWizard() {
   const [pets, setPets] = useState("");
   const [requests, setRequests] = useState("");
   const [giftCode, setGiftCode] = useState("");
+  const [promoCode, setPromoCode] = useState((params.get("promo") || "").toUpperCase());
 
   const [signature, setSignature] = useState<string | null>(null);
   const [agreed, setAgreed] = useState(false);
@@ -74,6 +76,13 @@ export function BookingWizard() {
     () => estimatePrice({ serviceId, bedrooms, bathrooms, sqft, addonIds: addons, frequency }),
     [serviceId, bedrooms, bathrooms, sqft, addons, frequency]
   );
+
+  // Client-side promo preview. The server re-validates authoritatively (the
+  // founding code is new-customers-only), so this is an optimistic display.
+  const promo = getPromo(promoCode);
+  const shown = promo
+    ? discountRange(estimate.low, estimate.high, promo.percentOff)
+    : { low: estimate.low, high: estimate.high };
 
   const canNext = (() => {
     switch (step) {
@@ -125,10 +134,12 @@ export function BookingWizard() {
         pets: pets || null,
         specialRequests: requests || null,
         giftCode: giftCode || null,
+        promoCode: promoCode || null,
         signatureDataUrl: signature,
       });
       if (res.ok) {
         toast.success("Booking confirmed — see you soon!");
+        if (res.promoNote) toast.info(res.promoNote);
         router.push(`/book/confirmation?id=${res.bookingId}`);
       } else {
         toast.error(res.error);
@@ -319,6 +330,24 @@ export function BookingWizard() {
                     value={giftCode}
                     onChange={(v) => setGiftCode(v.toUpperCase())}
                   />
+                  <div>
+                    <Input
+                      label="Promo code (optional)"
+                      value={promoCode}
+                      onChange={(v) => setPromoCode(v.toUpperCase())}
+                    />
+                    {promo && (
+                      <p className="mt-1.5 text-xs font-medium text-success">
+                        {promo.code} applied — {promo.description}
+                        {promo.firstCleanOnly ? " (new customers, confirmed at booking)" : ""}.
+                      </p>
+                    )}
+                    {!promo && promoCode.trim().length >= 3 && (
+                      <p className="mt-1.5 text-xs text-graphite/80">
+                        We’ll check this code when you confirm.
+                      </p>
+                    )}
+                  </div>
                 </Step>
               )}
 
@@ -416,13 +445,25 @@ export function BookingWizard() {
           Your booking
         </span>
         <p className="mt-3 text-3xl font-semibold tracking-tight text-charcoal">
-          {formatCurrencyRange(estimate.low, estimate.high)}
+          {formatCurrencyRange(shown.low, shown.high)}
         </p>
-        {estimate.discountPct > 0 && (
-          <span className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-semibold text-brand-700">
-            {FREQUENCIES[frequency].label} · {estimate.discountPct}% off every clean
-          </span>
+        {promo && (
+          <p className="mt-1 text-sm text-graphite line-through">
+            {formatCurrencyRange(estimate.low, estimate.high)}
+          </p>
         )}
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {estimate.discountPct > 0 && (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-semibold text-brand-700">
+              {FREQUENCIES[frequency].label} · {estimate.discountPct}% off every clean
+            </span>
+          )}
+          {promo && (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-2.5 py-1 text-[11px] font-semibold text-success">
+              {promo.code} · {promo.percentOff}% off
+            </span>
+          )}
+        </div>
         <p className="mt-2 text-xs text-graphite">
           Pay after the clean. Same-day reschedule allowed.
         </p>
