@@ -26,9 +26,11 @@ const NEXT: Record<BookingStatus, BookingStatus | null> = {
 export function BookingRowActions({
   bookingId,
   currentStatus,
+  suggestedAmount,
 }: {
   bookingId: string;
   currentStatus: BookingStatus;
+  suggestedAmount?: number;
 }) {
   const [pending, start] = useTransition();
   const next = NEXT[currentStatus];
@@ -42,7 +44,10 @@ export function BookingRowActions({
   };
 
   const invoice = () => {
-    const input = window.prompt("Final invoice amount (USD) to charge after the clean:");
+    const input = window.prompt(
+      "Final invoice amount (USD) to charge after the clean:",
+      suggestedAmount ? String(suggestedAmount) : ""
+    );
     if (!input) return;
     const amount = Number(input);
     if (!Number.isFinite(amount) || amount <= 0) {

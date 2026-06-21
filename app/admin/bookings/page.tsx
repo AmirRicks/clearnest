@@ -156,7 +156,15 @@ export default async function BookingsPage() {
                         </span>
                       </td>
                       <td className="px-5 py-4 text-right">
-                        <BookingRowActions bookingId={b.id} currentStatus={b.status as BookingStatus} />
+                        <BookingRowActions
+                          bookingId={b.id}
+                          currentStatus={b.status as BookingStatus}
+                          suggestedAmount={
+                            b.estimated_low != null && b.estimated_high != null
+                              ? Math.round((b.estimated_low + b.estimated_high) / 2)
+                              : undefined
+                          }
+                        />
                       </td>
                     </tr>
                   );
