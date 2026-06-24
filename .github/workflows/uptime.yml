@@ -1,0 +1,46 @@
+name: Uptime — clearnest.services
+
+# Probes the live site from GitHub's network (OFF Amir's local network), so a
+# local content-filter block can never produce a false "down" alert. When the
+# site is genuinely unreachable, the job fails and GitHub emails the repo owner.
+#
+# Self-test after merge: Actions tab → "Uptime — clearnest.services" → "Run workflow".
+
+on:
+  schedule:
+    - cron: "*/15 * * * *" # every ~15 min (UTC; GitHub may delay under load)
+  workflow_dispatch: {} # manual run button
+
+permissions:
+  contents: read
+
+concurrency:
+  group: uptime-clearnest
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe https://clearnest.services
+        run: |
+          set -uo pipefail
+          URL="https://clearnest.services"
+          ATTEMPTS=3
+          code="000"
+          for i in $(seq 1 "$ATTEMPTS"); do
+            code=$(curl -sS -o /tmp/body.html -w '%{http_code}' --max-time 25 "$URL" || echo "000")
+            echo "Attempt $i/$ATTEMPTS → HTTP $code"
+            if [ "$code" = "200" ]; then
+              if grep -qi "clearnest" /tmp/body.html; then
+                echo "✅ $URL is UP (HTTP 200, ClearNest content present)"
+              else
+                echo "::warning::$URL returned 200 but the body does not mention 'ClearNest' — possible parked/placeholder page."
+                echo "✅ $URL is UP (HTTP 200)"
+              fi
+              exit 0
+            fi
+            [ "$i" -lt "$ATTEMPTS" ] && sleep 15
+          done
+          echo "::error::$URL appears DOWN — last HTTP code: $code (checked from GitHub's off-site network)."
+          exit 1
