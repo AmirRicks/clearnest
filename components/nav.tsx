@@ -143,10 +143,9 @@ export function Nav() {
           <Magnetic strength={0.25}>
             <Link
               href="/book"
-              className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-charcoal px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
+              className="inline-flex items-center gap-2 rounded-full bg-charcoal px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700"
             >
-              <span className="relative z-10">Book Cleaning</span>
-              <span className="shine-bar" />
+              Book Cleaning
             </Link>
           </Magnetic>
         </div>

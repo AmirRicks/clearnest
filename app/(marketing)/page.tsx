@@ -1,5 +1,5 @@
 import { ReviewSchemaJsonLd } from "@/components/review-schema";
-import { HouseTour } from "@/components/house-tour";
+import { PremiumHero } from "@/components/premium-hero";
 import { TrustMarquee } from "@/components/trust-marquee";
 import { StatsBand } from "@/components/stats-band";
 import { HowItWorks } from "@/components/how-it-works";
@@ -13,7 +13,7 @@ export default function HomePage() {
   return (
     <>
       <ReviewSchemaJsonLd />
-      <HouseTour />
+      <PremiumHero />
       <TrustMarquee />
       <HowItWorks />
       <StatsBand />
