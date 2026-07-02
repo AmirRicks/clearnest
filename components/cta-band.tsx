@@ -1,4 +1,4 @@
-import { Phone } from "lucide-react";
+import { Phone, ShieldCheck } from "lucide-react";
 import { BUSINESS } from "@/lib/utils";
 import { MagneticButton } from "@/components/anim/magnetic";
 import { Reveal } from "@/components/anim/reveal";
@@ -32,6 +32,11 @@ export function CtaBand() {
               <MagneticButton href={BUSINESS.phoneHref} variant="outline" className="!border-white/30 !text-white hover:!bg-white/10">
                 <Phone className="h-4 w-4" /> {BUSINESS.phone}
               </MagneticButton>
+              {/* Trust signal beside the booking action (grounded rule: credentials near the CTA) */}
+              <p className="mt-1 inline-flex items-center gap-2 text-xs font-medium text-white/75 md:text-right">
+                <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
+                Insured &amp; bonded · Background-checked · Pay after the clean
+              </p>
             </Reveal>
           </div>
         </div>

@@ -30,11 +30,12 @@ export function PriceEstimator({
     <>
     <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr]">
       <div>
-        <Eyebrow>Instant estimate</Eyebrow>
-        <H2>See your price in seconds — no signup.</H2>
+        <Eyebrow>Flat-rate pricing</Eyebrow>
+        <H2>Simple, flat-rate pricing. See yours in seconds.</H2>
         <Lead>
-          Adjust the sliders to match your home. We’ll confirm the exact quote once we review
-          service notes during scheduling.
+          Every price is a systemized flat rate built from your home’s size — the same fair
+          math for every home. No hourly guesswork, no surprises, and you only pay after the
+          clean.
         </Lead>
 
         <div className="mt-8 grid gap-6">

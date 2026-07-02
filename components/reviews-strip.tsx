@@ -85,9 +85,13 @@ function FoundingCustomerStrip() {
             Instead, here’s our promise: book a founding clean, and if anything isn’t right, we
             make it right. Your honest review helps the next family find us.
           </Lead>
+          <p className="mt-4 inline-flex flex-wrap items-center gap-2 rounded-2xl bg-brand-50 px-4 py-2.5 text-sm font-medium text-brand-800">
+            Founding offer: <strong>20% off your first clean</strong> with code
+            <code className="rounded-md bg-white px-2 py-0.5 font-mono text-[13px] font-bold tracking-wide text-brand-700">FOUNDING20</code>
+          </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
-              href="/book"
+              href="/book?promo=FOUNDING20"
               className="inline-flex items-center gap-2 rounded-full bg-charcoal px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-700"
             >
               Become a founding customer <ArrowUpRight className="h-4 w-4" />

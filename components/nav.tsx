@@ -9,17 +9,22 @@ import { BUSINESS, cn } from "@/lib/utils";
 import { Logo } from "./logo";
 import { Magnetic } from "@/components/anim/magnetic";
 
+/**
+ * Grounded nav rule (ClearNest Services notebook, 2026-07-01): 4–5 items max,
+ * in the order Services → Pricing → Reviews → About, with the sticky
+ * contrasting Book CTA. Everything else lives under "More" + the footer.
+ */
 const mainLinks = [
   { href: "/services", label: "Services" },
-  { href: "/plans", label: "Plans" },
-  { href: "/house-cleaning", label: "Areas" },
-  { href: "/gallery", label: "Before & After" },
+  { href: "/plans", label: "Pricing" },
+  { href: "/reviews", label: "Reviews" },
+  { href: "/about", label: "About" },
 ];
 
 const secondaryLinks = [
+  { href: "/house-cleaning", label: "Areas we serve" },
+  { href: "/gallery", label: "Before & After" },
   { href: "/referrals", label: "Refer & Earn" },
-  { href: "/reviews", label: "Reviews" },
-  { href: "/about", label: "About" },
   { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },
 ];

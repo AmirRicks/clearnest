@@ -7,6 +7,7 @@ import { ServicesTeaser } from "@/components/services-teaser";
 import { PriceEstimator } from "@/components/price-estimator";
 import { GalleryStrip } from "@/components/gallery-strip";
 import { ReviewsStrip } from "@/components/reviews-strip";
+import { ServiceAreas } from "@/components/service-areas";
 import { CtaBand } from "@/components/cta-band";
 
 export default function HomePage() {
@@ -21,6 +22,7 @@ export default function HomePage() {
       <PriceEstimator />
       <GalleryStrip />
       <ReviewsStrip />
+      <ServiceAreas />
       <CtaBand />
     </>
   );

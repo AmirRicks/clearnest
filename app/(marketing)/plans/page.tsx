@@ -35,6 +35,15 @@ export default function PlansPage() {
           clean</strong>. You still pay after each visit — no deposit, no card on file, cancel or
           skip anytime. It&rsquo;s the easiest way to never think about cleaning again.
         </Lead>
+        <p className="mt-5 text-sm text-graphite">
+          Want your exact price first?{" "}
+          <Link
+            href="/services#estimator"
+            className="font-semibold text-brand-700 underline-offset-4 hover:underline"
+          >
+            Get your flat-rate quote in 30 seconds →
+          </Link>
+        </p>
       </Section>
 
       {/* Plan cards */}
