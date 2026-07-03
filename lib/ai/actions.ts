@@ -25,7 +25,12 @@ type Result<T = void> = { ok: true; data: T } | { ok: false; error: string };
 
 let _db: ReturnType<typeof createServerClient> | null = null;
 function getDb() {
-  if (!_db) _db = createServerClient();
+  // Prefer the service-role client so server-side conversation logging works
+  // WITHOUT broad anonymous RLS policies (migration 0009 dropped the anon
+  // SELECT/UPDATE on ai_conversations that leaked captured contact details).
+  // Falls back to the anon client — still server-only — if the service-role
+  // key isn't configured; all writes here are best-effort either way.
+  if (!_db) _db = (createAdminClient() ?? createServerClient()) as ReturnType<typeof createServerClient>;
   return _db;
 }
 
