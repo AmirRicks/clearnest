@@ -15,6 +15,7 @@
 - **🔒 Locked decisions:** Founding offer = **20% off (FOUNDING20)**, never "$25". `clearnest.services` is healthy — **do NOT change DNS/Vercel/registrar to "fix" a local-network "down"**. No paid spend without asking Amir. No fake reviews/ratings/badges.
 
 ## Log (newest first)
+- **2026-07-03 · Claude Code (Fable 5)** — "Finish it" pass: hours truth sweep (5 stale Mon–Sat → Tue–Sat), /about owner note, one h1/page (13/13, SEO+a11y), /services#estimator anchor fixed, /book trust line (commit `5e3693c`, live-verified) + D2D print assets: postcard-4x6 + referral-cards, PDFs verified, mirrored to ~/Documents/Businesses/ClearNest/print/ (commit `7af8f5a`).
 - **2026-07-01 · Claude Code (Fable 5)** — Notebook-grounded premium pass (nav buying-order, flat-rate framing, ServiceAreas, trust-beside-CTA, FOUNDING20 hook) commit `0d3f238` + marketing subagent's first-clients execution pack. New "ClearNest Services" NotebookLM (8 sources). Full write-up in Brain.
 - **2026-06-28 · Claude Code (Opus 4.8)** — Apple-grade premium homepage hero redesign (queried the premium-websites NotebookLM via Chrome; light/calm/white-space hero with a sun-drenched room "product shot" replacing the dark scroll-tour). Commit `5165303`, live + verified. Full write-up in Brain.
 - **2026-06-23 · Claude Code (Opus 4.8)** — "clearnest.services down" = local network filter (false alarm); domain healthy worldwide. Shipped uptime monitor (PR #3) + this continuity wiring. Full write-up in Brain `log.md` + `lessons-learned.md`.
