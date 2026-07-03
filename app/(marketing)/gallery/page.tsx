@@ -46,7 +46,7 @@ export default function GalleryPage() {
     <>
       <Section>
         <Eyebrow>Before & After</Eyebrow>
-        <H2>Drag the slider on any home to reveal the ClearNest difference.</H2>
+        <H2 as="h1">Drag the slider on any home to reveal the ClearNest difference.</H2>
         <Lead>
           {HAS_REAL_PHOTOS
             ? "Real cleanings, real homes — photographed straight from our jobs across the Salt Lake area."

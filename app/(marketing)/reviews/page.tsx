@@ -56,7 +56,7 @@ export default async function ReviewsPage() {
         <Eyebrow>Reviews</Eyebrow>
         {hasReviews ? (
           <>
-            <H2>What our customers say.</H2>
+            <H2 as="h1">What our customers say.</H2>
             <div className="mt-8 inline-flex items-center gap-3 rounded-full border border-stone/70 bg-background px-4 py-2 shadow-soft">
               <div className="flex gap-0.5 text-amber-500">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -69,7 +69,7 @@ export default async function ReviewsPage() {
           </>
         ) : (
           <>
-            <H2>New in town — out to earn your trust.</H2>
+            <H2 as="h1">New in town — out to earn your trust.</H2>
             <Lead>
               ClearNest recently launched in Salt Lake County. Rather than show reviews we haven’t
               earned yet, we’d rather earn yours. Book a founding clean — we’ll make it exceptional,

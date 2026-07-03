@@ -25,7 +25,7 @@ export default function ReferralsPage() {
     <>
       <Section className="pb-8">
         <Eyebrow><Users className="h-3.5 w-3.5 text-accent" /> ClearNest referral program</Eyebrow>
-        <H2>Give $25. Get $25.</H2>
+        <H2 as="h1">Give $25. Get $25.</H2>
         <Lead>
           Good things are meant to be shared. Invite your friends, family, or neighbors to experience the peace of a professionally cleaned home. They get a discount, you get rewarded.
         </Lead>

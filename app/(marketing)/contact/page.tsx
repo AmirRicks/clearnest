@@ -6,14 +6,14 @@ import { BUSINESS } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Contact ClearNest",
-  description: "Call, text, or message ClearNest Cleaning Services. We answer Mon–Sat 7am–7pm.",
+  description: "Call, text, or message ClearNest Cleaning Services. We answer Tue–Sat 7am–7pm.",
 };
 
 export default function ContactPage() {
   return (
     <Section>
       <Eyebrow>Contact</Eyebrow>
-      <H2>We&apos;re here Monday through Saturday.</H2>
+      <H2 as="h1">We&apos;re here Tuesday through Saturday.</H2>
       <Lead>Call, text, or send a message — we usually reply within an hour.</Lead>
 
       <div className="mt-12 grid gap-10 lg:grid-cols-[1fr_1fr]">

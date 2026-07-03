@@ -12,7 +12,7 @@ export default function AgreementPage() {
   return (
     <Section>
       <Eyebrow>Service Agreement · {AGREEMENT_VERSION}</Eyebrow>
-      <H2>Plain-English terms for every ClearNest visit.</H2>
+      <H2 as="h1">Plain-English terms for every ClearNest visit.</H2>
       <Lead>
         This is the same agreement you sign before your first booking. Take your time — questions
         are welcome at (801) 441-0726.

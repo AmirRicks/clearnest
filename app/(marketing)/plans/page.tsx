@@ -29,7 +29,7 @@ export default function PlansPage() {
       {/* Hero */}
       <Section className="pb-6">
         <Eyebrow>Plans & memberships</Eyebrow>
-        <H2>A consistently clean home — for less, every time.</H2>
+        <H2 as="h1">A consistently clean home — for less, every time.</H2>
         <Lead>
           Set a recurring plan and save up to <strong className="text-charcoal">20% on every
           clean</strong>. You still pay after each visit — no deposit, no card on file, cancel or

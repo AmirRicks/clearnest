@@ -48,7 +48,7 @@ export default function FaqPage() {
       <FaqJsonLd items={QUESTIONS} />
       <Section>
         <Eyebrow>FAQ</Eyebrow>
-        <H2>Common questions, answered.</H2>
+        <H2 as="h1">Common questions, answered.</H2>
         <Lead>Don’t see what you need? Text us at (801) 441-0726.</Lead>
 
         <div className="mt-12 divide-y divide-stone/70 overflow-hidden rounded-3xl border border-stone/70 bg-background shadow-soft">

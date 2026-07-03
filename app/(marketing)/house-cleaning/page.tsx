@@ -20,7 +20,7 @@ export default function ServiceAreasPage() {
     <>
       <Section className="pb-6">
         <Eyebrow>Service areas</Eyebrow>
-        <H2>House cleaning across the Salt Lake area</H2>
+        <H2 as="h1">House cleaning across the Salt Lake area</H2>
         <Lead>
           ClearNest serves Salt Lake City and communities within about 40 miles — from the
           Cottonwood canyons to Silicon Slopes and Park City. Find your city for local pricing,

@@ -21,7 +21,7 @@ export function CtaBand() {
                 <AnimatedText text="Your home, restored. Your weekend, returned." />
               </h2>
               <p className="mt-4 max-w-xl text-white/80">
-                Book online in 60 seconds, or call us — we answer Monday through Saturday, 7am–7pm.
+                Book online in 60 seconds, or call us — we answer Tuesday through Saturday, 7am–7pm.
               </p>
             </div>
 

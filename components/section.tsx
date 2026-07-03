@@ -52,17 +52,21 @@ export function H2({
   children,
   className,
   animate = true,
+  as = "h2",
 }: {
   children: React.ReactNode;
   className?: string;
   animate?: boolean;
+  /** Render as h1 on a page's first heading (one h1 per page — a11y + SEO). */
+  as?: "h1" | "h2";
 }) {
   const base = "mt-4 max-w-4xl text-balance display-2 text-charcoal";
   // Animate word-by-word only when given a plain string.
   if (animate && typeof children === "string") {
-    return <AnimatedText as="h2" text={children} className={cn(base, className)} />;
+    return <AnimatedText as={as} text={children} className={cn(base, className)} />;
   }
-  return <h2 className={cn(base, className)}>{children}</h2>;
+  const Tag = as;
+  return <Tag className={cn(base, className)}>{children}</Tag>;
 }
 
 export function Lead({ children, className }: { children: React.ReactNode; className?: string }) {

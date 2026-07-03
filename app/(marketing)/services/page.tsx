@@ -20,7 +20,7 @@ export default function ServicesPage() {
     <>
       <Section className="pt-16">
         <Eyebrow>Services & pricing</Eyebrow>
-        <H2>Premium cleaning for every kind of home.</H2>
+        <H2 as="h1">Premium cleaning for every kind of home.</H2>
         <Lead>
           Each visit follows our 60-point ClearNest checklist. Build a custom estimate below, or
           choose a service to book.
@@ -78,7 +78,7 @@ export default function ServicesPage() {
         </div>
       </Section>
 
-      <Section className="bg-paper/40">
+      <Section id="estimator" className="bg-paper/40">
         <PriceEstimator asSection={false} />
       </Section>
 

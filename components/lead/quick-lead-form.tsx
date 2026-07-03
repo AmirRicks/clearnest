@@ -74,7 +74,7 @@ export function QuickLeadForm({
           Thanks{name ? `, ${name.split(" ")[0]}` : ""}! Your request is in. 🌿
         </p>
         <p className="mt-1 text-sm text-graphite">
-          We’ll reach out within the hour (Mon–Sat, 7am–7pm). Want your quote{" "}
+          We’ll reach out within the hour (Tue–Sat, 7am–7pm). Want your quote{" "}
           <span className="font-semibold text-charcoal">right now</span>? Text or call us:
         </p>
         <div className="mt-3 flex flex-wrap gap-2">

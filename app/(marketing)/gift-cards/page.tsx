@@ -33,7 +33,7 @@ export default async function GiftCardsPage({
     <>
       <Section className="pb-8">
         <Eyebrow><Gift className="h-3.5 w-3.5 text-accent" /> ClearNest gift cards</Eyebrow>
-        <H2>Give the gift of a spotless home.</H2>
+        <H2 as="h1">Give the gift of a spotless home.</H2>
         <Lead>
           Whether it&rsquo;s a housewarming, a new baby, or a friend who just needs a break — a
           ClearNest gift card is the thoughtful gift that gives back hours. Choose any amount, add a

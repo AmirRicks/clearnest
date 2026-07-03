@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { ShieldCheck } from "lucide-react";
 import { BookingWizard } from "@/components/booking-wizard";
 
 export const metadata: Metadata = {
@@ -18,7 +19,11 @@ export default function BookPage() {
           Let’s schedule your clean.
         </h1>
         <p className="mt-2 text-base text-graphite">
-          We confirm by text within minutes — Mon–Sat, 7am–7pm.
+          We confirm by text within minutes — Tue–Sat, 7am–7pm.
+        </p>
+        <p className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-graphite">
+          <ShieldCheck className="h-4 w-4 shrink-0 text-brand-600" />
+          Insured &amp; bonded · Background-checked · Pay after the clean
         </p>
       </div>
       <Suspense fallback={<p className="text-sm text-graphite">Loading…</p>}>
