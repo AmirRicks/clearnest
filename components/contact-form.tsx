@@ -31,6 +31,14 @@ export function ContactForm() {
       </div>
       <Field label="Email" name="email" type="email" required />
       <Field label="Message" name="message" textarea required />
+      {/* Honeypot — invisible to humans, bots fill it. Kept off-screen (not
+          display:none) so scripted spam submits it and gets silently dropped. */}
+      <div aria-hidden="true" className="absolute left-[-9999px] top-[-9999px] h-0 w-0 overflow-hidden">
+        <label>
+          Company
+          <input type="text" name="company" tabIndex={-1} autoComplete="off" />
+        </label>
+      </div>
       <button
         type="submit"
         disabled={submitting}
