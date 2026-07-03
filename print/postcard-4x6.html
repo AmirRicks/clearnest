@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>ClearNest — Door-to-Door Postcard (4×6, front + back)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  /* ClearNest D2D leave-behind postcard — 6in × 4in, two pages:
+     page 1 = FRONT, page 2 = BACK. Print duplex (flip on short edge),
+     or print page 1, re-feed, print page 2. Print at 100% / Actual Size.
+
+     PRINTER NOTE — tuned for the HP Smart Tank Plus 550 (black tank dead).
+     ONLY color inks: blues, gold, white. No black, no grey anywhere.
+     Background graphics ON. QR is dark blue per the standing print rule.
+
+     Copy source: Brain → first-clients-sprint.md §leave-behind (grounded in
+     the ClearNest Services notebook: hierarchy-first, no heavy borders,
+     flat-rate price visible, QR to the site). Truth rules: "5-star clean"
+     describes the CLEAN, never a rating claim; prices from lib/pricing.ts. */
+  @page { size: 6in 4in; margin: 0; }
+  @media print { body { margin: 0; background: #fff; } .screen-only { display: none; } }
+
+  :root {
+    --blue:      #0E6F92;
+    --blue-deep: #0A5570;
+    --blue-soft: #2F8AA8;
+    --gold:      #C7972F;
+    --cream:     #FDFBF6;
+    --white:     #ffffff;
+  }
+  html, body { background: #dfe7ea; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Helvetica Neue", "Geist", "Inter", system-ui, Arial, sans-serif;
+    color: var(--blue);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  @media screen {
+    body { padding: 28px; display: grid; place-items: center; gap: 28px; }
+    .page { box-shadow: 0 30px 80px -20px rgba(14,111,146,.35), 0 6px 18px -6px rgba(14,111,146,.25); }
+  }
+
+  .page {
+    width: 6in; height: 4in;
+    background: var(--white);
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    page-break-after: always;
+  }
+  .page:last-child { page-break-after: auto; }
+
+  /* ============ FRONT ============ */
+  .front {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 0.42in 0.5in;
+    background:
+      radial-gradient(1.6in 1.6in at 108% -12%, rgba(199,151,47,.14), transparent 70%),
+      radial-gradient(2.2in 2.2in at -14% 116%, rgba(47,138,168,.14), transparent 70%),
+      var(--white);
+  }
+  .lockup { display: flex; align-items: center; gap: 9px; }
+  .mark { width: 34px; height: 34px; color: var(--blue); flex: none; }
+  .name { font-size: 22px; font-weight: 800; letter-spacing: -0.01em; line-height: 1; }
+  .strap { font-size: 8px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--blue-soft); margin-top: 3px; line-height: 1; }
+
+  .headline {
+    margin-top: 0.28in;
+    font-size: 34px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.06;
+    color: var(--blue-deep);
+    text-wrap: balance;
+  }
+  .headline .accent { color: var(--gold); }
+
+  .tagline {
+    margin-top: 0.16in;
+    font-size: 12.5px; font-weight: 700; letter-spacing: 0.01em;
+    color: var(--blue-soft);
+  }
+  .tagline .accent { color: var(--gold); }
+
+  .front .foot {
+    position: absolute; bottom: 0.3in; left: 0; right: 0;
+    font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--blue-soft); text-align: center;
+  }
+  .front .foot .dot { color: var(--gold); }
+
+  /* ============ BACK ============ */
+  .back {
+    display: grid;
+    grid-template-columns: 1fr 1.35in;
+    gap: 0.28in;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 0.34in 0.42in;
+    background:
+      radial-gradient(1.8in 1.8in at 112% 118%, rgba(47,138,168,.12), transparent 70%),
+      var(--white);
+  }
+  .back h2 {
+    margin: 0;
+    font-size: 21px; font-weight: 800; letter-spacing: -0.015em; line-height: 1.08;
+    color: var(--blue-deep);
+  }
+  .back h2 .accent { color: var(--gold); }
+  .sub { margin-top: 5px; font-size: 10px; font-weight: 700; color: var(--blue-soft); letter-spacing: 0.02em; }
+
+  .offer {
+    margin-top: 0.14in;
+    background: var(--cream);
+    border-radius: 12px;
+    padding: 0.11in 0.15in;
+    display: flex; align-items: baseline; gap: 7px; flex-wrap: wrap;
+  }
+  .offer .pct { font-size: 17px; font-weight: 800; color: var(--gold); letter-spacing: -0.01em; }
+  .offer .what { font-size: 10.5px; font-weight: 700; color: var(--blue); }
+  .offer .code { font-size: 10.5px; font-weight: 800; color: var(--blue-deep); letter-spacing: 0.08em; background: var(--white); border-radius: 6px; padding: 2px 7px; }
+
+  .flat {
+    margin-top: 0.12in;
+    font-size: 10px; font-weight: 600; line-height: 1.45; color: var(--blue);
+  }
+  .flat b { font-weight: 800; color: var(--blue-deep); }
+  .flat .ex { color: var(--blue-soft); }
+
+  .contact {
+    margin-top: 0.13in;
+    font-size: 11.5px; font-weight: 800; color: var(--blue-deep);
+    font-feature-settings: "tnum" 1, "lnum" 1;
+  }
+  .contact .site { color: var(--blue); }
+  .hours { font-size: 8.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--blue-soft); margin-top: 3px; }
+
+  .qrcol { text-align: center; align-self: center; }
+  .qrcol img { width: 1.15in; height: 1.15in; display: block; margin: 0 auto; }
+  .qrcol .cap { font-size: 7.5px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--blue-soft); margin-top: 5px; line-height: 1.4; }
+  .qrcol .cap .accent { color: var(--gold); }
+
+  .screen-only {
+    position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%);
+    padding: 8px 14px; background: var(--blue-deep); color: #fff;
+    border-radius: 999px; font-size: 12px; text-align: center; z-index: 9;
+  }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1 — FRONT -->
+<div class="page front" aria-label="Postcard front">
+  <div class="lockup">
+    <svg class="mark" viewBox="0 0 64 64" fill="none">
+      <path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/>
+      <circle cx="32" cy="38" r="3" fill="#C7972F"/>
+    </svg>
+    <div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div>
+  </div>
+
+  <div class="headline">A 5-star clean<br/>for <span class="accent">your</span> home.</div>
+  <div class="tagline">A Cleaner Home. <span class="accent">A Clearer Mind.</span></div>
+
+  <div class="foot">Locally owned &nbsp;<span class="dot">&middot;</span>&nbsp; Salt Lake County &nbsp;<span class="dot">&middot;</span>&nbsp; Insured &amp; bonded</div>
+</div>
+
+<!-- PAGE 2 — BACK -->
+<div class="page back" aria-label="Postcard back">
+  <div>
+    <h2>You pay <span class="accent">after</span> the clean.</h2>
+    <div class="sub">No deposit. No card upfront. Insured &amp; bonded &middot; Eco-friendly</div>
+
+    <div class="offer">
+      <span class="pct">20% off</span>
+      <span class="what">your first clean &middot; code</span>
+      <span class="code">FOUNDING20</span>
+    </div>
+
+    <div class="flat">
+      <b>Flat-rate pricing by home size</b> — your exact quote online in 60 seconds,
+      no phone call needed. <span class="ex">(ex: 3&nbsp;bed / 2&nbsp;bath standard&nbsp;&asymp;&nbsp;$258&ndash;$330)</span>
+    </div>
+
+    <div class="contact">(801) 441-0726 &nbsp;&middot;&nbsp; <span class="site">clearnest.services</span></div>
+    <div class="hours">Tue&ndash;Sat &middot; 7:00 AM &ndash; 7:00 PM</div>
+  </div>
+
+  <div class="qrcol">
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&margin=0&qzone=0&format=svg&color=0a5570&bgcolor=ffffff&data=https%3A%2F%2Fclearnest.services%2Fbook%3Fpromo%3DFOUNDING20" alt="Scan to book with 20% off at clearnest.services"/>
+    <div class="cap">Scan to book<br/><span class="accent">20% off applied</span></div>
+  </div>
+</div>
+
+<p class="screen-only">Print: US 4×6 postcard stock (or Letter + trim) · duplex short-edge · 100% scale · background graphics ON</p>
+</body>
+</html>

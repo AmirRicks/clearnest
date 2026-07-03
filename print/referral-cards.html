@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>ClearNest — Referral Cards (Avery 28371, 10-up)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  /* ClearNest referral cards — hand one to every founding client.
+     Avery 28371 / 5371 / 8371: US Letter, 10 cards (2 × 5), 3.5in × 2in.
+     Same drift-tolerant safe-zone layout as business-cards.html.
+     Print at 100% / Actual Size. Background graphics ON.
+
+     PRINTER NOTE — HP Smart Tank Plus 550 (black tank dead): ONLY color
+     inks — blues, gold, white. No black, no grey. QR is dark blue.
+
+     Copy matches the LIVE program at clearnest.services/referrals:
+     friend gets $25 off their first clean; you get a $25 credit once
+     their first clean is complete. (Do NOT change to a 3rd-clean gate
+     without changing the site first — truth-in-advertising.) */
+  @page { size: letter portrait; margin: 0; }
+  @media print { body { margin: 0; background: #fff; } .screen-only { display: none; } }
+
+  :root {
+    --blue:      #0E6F92;
+    --blue-deep: #0A5570;
+    --blue-soft: #2F8AA8;
+    --gold:      #C7972F;
+    --cream:     #FDFBF6;
+    --white:     #ffffff;
+  }
+  html, body { background: #dfe7ea; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Helvetica Neue", "Geist", "Inter", system-ui, Arial, sans-serif;
+    color: var(--blue);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  @media screen {
+    body { padding: 28px; display: grid; place-items: center; }
+    .sheet { box-shadow: 0 30px 80px -20px rgba(14,111,146,.35), 0 6px 18px -6px rgba(14,111,146,.25); }
+    .card { outline: 1px dashed rgba(47,138,168,.45); outline-offset: -0.5px; }
+  }
+
+  .sheet {
+    width: 8.5in; height: 11in;
+    background: var(--white);
+    box-sizing: border-box;
+    padding: 0.5in 0.75in;
+    display: grid;
+    grid-template-columns: 3.5in 3.5in;
+    grid-template-rows: repeat(5, 2in);
+  }
+
+  .card {
+    width: 3.5in; height: 2in;
+    box-sizing: border-box;
+    background: var(--white);
+    position: relative;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .card::before {
+    content: ""; position: absolute;
+    width: 1.2in; height: 1.2in; border-radius: 50%;
+    top: -0.35in; right: -0.2in;
+    background: radial-gradient(circle, rgba(199,151,47,.18), transparent 70%);
+  }
+
+  .safe {
+    position: relative; z-index: 1;
+    width: 100%; height: 100%;
+    box-sizing: border-box;
+    padding: 0.3in 0.3in;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 0.16in;
+  }
+
+  .left { display: flex; flex-direction: column; gap: 0.045in; min-width: 0; }
+
+  .lockup { display: flex; align-items: center; gap: 5px; }
+  .mark { width: 17px; height: 17px; color: var(--blue); flex: none; }
+  .name { font-size: 11px; font-weight: 800; letter-spacing: -0.01em; color: var(--blue); line-height: 1; }
+  .strap { font-size: 5px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--blue-soft); line-height: 1; margin-top: 1px; }
+
+  .hook { font-size: 13.5px; font-weight: 800; letter-spacing: -0.015em; line-height: 1.05; color: var(--blue-deep); }
+  .hook .accent { color: var(--gold); }
+
+  .deal { font-size: 8px; font-weight: 600; line-height: 1.35; color: var(--blue); }
+  .deal b { font-weight: 800; color: var(--blue-deep); }
+  .deal .gold { color: var(--gold); font-weight: 800; }
+
+  .contact { font-size: 8px; font-weight: 800; color: var(--blue-deep); font-feature-settings: "tnum" 1, "lnum" 1; }
+  .contact .site { color: var(--blue); }
+
+  .qr { text-align: center; flex: none; align-self: center; }
+  .qr img { width: 0.62in; height: 0.62in; display: block; }
+  .qr .cap { font-size: 4.6px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue-soft); margin-top: 2px; }
+
+  .screen-only {
+    position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%);
+    padding: 8px 14px; background: var(--blue-deep); color: #fff;
+    border-radius: 999px; font-size: 12px; text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="sheet" aria-label="ClearNest referral cards — Avery 28371, 10 per sheet">
+  <!-- one card, repeated 10× -->
+  <div class="card"><div class="safe">
+    <div class="left">
+      <div class="lockup">
+        <svg class="mark" viewBox="0 0 64 64" fill="none"><path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="38" r="3" fill="#C7972F"/></svg>
+        <div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div>
+      </div>
+      <div class="hook">Love your clean? <span class="accent">Share it.</span></div>
+      <div class="deal">Give a friend <b>$25 off</b> their first clean — once it&rsquo;s done, <span class="gold">you get a $25 credit</span> on your next one. No cap: 10 friends = $250.</div>
+      <div class="contact">clearnest.services/referrals &nbsp;&middot;&nbsp; <span class="site">(801) 441-0726</span></div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&margin=0&qzone=0&format=svg&color=0a5570&bgcolor=ffffff&data=https%3A%2F%2Fclearnest.services%2Freferrals" alt="clearnest.services/referrals"/>
+      <div class="cap">Refer &amp; earn</div>
+    </div>
+  </div></div>
+  <div class="card"><div class="safe">
+    <div class="left">
+      <div class="lockup">
+        <svg class="mark" viewBox="0 0 64 64" fill="none"><path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="38" r="3" fill="#C7972F"/></svg>
+        <div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div>
+      </div>
+      <div class="hook">Love your clean? <span class="accent">Share it.</span></div>
+      <div class="deal">Give a friend <b>$25 off</b> their first clean — once it&rsquo;s done, <span class="gold">you get a $25 credit</span> on your next one. No cap: 10 friends = $250.</div>
+      <div class="contact">clearnest.services/referrals &nbsp;&middot;&nbsp; <span class="site">(801) 441-0726</span></div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&margin=0&qzone=0&format=svg&color=0a5570&bgcolor=ffffff&data=https%3A%2F%2Fclearnest.services%2Freferrals" alt="clearnest.services/referrals"/>
+      <div class="cap">Refer &amp; earn</div>
+    </div>
+  </div></div>
+  <div class="card"><div class="safe">
+    <div class="left">
+      <div class="lockup">
+        <svg class="mark" viewBox="0 0 64 64" fill="none"><path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="38" r="3" fill="#C7972F"/></svg>
+        <div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div>
+      </div>
+      <div class="hook">Love your clean? <span class="accent">Share it.</span></div>
+      <div class="deal">Give a friend <b>$25 off</b> their first clean — once it&rsquo;s done, <span class="gold">you get a $25 credit</span> on your next one. No cap: 10 friends = $250.</div>
+      <div class="contact">clearnest.services/referrals &nbsp;&middot;&nbsp; <span class="site">(801) 441-0726</span></div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&margin=0&qzone=0&format=svg&color=0a5570&bgcolor=ffffff&data=https%3A%2F%2Fclearnest.services%2Freferrals" alt="clearnest.services/referrals"/>
+      <div class="cap">Refer &amp; earn</div>
+    </div>
+  </div></div>
+  <div class="card"><div class="safe">
+    <div class="left">
+      <div class="lockup">
+        <svg class="mark" viewBox="0 0 64 64" fill="none"><path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="38" r="3" fill="#C7972F"/></svg>
+        <div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div>
+      </div>
+      <div class="hook">Love your clean? <span class="accent">Share it.</span></div>
+      <div class="deal">Give a friend <b>$25 off</b> their first clean — once it&rsquo;s done, <span class="gold">you get a $25 credit</span> on your next one. No cap: 10 friends = $250.</div>
+      <div class="contact">clearnest.services/referrals &nbsp;&middot;&nbsp; <span class="site">(801) 441-0726</span></div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&margin=0&qzone=0&format=svg&color=0a5570&bgcolor=ffffff&data=https%3A%2F%2Fclearnest.services%2Freferrals" alt="clearnest.services/referrals"/>
+      <div class="cap">Refer &amp; earn</div>
+    </div>
+  </div></div>
+  <div class="card"><div class="safe">
+    <div class="left">
+      <div class="lockup">
+        <svg class="mark" viewBox="0 0 64 64" fill="none"><path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="38" r="3" fill="#C7972F"/></svg>
+        <div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div>
+      </div>
+      <div class="hook">Love your clean? <span class="accent">Share it.</span></div>
+      <div class="deal">Give a friend <b>$25 off</b> their first clean — once it&rsquo;s done, <span class="gold">you get a $25 credit</span> on your next one. No cap: 10 friends = $250.</div>
+      <div class="contact">clearnest.services/referrals &nbsp;&middot;&nbsp; <span class="site">(801) 441-0726</span></div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&margin=0&qzone=0&format=svg&color=0a5570&bgcolor=ffffff&data=https%3A%2F%2Fclearnest.services%2Freferrals" alt="clearnest.services/referrals"/>
+      <div class="cap">Refer &amp; earn</div>
+    </div>
+  </div></div>
+  <div class="card"><div class="safe">
+    <div class="left">
+      <div class="lockup">
+        <svg class="mark" viewBox="0 0 64 64" fill="none"><path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="38" r="3" fill="#C7972F"/></svg>
+        <div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div>
+      </div>
+      <div class="hook">Love your clean? <span class="accent">Share it.</span></div>
+      <div class="deal">Give a friend <b>$25 off</b> their first clean — once it&rsquo;s done, <span class="gold">you get a $25 credit</span> on your next one. No cap: 10 friends = $250.</div>
+      <div class="contact">clearnest.services/referrals &nbsp;&middot;&nbsp; <span class="site">(801) 441-0726</span></div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&margin=0&qzone=0&format=svg&color=0a5570&bgcolor=ffffff&data=https%3A%2F%2Fclearnest.services%2Freferrals" alt="clearnest.services/referrals"/>
+      <div class="cap">Refer &amp; earn</div>
+    </div>
+  </div></div>
+  <div class="card"><div class="safe">
+    <div class="left">
+      <div class="lockup">
+        <svg class="mark" viewBox="0 0 64 64" fill="none"><path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="38" r="3" fill="#C7972F"/></svg>
+        <div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div>
+      </div>
+      <div class="hook">Love your clean? <span class="accent">Share it.</span></div>
+      <div class="deal">Give a friend <b>$25 off</b> their first clean — once it&rsquo;s done, <span class="gold">you get a $25 credit</span> on your next one. No cap: 10 friends = $250.</div>
+      <div class="contact">clearnest.services/referrals &nbsp;&middot;&nbsp; <span class="site">(801) 441-0726</span></div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&margin=0&qzone=0&format=svg&color=0a5570&bgcolor=ffffff&data=https%3A%2F%2Fclearnest.services%2Freferrals" alt="clearnest.services/referrals"/>
+      <div class="cap">Refer &amp; earn</div>
+    </div>
+  </div></div>
+  <div class="card"><div class="safe">
+    <div class="left">
+      <div class="lockup">
+        <svg class="mark" viewBox="0 0 64 64" fill="none"><path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="38" r="3" fill="#C7972F"/></svg>
+        <div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div>
+      </div>
+      <div class="hook">Love your clean? <span class="accent">Share it.</span></div>
+      <div class="deal">Give a friend <b>$25 off</b> their first clean — once it&rsquo;s done, <span class="gold">you get a $25 credit</span> on your next one. No cap: 10 friends = $250.</div>
+      <div class="contact">clearnest.services/referrals &nbsp;&middot;&nbsp; <span class="site">(801) 441-0726</span></div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&margin=0&qzone=0&format=svg&color=0a5570&bgcolor=ffffff&data=https%3A%2F%2Fclearnest.services%2Freferrals" alt="clearnest.services/referrals"/>
+      <div class="cap">Refer &amp; earn</div>
+    </div>
+  </div></div>
+  <div class="card"><div class="safe">
+    <div class="left">
+      <div class="lockup">
+        <svg class="mark" viewBox="0 0 64 64" fill="none"><path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="38" r="3" fill="#C7972F"/></svg>
+        <div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div>
+      </div>
+      <div class="hook">Love your clean? <span class="accent">Share it.</span></div>
+      <div class="deal">Give a friend <b>$25 off</b> their first clean — once it&rsquo;s done, <span class="gold">you get a $25 credit</span> on your next one. No cap: 10 friends = $250.</div>
+      <div class="contact">clearnest.services/referrals &nbsp;&middot;&nbsp; <span class="site">(801) 441-0726</span></div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&margin=0&qzone=0&format=svg&color=0a5570&bgcolor=ffffff&data=https%3A%2F%2Fclearnest.services%2Freferrals" alt="clearnest.services/referrals"/>
+      <div class="cap">Refer &amp; earn</div>
+    </div>
+  </div></div>
+  <div class="card"><div class="safe">
+    <div class="left">
+      <div class="lockup">
+        <svg class="mark" viewBox="0 0 64 64" fill="none"><path d="M8 32 L32 8 L56 32 Q56 60 32 60 Q8 60 8 32 Z" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="38" r="3" fill="#C7972F"/></svg>
+        <div><div class="name">ClearNest</div><div class="strap">Cleaning Services</div></div>
+      </div>
+      <div class="hook">Love your clean? <span class="accent">Share it.</span></div>
+      <div class="deal">Give a friend <b>$25 off</b> their first clean — once it&rsquo;s done, <span class="gold">you get a $25 credit</span> on your next one. No cap: 10 friends = $250.</div>
+      <div class="contact">clearnest.services/referrals &nbsp;&middot;&nbsp; <span class="site">(801) 441-0726</span></div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&margin=0&qzone=0&format=svg&color=0a5570&bgcolor=ffffff&data=https%3A%2F%2Fclearnest.services%2Freferrals" alt="clearnest.services/referrals"/>
+      <div class="cap">Refer &amp; earn</div>
+    </div>
+  </div></div>
+</div>
+<p class="screen-only">Print: Avery 28371 · US Letter · 100% scale · background graphics ON</p>
+</body>
+</html>
