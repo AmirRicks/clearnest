@@ -77,6 +77,29 @@ body {
   }
 }
 
+/* ----- Above-the-fold entrance (CSS-driven, NOT JS-driven) -----
+   The hero headline is the LCP element. Framer Motion's initial={{opacity:0}}
+   kept it invisible until React hydrated (~1s of blank hero on slow phones —
+   most local-service customers). These utilities run the same rise at FIRST
+   PAINT with pure CSS, so the copy is visible immediately with no JS/hydration
+   dependency. The reduced-motion block above collapses them to instant. */
+@keyframes cn-rise {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes cn-rise-solid { /* transform only — stays fully opaque for best LCP */
+  from { transform: translateY(20px); }
+  to   { transform: none; }
+}
+.cn-reveal {
+  animation: cn-rise 0.7s var(--ease-soft) both;
+  animation-delay: var(--cn-delay, 0s);
+}
+.cn-reveal-solid {
+  animation: cn-rise-solid 0.6s var(--ease-soft) both;
+  animation-delay: var(--cn-delay, 0s);
+}
+
 /* ----- Animated decorations ----- */
 @keyframes drift {
   0%   { transform: translate3d(0,0,0); opacity: 0; }
