@@ -1,0 +1,17 @@
+rules:
+  - id: no-hardcoded-secrets
+    pattern: |
+      $KEY = "..."
+    patterns:
+      - metavariable-regex:
+          metavariable: $KEY
+          regex: (?i).*(secret|password|api_key|token|private_key).*
+    message: Possible hardcoded secret
+    severity: WARNING
+    languages: [javascript, typescript, python]
+
+  - id: no-console-log
+    pattern: console.log(...)
+    message: Remove console.log before shipping
+    severity: WARNING
+    languages: [javascript, typescript]
