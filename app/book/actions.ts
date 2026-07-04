@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { AGREEMENT_VERSION } from "@/lib/agreement";
 import { estimatePrice, SERVICES, type ServiceId } from "@/lib/pricing";
 import { validatePromo, discountRange } from "@/lib/promo";
@@ -66,7 +67,16 @@ export async function submitBooking(input: unknown): Promise<BookingResult> {
   }
 
   try {
-    const sb = await createClient();
+    // Use the SERVICE-ROLE client. This server action already validates
+    // everything (price recomputed server-side via estimatePrice, promo checked
+    // server-side, status left to default 'pending'), so it must bypass RLS —
+    // the public write policies were removed (migration 0010) to stop direct
+    // REST inserts that could set status='paid' or spam the calendar. Service
+    // role also lets the promo eligibility check below read prior bookings
+    // (migration 0009 removed anon SELECT on bookings, which had silently
+    // disabled first-clean enforcement for the anon client). Falls back to the
+    // cookie client if the service-role key is somehow unset.
+    const sb = createAdminClient() ?? (await createClient());
 
     // Validate the promo code server-side. FOUNDING20 is first-clean-only, so we
     // check this customer against past bookings (by email/phone) — a returning
