@@ -1,0 +1,25 @@
+name: Semgrep
+on:
+  pull_request: {}
+  push:
+    branches: [main]
+  schedule:
+    - cron: 30 6 * * 1
+
+jobs:
+  semgrep:
+    name: Semgrep SAST
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+    container:
+      image: semgrep/semgrep
+    steps:
+      - uses: actions/checkout@v4
+      - run: semgrep ci --config auto --sarif -o results.sarif
+      - name: Upload SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: results.sarif
+          category: semgrep
