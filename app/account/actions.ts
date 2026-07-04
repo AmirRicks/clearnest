@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { SERVICES } from "@/lib/pricing";
 import { sendRescheduleConfirmation, sendCancelConfirmation } from "@/lib/email";
 
@@ -10,36 +11,41 @@ type Fail = { ok: false; error: string };
 
 const MIN_RESCHEDULE_LEAD_HOURS = 24;
 
+// Authenticate with the cookie client (reads the session), then read/write the
+// booking with the SERVICE-ROLE client. Ownership is enforced IN CODE below
+// (email match or admin), so we no longer depend on the RLS write policy that
+// was removed in migration 0010 (it let a customer set their own status='paid').
 async function getOwnedBooking(bookingId: string) {
   const sb = await createClient();
+  const db = createAdminClient() ?? sb;
   const { data: { user } } = await sb.auth.getUser();
-  if (!user?.email) return { sb, user: null, booking: null };
+  if (!user?.email) return { sb, db, user: null, booking: null };
 
-  const { data: admin } = await sb
+  const { data: admin } = await db
     .from("admins")
     .select("user_id")
     .eq("user_id", user.id)
     .maybeSingle();
   const isAdmin = Boolean(admin);
 
-  const { data: booking } = await sb
+  const { data: booking } = await db
     .from("bookings")
     .select("*")
     .eq("id", bookingId)
     .maybeSingle();
 
-  if (!booking) return { sb, user, booking: null };
+  if (!booking) return { sb, db, user, booking: null };
   const owns = booking.customer_email.toLowerCase() === user.email.toLowerCase();
-  if (!owns && !isAdmin) return { sb, user, booking: null };
-  return { sb, user, booking, isAdmin };
+  if (!owns && !isAdmin) return { sb, db, user, booking: null };
+  return { sb, db, user, booking, isAdmin };
 }
 
 export async function rescheduleBooking(
   bookingId: string,
   newIso: string
 ): Promise<Ok | Fail> {
-  const { sb, booking, isAdmin } = await getOwnedBooking(bookingId);
-  if (!sb || !booking) return { ok: false, error: "Booking not found or not yours." };
+  const { db, booking, isAdmin } = await getOwnedBooking(bookingId);
+  if (!db || !booking) return { ok: false, error: "Booking not found or not yours." };
 
   const newDate = new Date(newIso);
   if (isNaN(newDate.getTime())) return { ok: false, error: "Invalid new date." };
@@ -56,7 +62,7 @@ export async function rescheduleBooking(
   }
 
   const oldFor = booking.scheduled_for;
-  const { error } = await sb
+  const { error } = await db
     .from("bookings")
     .update({
       scheduled_for: newDate.toISOString(),
@@ -81,8 +87,8 @@ export async function rescheduleBooking(
 }
 
 export async function cancelBooking(bookingId: string): Promise<Ok | Fail> {
-  const { sb, booking, isAdmin } = await getOwnedBooking(bookingId);
-  if (!sb || !booking) return { ok: false, error: "Booking not found or not yours." };
+  const { db, booking, isAdmin } = await getOwnedBooking(bookingId);
+  if (!db || !booking) return { ok: false, error: "Booking not found or not yours." };
 
   if (booking.status === "completed" || booking.status === "paid" || booking.status === "canceled") {
     return { ok: false, error: "This booking can’t be canceled." };
@@ -92,7 +98,7 @@ export async function cancelBooking(bookingId: string): Promise<Ok | Fail> {
   // We could enforce a 24h policy or just record + let admin waive the fee.
   // For now, allow cancel any time; the 25% fee is enforced manually by admin.
 
-  const { error } = await sb
+  const { error } = await db
     .from("bookings")
     .update({ status: "canceled" })
     .eq("id", bookingId);
