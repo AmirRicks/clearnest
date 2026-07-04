@@ -37,7 +37,8 @@
     "stripe": "^22.2.0",
     "tailwind-merge": "^3.6.0",
     "twilio": "^6.0.2",
-    "zod": "^4.4.3"
+    "zod": "^4.4.3",
+    "@sentry/nextjs": "^8"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
