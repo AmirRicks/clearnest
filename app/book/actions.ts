@@ -222,7 +222,7 @@ export async function submitBooking(input: unknown): Promise<BookingResult> {
     console.error("[ClearNest] booking insert failed", err);
     return {
       ok: false,
-      error: "We couldn’t save your booking. Please call (801) 441-0726 and we’ll handle it.",
+      error: "We couldn’t save your booking. Please email clearnest.services@gmail.com and we’ll handle it.",
     };
   }
 }

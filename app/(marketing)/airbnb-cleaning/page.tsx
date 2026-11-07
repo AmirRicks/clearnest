@@ -1,20 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  CheckCircle2,
-  Clock,
-  Phone,
-  MapPin,
-  ArrowUpRight,
-  BedDouble,
-  Camera,
-  ClipboardList,
-  RefreshCw,
-  Sparkles,
-  ShieldCheck,
-  CreditCard,
-  Leaf,
-} from "lucide-react";
+import { CheckCircle2, Clock, MapPin, ArrowUpRight, BedDouble, Camera, ClipboardList, RefreshCw, Sparkles, ShieldCheck, CreditCard, Leaf, Mail } from "lucide-react";
 import { BUSINESS } from "@/lib/utils";
 import { SERVICES } from "@/lib/pricing";
 import { LOCATIONS } from "@/lib/locations";
@@ -107,7 +93,7 @@ const FAQS = [
   },
   {
     q: "What if I need a turnover on short notice?",
-    a: "Text or call (801) 441-0726 — we'll do our best to fit you in. For planned last-minute turns, sharing your calendar in advance gives us the most flexibility.",
+    a: "Email clearnest.services@gmail.com — we'll do our best to fit you in. For planned last-minute turns, sharing your calendar in advance gives us the most flexibility.",
   },
   {
     q: "How much does a turnover clean cost?",
@@ -129,7 +115,6 @@ const serviceLd = {
     "@type": "HouseCleaningService",
     "@id": `${BASE}/#business`,
     name: BUSINESS.name,
-    telephone: "+18014410726",
     url: BASE,
   },
   areaServed: [
@@ -202,8 +187,8 @@ export default function AirbnbCleaningPage() {
               <MagneticButton href="/book?service=airbnb">
                 Book a Turnover
               </MagneticButton>
-              <MagneticButton href={BUSINESS.phoneHref} variant="outline">
-                <Phone className="h-4 w-4" /> {BUSINESS.phone}
+              <MagneticButton href={BUSINESS.emailHref} variant="outline">
+                <Mail className="h-4 w-4" /> Email us
               </MagneticButton>
             </Reveal>
 

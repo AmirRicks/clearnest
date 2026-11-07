@@ -4,7 +4,7 @@ A premium, animated booking website for ClearNest Cleaning Services — built wi
 
 > **A Cleaner Home. A Clearer Mind.**
 > Residential · Deep · Move-In/Out · Airbnb Turnover
-> Salt Lake County, UT · **(801) 441-0726**
+> Salt Lake County, UT · **clearnest.services@gmail.com**
 
 ---
 
@@ -105,4 +105,4 @@ Or push to GitHub and connect the repo to Vercel — auto-deploys preview branch
 
 ## Phone number
 
-`(801) 441-0726` — appears in the nav, footer, hero CTA, contact page, FAQ, confirmation page, and CTA bands. Single source of truth in `lib/utils.ts → BUSINESS`.
+No public phone number (the old (801) Google Voice line moved to Gainloop on 2026-11-06). Contact is email: `clearnest.services@gmail.com` — nav, footer, hero, contact page, FAQ, confirmation page and CTA bands all use `BUSINESS.email`. Single source of truth in `lib/utils.ts → BUSINESS`.

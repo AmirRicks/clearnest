@@ -450,7 +450,7 @@ export async function POST(req: NextRequest) {
           raw1 = await streamAIResponse(baseMessages, (t) => vis1.push(t));
         } catch (err) {
           console.error("[AI Chat] phase 1 stream error:", (err as Error)?.message);
-          emit({ type: "error", content: "I'm having trouble right now. Please try again or call (801) 441-0726." });
+          emit({ type: "error", content: "I'm having trouble right now. Please try again or email clearnest.services@gmail.com." });
           emit({ type: "done", conversationId: loggedConvId });
           controller.close();
           return;

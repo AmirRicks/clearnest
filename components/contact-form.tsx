@@ -17,7 +17,7 @@ export function ContactForm() {
       toast.success("Thanks — we’ll be in touch within the hour.");
       form.reset();
     } catch {
-      toast.error("Couldn’t send. Please call or text (801) 441-0726.");
+      toast.error("Couldn’t send. Please email clearnest.services@gmail.com.");
     } finally {
       setSubmitting(false);
     }

@@ -69,7 +69,7 @@ export async function startGiftCheckout(
     return {
       ok: false,
       error:
-        "Online gift-card checkout isn't available right now — please call or text us at (801) 441-0726 and we'll set one up for you.",
+        "Online gift-card checkout isn't available right now — please email us at clearnest.services@gmail.com and we'll set one up for you.",
     };
   }
 

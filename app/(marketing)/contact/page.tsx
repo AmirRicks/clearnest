@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Phone, MessageSquare, Mail, MapPin, Clock } from "lucide-react";
+import { Mail, MapPin, Clock } from "lucide-react";
 import { Eyebrow, H2, Lead, Section } from "@/components/section";
 import { ContactForm } from "@/components/contact-form";
 import { BUSINESS } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Contact ClearNest",
-  description: "Call, text, or message ClearNest Cleaning Services. We answer Tue–Sat 7am–7pm.",
+  description: "Email or message ClearNest Cleaning Services. We answer Tue–Sat 7am–7pm.",
 };
 
 export default function ContactPage() {
@@ -14,30 +14,16 @@ export default function ContactPage() {
     <Section>
       <Eyebrow>Contact</Eyebrow>
       <H2 as="h1">We&apos;re here Tuesday through Saturday.</H2>
-      <Lead>Call, text, or send a message — we usually reply within an hour.</Lead>
+      <Lead>Email us or send a message — we usually reply within an hour.</Lead>
 
       <div className="mt-12 grid gap-10 lg:grid-cols-[1fr_1fr]">
         <div className="grid gap-3 self-start">
-          <Channel
-            icon={Phone}
-            title="Call us"
-            href={BUSINESS.phoneHref}
-            primary={BUSINESS.phone}
-            secondary="Tap to call — we answer live or return missed calls within the hour."
-          />
-          <Channel
-            icon={MessageSquare}
-            title="Text us"
-            href={BUSINESS.smsHref}
-            primary={BUSINESS.phone}
-            secondary="Fastest for quick questions, scheduling, and pre-booking estimates."
-          />
           <Channel
             icon={Mail}
             title="Email"
             href={BUSINESS.emailHref}
             primary={BUSINESS.email}
-            secondary="For agreements, invoices, and account questions."
+            secondary="Questions, scheduling, estimates, agreements, and invoices."
           />
           <div className="rounded-3xl border border-stone/70 bg-paper/60 p-5 shadow-soft">
             <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-graphite">

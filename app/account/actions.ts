@@ -54,7 +54,7 @@ export async function rescheduleBooking(
   if (!isAdmin && hoursAway < MIN_RESCHEDULE_LEAD_HOURS) {
     return {
       ok: false,
-      error: "Too close to start — please call (801) 441-0726 for same-day reschedules.",
+      error: "Too close to start — please email clearnest.services@gmail.com for same-day reschedules.",
     };
   }
   if (booking.status === "completed" || booking.status === "paid" || booking.status === "canceled") {

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { Check, Phone } from "lucide-react";
+import { Check, Mail } from "lucide-react";
 import { BUSINESS } from "@/lib/utils";
 import { TrackOnMount } from "@/components/analytics";
 
@@ -30,10 +30,10 @@ function Inner() {
       </p>
       <div className="mt-7 flex flex-wrap gap-3">
         <a
-          href={BUSINESS.phoneHref}
+          href={BUSINESS.emailHref}
           className="inline-flex items-center gap-2 rounded-full bg-charcoal px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-700"
         >
-          <Phone className="h-4 w-4" /> {BUSINESS.phone}
+          <Mail className="h-4 w-4" /> Email us
         </a>
         <Link
           href="/"

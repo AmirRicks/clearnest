@@ -234,7 +234,7 @@ export function BookingWizard() {
                     onSelect={(d, t) => { setDate(d); setTime(t); }} 
                   />
                   <p className="mt-6 text-xs text-graphite text-center">
-                    24-hour notice required. Need same-day? Call (801) 441-0726.
+                    24-hour notice required. Need same-day? Email clearnest.services@gmail.com.
                   </p>
                 </Step>
               )}

@@ -60,8 +60,8 @@ export function PremiumHero() {
 
           <p style={delay(0.3)} className="cn-reveal mt-6 text-sm text-graphite/80">
             No deposit · Same-day reschedule ·{" "}
-            <a href={BUSINESS.phoneHref} className="font-medium text-brand-700 hover:text-brand-800">
-              {BUSINESS.phone}
+            <a href={BUSINESS.emailHref} className="font-medium text-brand-700 hover:text-brand-800">
+              Email us
             </a>
           </p>
         </div>

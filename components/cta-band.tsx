@@ -1,4 +1,4 @@
-import { Phone, ShieldCheck } from "lucide-react";
+import { ShieldCheck, Mail } from "lucide-react";
 import { BUSINESS } from "@/lib/utils";
 import { MagneticButton } from "@/components/anim/magnetic";
 import { Reveal } from "@/components/anim/reveal";
@@ -29,8 +29,8 @@ export function CtaBand() {
               <MagneticButton href="/book" variant="light">
                 Book Cleaning
               </MagneticButton>
-              <MagneticButton href={BUSINESS.phoneHref} variant="outline" className="!border-white/30 !text-white hover:!bg-white/10">
-                <Phone className="h-4 w-4" /> {BUSINESS.phone}
+              <MagneticButton href={BUSINESS.emailHref} variant="outline" className="!border-white/30 !text-white hover:!bg-white/10">
+                <Mail className="h-4 w-4" /> Email us
               </MagneticButton>
               {/* Trust signal beside the booking action (grounded rule: credentials near the CTA) */}
               <p className="mt-1 inline-flex items-center gap-2 text-xs font-medium text-white/75 md:text-right">

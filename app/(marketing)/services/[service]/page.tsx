@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowUpRight, CheckCircle2, Clock, MapPin, Phone } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, Clock, MapPin, Mail } from "lucide-react";
 import { SERVICES } from "@/lib/pricing";
 import { BUSINESS } from "@/lib/utils";
 import { getServicePage, SERVICE_PAGE_SLUGS } from "@/lib/service-pages";
@@ -65,7 +65,6 @@ export default async function ServiceDetailPage({
       "@type": "HouseCleaningService",
       "@id": `${BASE}/#business`,
       name: BUSINESS.name,
-      telephone: "+18014410726",
       url: BASE,
     },
     areaServed: { "@type": "City", name: "Salt Lake City, UT" },
@@ -117,8 +116,8 @@ export default async function ServiceDetailPage({
             <MagneticButton href={`/book?service=${sp.serviceId}`}>
               Book {svc.name.split(" ")[0]}
             </MagneticButton>
-            <MagneticButton href={BUSINESS.phoneHref} variant="outline">
-              <Phone className="h-4 w-4" /> {BUSINESS.phone}
+            <MagneticButton href={BUSINESS.emailHref} variant="outline">
+              <Mail className="h-4 w-4" /> Email us
             </MagneticButton>
           </Reveal>
         </div>

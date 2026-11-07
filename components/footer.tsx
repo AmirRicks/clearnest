@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Phone, Mail, MessageSquare, Star } from "lucide-react";
+import { Mail, Star } from "lucide-react";
 import { BUSINESS } from "@/lib/utils";
 import { LOCATIONS } from "@/lib/locations";
 import { Logo } from "./logo";
@@ -17,16 +17,10 @@ export function Footer() {
           </p>
           <div className="mt-6 flex flex-wrap gap-2">
             <a
-              href={BUSINESS.phoneHref}
+              href={BUSINESS.emailHref}
               className="inline-flex items-center gap-2 rounded-full bg-charcoal px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
             >
-              <Phone className="h-4 w-4" /> {BUSINESS.phone}
-            </a>
-            <a
-              href={BUSINESS.smsHref}
-              className="inline-flex items-center gap-2 rounded-full border border-stone/80 px-4 py-2 text-sm font-medium text-charcoal hover:border-brand-300"
-            >
-              <MessageSquare className="h-4 w-4" /> Text us
+              <Mail className="h-4 w-4" /> Email us
             </a>
             <a
               href={BUSINESS.yelpUrl}

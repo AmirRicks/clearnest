@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Menu, Phone, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Mail } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BUSINESS, cn } from "@/lib/utils";
 import { Logo } from "./logo";
@@ -138,12 +138,12 @@ export function Nav() {
 
         <div className="hidden items-center gap-2 lg:flex">
           <a
-            href={BUSINESS.phoneHref}
+            href={BUSINESS.emailHref}
             className="inline-flex items-center gap-2 rounded-full border border-stone/80 px-3.5 py-2 text-sm font-medium text-charcoal transition hover:border-brand-300 hover:text-brand-700"
           >
-            <Phone className="h-4 w-4" />
-            <span className="hidden xl:inline">{BUSINESS.phone}</span>
-            <span className="xl:hidden">Call</span>
+            <Mail className="h-4 w-4" />
+            <span className="hidden xl:inline">Email us</span>
+            <span className="xl:hidden">Email</span>
           </a>
           <Magnetic strength={0.25}>
             <Link
@@ -185,11 +185,11 @@ export function Nav() {
               ))}
               <div className="mt-2 grid grid-cols-2 gap-2">
                 <a
-                  href={BUSINESS.phoneHref}
+                  href={BUSINESS.emailHref}
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-stone/80 px-4 py-3 text-sm font-medium text-charcoal"
                 >
-                  <Phone className="h-4 w-4" />
-                  Call
+                  <Mail className="h-4 w-4" />
+                  Email
                 </a>
                 <Link
                   href="/book"

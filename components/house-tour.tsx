@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useScroll, useMotionValueEvent, useReducedMotion } from "framer-motion";
-import { Phone, ChevronDown } from "lucide-react";
+import { ChevronDown, Mail } from "lucide-react";
 import { TOUR_ROOMS } from "@/lib/tour-data";
 import { BUSINESS } from "@/lib/utils";
 import { AnimatedText, ShinyText } from "@/components/anim/animated-text";
@@ -175,9 +175,9 @@ export function HouseTour() {
                     />
                   </svg>
                 </MagneticButton>
-                <MagneticButton href={BUSINESS.phoneHref} variant="outline">
-                  <Phone className="h-4 w-4" />
-                  {BUSINESS.phone}
+                <MagneticButton href={BUSINESS.emailHref} variant="outline">
+                  <Mail className="h-4 w-4" />
+                  Email us
                 </MagneticButton>
               </div>
             </div>
@@ -281,10 +281,10 @@ function StaticHero() {
               Book Cleaning
             </a>
             <a
-              href={BUSINESS.phoneHref}
+              href={BUSINESS.emailHref}
               className="inline-flex items-center gap-2 rounded-full border border-white/30 px-5 py-3.5 text-sm font-medium text-white"
             >
-              <Phone className="h-4 w-4" /> {BUSINESS.phone}
+              <Mail className="h-4 w-4" /> Email us
             </a>
           </div>
         </div>

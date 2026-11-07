@@ -59,13 +59,13 @@ ALWAYS use the estimate_quote tool to get a real number — do not add these up 
 ### Cancellation Policy
 - Free cancellation up to 24 hours before scheduled service.
 - Cancellations within 24 hours may be subject to a $35 fee.
-- To cancel, call (801) 441-0726 or reply to your confirmation email.
+- To cancel, email clearnest.services@gmail.com or reply to your confirmation email.
 
 ### Rescheduling Policy
 - Free rescheduling up to 24 hours before scheduled service.
 - We try to accommodate last-minute changes when possible.
 - Multiple reschedules may require management approval.
-- Reschedule through your account or by calling (801) 441-0726.
+- Reschedule through your account or by emailing clearnest.services@gmail.com.
 
 ## CLEANING PRODUCTS
 We use eco-friendly, pet-safe, and child-safe cleaning products:
@@ -80,7 +80,6 @@ We use eco-friendly, pet-safe, and child-safe cleaning products:
 Salt Lake City, Sandy, West Jordan, South Jordan, Murray, Draper, Holladay, Cottonwood Heights, Millcreek, West Valley City, Riverton, Herriman, Lehi, Bluffdale, Midvale, Taylorsville, Park City
 
 ## BUSINESS INFO
-- Phone: (801) 441-0726
 - Email: clearnest.services@gmail.com
 - Hours: Tuesday–Saturday, 7am–7pm
 - Closed: Sunday and Monday

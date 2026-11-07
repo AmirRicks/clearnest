@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Phone, MessageSquareText } from "lucide-react";
+import { MessageSquareText, Mail } from "lucide-react";
 import { BUSINESS } from "@/lib/utils";
 import { Modal, ModalContent } from "@/components/ui/modal";
 import { QuickLeadForm } from "./quick-lead-form";
@@ -41,10 +41,10 @@ export function FloatingCta() {
           >
             <div className="glass glass-specular flex w-full max-w-md items-center gap-2 rounded-full p-1.5 shadow-card sm:w-auto">
               <a
-                href={BUSINESS.phoneHref}
+                href={BUSINESS.emailHref}
                 className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-stone/40 bg-background/70 px-4 py-3 text-sm font-semibold text-charcoal transition hover:border-brand-300 sm:flex-none"
               >
-                <Phone className="h-4 w-4 text-brand-600" /> Call
+                <Mail className="h-4 w-4 text-brand-600" /> Email
               </a>
               <button
                 type="button"

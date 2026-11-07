@@ -2,10 +2,11 @@
 
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { Loader2, Phone, MessageSquare } from "lucide-react";
+import { Loader2, Mail } from "lucide-react";
 import { submitLead } from "@/app/lead/actions";
 import { trackEvent } from "@/components/analytics";
 import type { ServiceId } from "@/lib/pricing";
+import { BUSINESS } from "@/lib/utils";
 
 export type LeadDefaults = {
   source: string;
@@ -75,20 +76,14 @@ export function QuickLeadForm({
         </p>
         <p className="mt-1 text-sm text-graphite">
           We’ll reach out within the hour (Tue–Sat, 7am–7pm). Want your quote{" "}
-          <span className="font-semibold text-charcoal">right now</span>? Text or call us:
+          <span className="font-semibold text-charcoal">right now</span>? Email us:
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           <a
-            href="sms:+18014410726"
+            href={BUSINESS.emailHref}
             className="inline-flex items-center gap-1.5 rounded-full bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800"
           >
-            <MessageSquare className="h-4 w-4" /> Text us now
-          </a>
-          <a
-            href="tel:+18014410726"
-            className="inline-flex items-center gap-1.5 rounded-full border border-stone/70 bg-background px-4 py-2 text-sm font-medium text-charcoal transition hover:border-brand-300"
-          >
-            <Phone className="h-4 w-4" /> (801) 441-0726
+            <Mail className="h-4 w-4" /> {BUSINESS.email}
           </a>
         </div>
       </div>

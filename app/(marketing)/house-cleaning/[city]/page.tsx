@@ -1,17 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  ArrowUpRight,
-  CheckCircle2,
-  Clock,
-  MapPin,
-  Phone,
-  ShieldCheck,
-  Sparkles,
-  CreditCard,
-  Leaf,
-} from "lucide-react";
+import { ArrowUpRight, CheckCircle2, Clock, MapPin, ShieldCheck, Sparkles, CreditCard, Leaf, Mail } from "lucide-react";
 import { SERVICES } from "@/lib/pricing";
 import { BUSINESS, cn } from "@/lib/utils";
 import { getLocation, LOCATION_SLUGS, LOCATIONS } from "@/lib/locations";
@@ -146,8 +136,8 @@ export default async function CityPage({
         <LocalGallery citySlug={loc.slug} cityName={loc.city} />
         <Reveal delay={0.15} className="mt-8 flex flex-wrap items-center gap-3">
             <MagneticButton href={`/book?city=${loc.slug}`}>Book a Cleaning</MagneticButton>
-            <MagneticButton href={BUSINESS.phoneHref} variant="outline">
-              <Phone className="h-4 w-4" /> {BUSINESS.phone}
+            <MagneticButton href={BUSINESS.emailHref} variant="outline">
+              <Mail className="h-4 w-4" /> Email us
             </MagneticButton>
           </Reveal>
 
@@ -301,10 +291,10 @@ export default async function CityPage({
             </Lead>
             <div className="mt-6 flex flex-wrap gap-3 text-sm text-graphite">
               <a
-                href={BUSINESS.phoneHref}
+                href={BUSINESS.emailHref}
                 className="inline-flex items-center gap-2 rounded-full border border-stone/80 px-4 py-2 font-medium text-charcoal transition hover:border-brand-300"
               >
-                <Phone className="h-4 w-4" /> Call {BUSINESS.phone}
+                <Mail className="h-4 w-4" /> Email {BUSINESS.email}
               </a>
               <span className="inline-flex items-center gap-2 py-2">{BUSINESS.hours}</span>
             </div>

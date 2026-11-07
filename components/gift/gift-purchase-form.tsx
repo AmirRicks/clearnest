@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
-import { Gift, Loader2, Phone, MessageSquare, ArrowRight } from "lucide-react";
+import { Gift, Loader2, ArrowRight, Mail } from "lucide-react";
 import { startGiftCheckout, type GiftFormState } from "@/app/(marketing)/gift-cards/actions";
 import { GIFT_PRESETS, GIFT_MIN, GIFT_MAX } from "@/lib/gift";
 import { BUSINESS } from "@/lib/utils";
@@ -52,24 +52,18 @@ export function GiftPurchaseForm({ enabled }: { enabled: boolean }) {
           <Gift className="h-5 w-5" />
         </span>
         <h3 className="mt-5 text-xl font-semibold tracking-tight text-charcoal">
-          Gift cards available by phone
+          Gift cards available by email
         </h3>
         <p className="mt-2 text-sm leading-relaxed text-graphite">
-          We&rsquo;d love to set up a ClearNest gift card for you. Call or text and we&rsquo;ll
+          We&rsquo;d love to set up a ClearNest gift card for you. Email us and we&rsquo;ll
           handle the amount, the recipient, and a personal note — same day.
         </p>
         <div className="mt-6 flex flex-wrap gap-2">
           <a
-            href={BUSINESS.phoneHref}
+            href={BUSINESS.emailHref}
             className="inline-flex items-center gap-2 rounded-full bg-charcoal px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700"
           >
-            <Phone className="h-4 w-4" /> {BUSINESS.phone}
-          </a>
-          <a
-            href={BUSINESS.smsHref}
-            className="inline-flex items-center gap-2 rounded-full border border-stone/80 px-5 py-2.5 text-sm font-medium text-charcoal hover:border-brand-300"
-          >
-            <MessageSquare className="h-4 w-4" /> Text us
+            <Mail className="h-4 w-4" /> {BUSINESS.email}
           </a>
         </div>
       </div>

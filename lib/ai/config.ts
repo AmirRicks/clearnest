@@ -61,7 +61,7 @@ export async function streamAIResponse(
 ): Promise<string> {
   const config = getAIConfig();
   if (!config) {
-    const fallback = "Our assistant is offline right now — please call (801) 441-0726 and we'll help you straight away.";
+    const fallback = "Our assistant is offline right now — please email clearnest.services@gmail.com and we'll help you straight away.";
     onToken(fallback);
     return fallback;
   }

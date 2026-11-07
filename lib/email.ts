@@ -56,7 +56,7 @@ function shell(title: string, body: string) {
       ${body}
     </div>
     <p style="margin:24px 0 0;text-align:center;font-size:12px;color:#4a5159;">
-      ClearNest Cleaning Services &middot; ${BUSINESS.phone} &middot; ${BUSINESS.email}<br/>
+      ClearNest Cleaning Services &middot; ${BUSINESS.email}<br/>
       ${BUSINESS.serviceArea}
     </p>
   </div></body></html>`;
@@ -90,7 +90,7 @@ export async function sendBookingConfirmation(input: {
       <strong style="color:#1a1d22;">You pay after the clean.</strong> We'll send a hosted invoice the day of service — card, Apple Pay, or Google Pay.
     </div>
     <p style="margin:24px 0 0;font-size:13px;color:#4a5159;">
-      Need to reschedule? Reply to this email or call <a href="${BUSINESS.phoneHref}" style="color:#1b556c;">${BUSINESS.phone}</a>.
+      Need to reschedule? Just reply to this email.
     </p>
   `;
   return send({
@@ -225,11 +225,10 @@ export async function sendLeadAutoReply(input: {
   const first = input.customerName?.trim().split(" ")[0];
   const body = `
     <p style="margin:0 0 16px;color:#4a5159;line-height:1.6;">
-      Hi ${first ? escape(first) : "there"} — thanks for reaching out to ClearNest! We've got your request and we'll text or email your quote shortly. We answer Tuesday–Saturday, 7am–7pm.
+      Hi ${first ? escape(first) : "there"} — thanks for reaching out to ClearNest! We've got your request and we'll email your quote shortly. We answer Tuesday–Saturday, 7am–7pm.
     </p>
     <div style="border-top:1px solid #e6e1d6;margin-top:16px;padding-top:16px;font-size:13px;color:#4a5159;line-height:1.6;">
-      <strong style="color:#1a1d22;">Want the fastest answer?</strong> Text or call us at
-      <a href="${BUSINESS.phoneHref}" style="color:#1b556c;font-weight:600;">${BUSINESS.phone}</a>.
+      <strong style="color:#1a1d22;">Want the fastest answer?</strong> Just reply to this email.
       <br/><br/>
       And remember — with ClearNest you <strong style="color:#1a1d22;">pay after the clean</strong>, never a deposit. Insured, bonded, and eco &amp; pet-safe.
     </div>

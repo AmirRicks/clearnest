@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Eyebrow, H2, Lead, Section } from "@/components/section";
 import { CtaBand } from "@/components/cta-band";
 import { BUSINESS } from "@/lib/utils";
-import { ShieldCheck, Sparkles, HeartHandshake, Leaf, Phone } from "lucide-react";
+import { ShieldCheck, Sparkles, HeartHandshake, Leaf, Mail } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "About ClearNest",
@@ -66,13 +66,13 @@ export default function AboutPage() {
             </div>
             <div className="flex flex-col gap-3 md:items-end">
               <a
-                href={BUSINESS.phoneHref}
+                href={BUSINESS.emailHref}
                 className="inline-flex items-center gap-2 rounded-full bg-charcoal px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-700"
               >
-                <Phone className="h-4 w-4" /> Call the owner directly
+                <Mail className="h-4 w-4" /> Email the owner directly
               </a>
               <p className="text-xs text-graphite md:text-right">
-                {BUSINESS.phone} · {BUSINESS.hours}
+                {BUSINESS.email} · {BUSINESS.hours}
               </p>
             </div>
           </div>

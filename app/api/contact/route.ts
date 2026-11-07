@@ -75,7 +75,7 @@ export async function POST(request: Request) {
   const ip = getClientIp(request);
   if (!checkRateLimit(ip)) {
     return NextResponse.json(
-      { ok: false, error: "Too many requests. Please call or text (801) 441-0726." },
+      { ok: false, error: "Too many requests. Please email clearnest.services@gmail.com." },
       { status: 429 },
     );
   }

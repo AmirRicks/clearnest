@@ -59,6 +59,6 @@ export async function submitLead(input: unknown): Promise<LeadResult> {
     return { ok: true };
   } catch (err) {
     console.error("[ClearNest lead] insert failed", err);
-    return { ok: false, error: "Couldn’t send that — please call (801) 441-0726." };
+    return { ok: false, error: "Couldn’t send that — please email clearnest.services@gmail.com." };
   }
 }

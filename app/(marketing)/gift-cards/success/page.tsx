@@ -33,7 +33,7 @@ export default function GiftSuccessPage() {
             <li>• The balance is applied to their visit — gifts never expire.</li>
           </ul>
           <p className="mt-4 text-xs text-graphite">
-            Didn&rsquo;t see your receipt? Check spam, or text us at (801) 441-0726 and we&rsquo;ll
+            Didn&rsquo;t see your receipt? Check spam, or email us at clearnest.services@gmail.com and we&rsquo;ll
             resend it.
           </p>
         </div>

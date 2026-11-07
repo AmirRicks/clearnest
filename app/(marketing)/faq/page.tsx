@@ -49,7 +49,7 @@ export default function FaqPage() {
       <Section>
         <Eyebrow>FAQ</Eyebrow>
         <H2 as="h1">Common questions, answered.</H2>
-        <Lead>Don’t see what you need? Text us at (801) 441-0726.</Lead>
+        <Lead>Don’t see what you need? Email us at clearnest.services@gmail.com.</Lead>
 
         <div className="mt-12 divide-y divide-stone/70 overflow-hidden rounded-3xl border border-stone/70 bg-background shadow-soft">
           {QUESTIONS.map((item, i) => {

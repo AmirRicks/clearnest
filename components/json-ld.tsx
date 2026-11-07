@@ -33,7 +33,6 @@ export function LocalBusinessJsonLd() {
     name: BUSINESS.name,
     image: `${BASE}/video/home-tour-poster.jpg`,
     url: BASE,
-    telephone: "+18014410726",
     email: BUSINESS.email,
     priceRange: "$$",
     address: {
@@ -87,7 +86,6 @@ export function CityServiceJsonLd({
       "@type": "HouseCleaningService",
       "@id": `${BASE}/#business`,
       name: BUSINESS.name,
-      telephone: "+18014410726",
       url: BASE,
     },
     areaServed: { "@type": "City", name: `${city}, UT` },

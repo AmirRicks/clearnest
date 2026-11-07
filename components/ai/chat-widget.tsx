@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, X, Send, Loader2, Minimize2, Maximize2, Phone, ChevronDown } from "lucide-react";
+import { MessageCircle, X, Send, Loader2, Minimize2, Maximize2, ChevronDown, Mail } from "lucide-react";
 
 const SESSION_KEY = "clearnest_ai_session";
 const HISTORY_KEY = "clearnest_ai_history";
@@ -174,7 +174,7 @@ export function AIChatWidget() {
       if (err.name === "AbortError") return;
       addMessage({
         role: "assistant",
-        content: "I'm having trouble connecting. Please try again or call (801) 441-0726.",
+        content: "I'm having trouble connecting. Please try again or email clearnest.services@gmail.com.",
       });
     } finally {
       setIsStreaming(false);
@@ -352,11 +352,11 @@ export function AIChatWidget() {
                   </div>
                   <div className="mt-2 flex items-center justify-between">
                     <a
-                      href="tel:+18014410726"
+                      href="mailto:clearnest.services@gmail.com"
                       className="inline-flex items-center gap-1 text-[10px] text-graphite hover:text-charcoal transition"
                     >
-                      <Phone className="h-3 w-3" />
-                      Call (801) 441-0726
+                      <Mail className="h-3 w-3" />
+                      Email clearnest.services@gmail.com
                     </a>
                     {messages.length > 0 && (
                       <button

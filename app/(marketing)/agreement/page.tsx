@@ -15,7 +15,7 @@ export default function AgreementPage() {
       <H2 as="h1">Plain-English terms for every ClearNest visit.</H2>
       <Lead>
         This is the same agreement you sign before your first booking. Take your time — questions
-        are welcome at (801) 441-0726.
+        are welcome at clearnest.services@gmail.com.
       </Lead>
 
       <div className="mt-12 grid gap-4">
